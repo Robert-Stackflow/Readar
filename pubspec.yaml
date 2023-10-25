@@ -1,0 +1,70 @@
+name: cloudreader
+version: 1.0.0+1
+description: An RSS Reader
+
+environment:
+  sdk: '>=3.1.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # 控件
+  fl_chart: ^0.64.0
+  animations: ^2.0.3
+  fluttertoast: ^8.2.1
+  audioplayers: ^5.2.0
+  auto_size_text: ^3.0.0
+  webview_flutter: ^4.4.1
+  pull_to_refresh: ^2.0.0
+  passcode_screen: ^2.0.1
+  flutter_spinkit: ^5.1.0
+  animated_text_kit: ^4.2.2
+  percent_indicator: ^4.2.3
+  sliding_up_panel: ^2.0.0+1
+  flutter_staggered_grid_view: ^0.6.2
+  flutter_swiper_null_safety: ^1.0.0
+  # 系统
+  event_bus: ^2.0.0
+  local_auth: ^2.1.6
+  local_auth_android: ^1.0.35
+  url_launcher: ^6.2.0
+  package_info_plus: ^4.2.0
+  palette_generator: ^0.3.2
+  flutter_windowmanager: ^0.2.0
+  audio_video_progress_bar: ^0.9.0
+  # 存储/网络
+  path:
+  sqflite:
+  dio: ^5.3.3
+  hive: ^2.2.3
+  http: ^0.13.5
+  cookie_jar: ^4.0.8
+  hive_flutter: ^1.1.0
+  path_provider: ^2.0.12
+  dio_cookie_manager: ^3.1.1
+  cached_network_image: ^3.2.1
+  # 工具
+  logging: ^1.1.1
+  vector_math: ^2.1.4
+  dart_jsonwebtoken: ^2.7.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  # iconfont_builder: ^1.0.4
+  # build_runner: ^1.12.2
+  flare_splash_screen: ^4.0.0
+
+flutter_intl:
+  enabled: true
+# The following section is specific to Flutter packages.
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/screenshots/
+    - assets/music/
+  fonts:
+    - family: Iconfont
+      fonts:
+        - asset: assets/fonts/iconfont/iconfont.ttf
