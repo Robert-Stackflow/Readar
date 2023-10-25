@@ -1,6 +1,5 @@
-import 'package:cloudreader/Configs/hive_config.dart';
 // import 'package:local_auth_android/types/auth_messages_android.dart';
-import 'package:cloudreader/Themes/theme.dart';
+import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Utils/iprint.dart';
 import 'package:cloudreader/Utils/itoast.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_notifier.dart';
@@ -9,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
+
+import '../../Utils/hive_util.dart';
 
 class PinVerifyScreen extends StatefulWidget {
   const PinVerifyScreen({super.key, this.onSuccess, this.isModal = true});
@@ -33,9 +34,9 @@ class PinVerifyScreen extends StatefulWidget {
 // );
 
 class PinVerifyScreenState extends State<PinVerifyScreen> {
-  final String? _password = HiveConfig.getString(key: HiveConfig.lockPinKey);
+  final String? _password = HiveUtil.getString(key: HiveUtil.lockPinKey);
   late final bool _isUseBiometric =
-      HiveConfig.getBool(key: HiveConfig.biometricEnableKey);
+      HiveUtil.getBool(key: HiveUtil.biometricEnableKey);
   late final GestureNotifier _notifier =
       GestureNotifier(status: GestureStatus.verify, gestureText: "验证密码");
   final GlobalKey<GestureState> _gestureUnlockView = GlobalKey();

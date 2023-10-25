@@ -1,6 +1,5 @@
-import 'package:cloudreader/Configs/hive_config.dart';
 // import 'package:local_auth_android/types/auth_messages_android.dart';
-import 'package:cloudreader/Themes/theme.dart';
+import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Utils/iprint.dart';
 import 'package:cloudreader/Utils/itoast.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_notifier.dart';
@@ -10,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
+
+import '../../Utils/hive_util.dart';
 
 class PinChangeScreen extends StatefulWidget {
   const PinChangeScreen({super.key});
@@ -33,11 +34,11 @@ class PinChangeScreen extends StatefulWidget {
 
 class PinChangeScreenState extends State<PinChangeScreen> {
   String _gesturePassword = "";
-  final String? _oldPassword = HiveConfig.getString(key: HiveConfig.lockPinKey);
-  bool _isEditMode = HiveConfig.getString(key: HiveConfig.lockPinKey) != null &&
-      HiveConfig.getString(key: HiveConfig.lockPinKey)!.isNotEmpty;
+  final String? _oldPassword = HiveUtil.getString(key: HiveUtil.lockPinKey);
+  bool _isEditMode = HiveUtil.getString(key: HiveUtil.lockPinKey) != null &&
+      HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty;
   late final bool _isUseBiometric =
-      _isEditMode && HiveConfig.getBool(key: HiveConfig.biometricEnableKey);
+      _isEditMode && HiveUtil.getBool(key: HiveUtil.biometricEnableKey);
   late final GestureNotifier _notifier = _isEditMode
       ? GestureNotifier(status: GestureStatus.verify, gestureText: "绘制旧手势密码")
       : GestureNotifier(status: GestureStatus.create, gestureText: "绘制新手势密码");
@@ -221,8 +222,8 @@ class PinChangeScreenState extends State<PinChangeScreen> {
               );
               Navigator.pop(context);
             });
-            HiveConfig.put(
-                key: HiveConfig.lockPinKey,
+            HiveUtil.put(
+                key: HiveUtil.lockPinKey,
                 value: GestureUnlockView.selectedToString(selected));
           } else {
             setState(() {

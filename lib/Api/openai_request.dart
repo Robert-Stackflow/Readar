@@ -3,14 +3,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../Configs/hive_config.dart';
 import '../Models/message_data.dart';
+import '../Utils/hive_util.dart';
 
 class OpenAIRequest {
   static Future<dynamic> sendMessage(
       String message, List<MessageData> history) async {
-    String? apiKey = HiveConfig.getString(key: HiveConfig.apiKeyKey);
-    String? baseUrl = HiveConfig.getString(key: HiveConfig.apiUrlKey);
+    String? apiKey = HiveUtil.getString(key: HiveUtil.apiKeyKey);
+    String? baseUrl = HiveUtil.getString(key: HiveUtil.apiUrlKey);
     Map<String, String> headers = {
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $apiKey"
@@ -45,8 +45,8 @@ class OpenAIRequest {
 
   static Future<dynamic> sendMessageProxy(
       String message, List<MessageData> history) async {
-    String? baseUrl = HiveConfig.getString(key: HiveConfig.apiCustomUrlKey);
-    String? apiCode = HiveConfig.getString(key: HiveConfig.apiCodeKey);
+    String? baseUrl = HiveUtil.getString(key: HiveUtil.apiCustomUrlKey);
+    String? apiCode = HiveUtil.getString(key: HiveUtil.apiCodeKey);
     Map<String, String> headers = {
       "Content-Type": "application/json; charset=UTF-8",
       "access-code": '$apiCode',
@@ -89,8 +89,8 @@ class OpenAIRequest {
   }
 
   static Future<dynamic> moderationProxy(String message) async {
-    String? baseUrl = HiveConfig.getString(key: HiveConfig.apiCustomUrlKey);
-    String? apiCode = HiveConfig.getString(key: HiveConfig.apiCodeKey);
+    String? baseUrl = HiveUtil.getString(key: HiveUtil.apiCustomUrlKey);
+    String? apiCode = HiveUtil.getString(key: HiveUtil.apiCodeKey);
     Map<String, String> headers = {
       "Content-Type": "application/json; charset=UTF-8",
       "access-code": '$apiCode',

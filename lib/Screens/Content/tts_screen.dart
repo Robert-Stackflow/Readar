@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:cloudreader/Themes/theme.dart';
+import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

@@ -1,41 +1,21 @@
 import 'dart:io';
 
-import 'package:cloudreader/Models/tab_data.dart';
-import 'package:cloudreader/Themes/icon.dart';
-import 'package:cloudreader/Themes/theme.dart';
-import 'package:cloudreader/Widgets/tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class SubscriptionScreen extends StatefulWidget {
-  const SubscriptionScreen({super.key});
+class FeedScreen extends StatefulWidget {
+  const FeedScreen({super.key});
 
   static const String routeName = "/nav/subscription";
 
   @override
-  State<SubscriptionScreen> createState() => _SubscriptionScreenState();
+  State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _SubscriptionScreenState extends State<SubscriptionScreen>
+class _FeedScreenState extends State<FeedScreen>
     with TickerProviderStateMixin {
-  TabController? tabController;
-  AnimationController? animationController;
-  List<TabData> holeTabData = TabData.holeTabList;
-
-  @override
-  void dispose() {
-    animationController?.dispose();
-    tabController?.dispose();
-    super.dispose();
-  }
-
   @override
   void initState() {
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-    animationController!.forward();
     if (Platform.isAndroid) {
       SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -43,7 +23,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
       SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     }
     super.initState();
-    tabController = TabController(vsync: this, length: holeTabData.length);
   }
 
   @override
@@ -62,14 +41,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(
-                      width: 5,
-                    ),
+                    const SizedBox(width: 5),
                     IconButton(
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       icon: const Icon(
-                        Iconfont.gengduo,
+                        Icons.dehaze_rounded,
                         size: 23,
                       ),
                       onPressed: () {
@@ -77,57 +54,46 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                       },
                     ),
                     Expanded(
-                      child: TabBar(
-                        controller: tabController,
-                        tabs: holeTabData.map((value) {
-                          var tp = TextPainter(
-                            textDirection: TextDirection.ltr,
-                            text: TextSpan(
-                              text: value.name,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                          )..layout();
-                          return Tab(
-                            child: SizedBox(
-                              width: tp.width,
-                              child: Text(value.name),
-                            ),
-                          );
-                        }).toList(),
-                        labelPadding:
-                            const EdgeInsets.symmetric(horizontal: 12),
-                        isScrollable: true,
-                        enableFeedback: true,
-                        physics: const BouncingScrollPhysics(),
-                        labelColor: AppTheme.darkerText,
-                        unselectedLabelColor: Colors.grey,
-                        labelStyle: const TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18,
-                          color: AppTheme.darkerText,
-                        ),
-                        unselectedLabelStyle: const TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 18,
-                          color: Colors.grey,
-                        ),
-                        indicator: const TabIndicator(),
-                      ),
+                      child: Container(),
                     ),
+                    IconButton(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      icon: const Icon(
+                        Icons.headset_outlined,
+                        size: 23,
+                      ),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      icon: const Icon(
+                        Icons.search_rounded,
+                        size: 25,
+                      ),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      icon: const Icon(
+                        Icons.add_link_rounded,
+                        size: 25,
+                      ),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      icon: const Icon(
+                        Icons.filter_list_rounded,
+                        size: 25,
+                      ),
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 5),
                   ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    physics: const BouncingScrollPhysics(),
-                    controller: tabController,
-                    children: [
-                      Container(),
-                      Container(),
-                    ],
-                  ),
                 ),
               ],
             ),

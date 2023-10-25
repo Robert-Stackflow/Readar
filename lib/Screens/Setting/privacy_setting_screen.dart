@@ -1,8 +1,5 @@
-import 'package:cloudreader/Configs/hive_config.dart';
 import 'package:cloudreader/Models/auto_lock.dart';
 import 'package:cloudreader/Screens/Lock/pin_change_screen.dart';
-import 'package:cloudreader/Themes/icon.dart';
-import 'package:cloudreader/Themes/theme.dart';
 import 'package:cloudreader/Utils/itoast.dart';
 import 'package:cloudreader/Widgets/BottomSheet/bottom_sheet_builder.dart'
     as bottom_sheet_builder;
@@ -13,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:local_auth/local_auth.dart';
 
+import '../../Utils/hive_util.dart';
+import '../../generated/l10n.dart';
 import '../Lock/pin_verify_screen.dart';
 
 class PrivacySettingScreen extends StatefulWidget {
@@ -26,15 +25,15 @@ class PrivacySettingScreen extends StatefulWidget {
 
 class _PrivacySettingScreenState extends State<PrivacySettingScreen>
     with TickerProviderStateMixin {
-  bool _lock = HiveConfig.getBool(key: HiveConfig.lockEnableKey);
-  bool _autoLock = HiveConfig.getBool(key: HiveConfig.autoLockKey);
-  bool _biometricLock = HiveConfig.getBool(key: HiveConfig.biometricEnableKey);
+  bool _lock = HiveUtil.getBool(key: HiveUtil.lockEnableKey);
+  bool _autoLock = HiveUtil.getBool(key: HiveUtil.autoLockKey);
+  bool _biometricLock = HiveUtil.getBool(key: HiveUtil.biometricEnableKey);
   bool _safeMode =
-      HiveConfig.getBool(key: HiveConfig.safeModeKey, defaultValue: false);
-  int _autoLockOption = HiveConfig.getInt(key: HiveConfig.autoLockTimeKey);
+      HiveUtil.getBool(key: HiveUtil.safeModeKey, defaultValue: false);
+  int _autoLockOption = HiveUtil.getInt(key: HiveUtil.autoLockTimeKey);
   String _availableBiometricString = "";
   bool _isBiometricAvailable = false;
-  bool _existPin = HiveConfig.getString(key: HiveConfig.lockPinKey)!.isNotEmpty;
+  bool _existPin = HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty;
 
   getAuth() async {
     LocalAuthentication localAuth = LocalAuthentication();
@@ -80,30 +79,7 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: AppBar(
-          leadingWidth: 40,
-          elevation: 0.2,
-          leading: IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: AppTheme.darkerText,
-              size: 23,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text(
-            "隐私",
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: AppTheme.darkerText,
-                fontSize: 17),
-          ),
-          backgroundColor: AppTheme.background,
-        ),
+        appBar: ItemBuilder.buildAppBar(title: S.current.privacySetting),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -129,14 +105,14 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                             builder: (context) => PinVerifyScreen(
                               onSuccess: () {
                                 IToast.showTop(context, text: "关闭手势密码成功");
-                                HiveConfig.delete(key: HiveConfig.lockPinKey);
+                                HiveUtil.delete(key: HiveUtil.lockPinKey);
                                 setState(() {
                                   _lock = !_lock;
-                                  HiveConfig.put(
-                                      key: HiveConfig.lockEnableKey,
+                                  HiveUtil.put(
+                                      key: HiveUtil.lockEnableKey,
                                       value: _lock);
-                                  _existPin = HiveConfig.getString(
-                                          key: HiveConfig.lockPinKey)!
+                                  _existPin = HiveUtil.getString(
+                                          key: HiveUtil.lockPinKey)!
                                       .isNotEmpty;
                                 });
                               },
@@ -147,16 +123,15 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                       } else {
                         setState(() {
                           _lock = !_lock;
-                          HiveConfig.put(
-                              key: HiveConfig.lockEnableKey, value: _lock);
+                          HiveUtil.put(
+                              key: HiveUtil.lockEnableKey, value: _lock);
                           _existPin =
-                              HiveConfig.getString(key: HiveConfig.lockPinKey)!
+                              HiveUtil.getString(key: HiveUtil.lockPinKey)!
                                   .isNotEmpty;
                         });
                       }
                     });
                   },
-                  leading: Iconfont.shezhi,
                 ),
                 Visibility(
                   visible: _lock,
@@ -172,14 +147,13 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                                 builder: (context) =>
                                     const PinChangeScreen())).then((value) {
                           setState(() {
-                            _existPin = HiveConfig.getString(
-                                    key: HiveConfig.lockPinKey)!
-                                .isNotEmpty;
+                            _existPin =
+                                HiveUtil.getString(key: HiveUtil.lockPinKey)!
+                                    .isNotEmpty;
                           });
                         });
                       });
                     },
-                    leading: Iconfont.shezhi,
                   ),
                 ),
                 Visibility(
@@ -206,8 +180,8 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                                 IToast.showTop(context, text: "生物识别开启成功");
                                 setState(() {
                                   _biometricLock = !_biometricLock;
-                                  HiveConfig.put(
-                                      key: HiveConfig.biometricEnableKey,
+                                  HiveUtil.put(
+                                      key: HiveUtil.biometricEnableKey,
                                       value: _biometricLock);
                                 });
                               },
@@ -218,13 +192,12 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                       } else {
                         setState(() {
                           _biometricLock = !_biometricLock;
-                          HiveConfig.put(
-                              key: HiveConfig.biometricEnableKey,
+                          HiveUtil.put(
+                              key: HiveUtil.biometricEnableKey,
                               value: _biometricLock);
                         });
                       }
                     },
-                    leading: Iconfont.shezhi,
                   ),
                 ),
                 Visibility(
@@ -242,11 +215,10 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                     onTap: () {
                       setState(() {
                         _autoLock = !_autoLock;
-                        HiveConfig.put(
-                            key: HiveConfig.autoLockKey, value: _autoLock);
+                        HiveUtil.put(
+                            key: HiveUtil.autoLockKey, value: _autoLock);
                       });
                     },
-                    leading: Iconfont.shezhi,
                   ),
                 ),
                 Visibility(
@@ -266,15 +238,13 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                           onChanged: (int index) {
                             setState(() {
                               _autoLockOption = index;
-                              HiveConfig.put(
-                                  key: HiveConfig.autoLockTimeKey,
-                                  value: index);
+                              HiveUtil.put(
+                                  key: HiveUtil.autoLockTimeKey, value: index);
                             });
                           },
                         ),
                       );
                     },
-                    leading: Iconfont.shezhi,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -294,11 +264,9 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                         FlutterWindowManager.clearFlags(
                             FlutterWindowManager.FLAG_SECURE);
                       }
-                      HiveConfig.put(
-                          key: HiveConfig.safeModeKey, value: _safeMode);
+                      HiveUtil.put(key: HiveUtil.safeModeKey, value: _safeMode);
                     });
                   },
-                  leading: Iconfont.jiju,
                 ),
                 const SizedBox(height: 10),
               ],

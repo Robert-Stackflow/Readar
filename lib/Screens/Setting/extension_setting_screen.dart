@@ -1,49 +1,26 @@
-import 'package:cloudreader/Themes/theme.dart';
 import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 
 import '../../Widgets/item_builder.dart';
+import '../../generated/l10n.dart';
 
-class ServiceSettingScreen extends StatefulWidget {
-  const ServiceSettingScreen({super.key});
+class ExtensionSettingScreen extends StatefulWidget {
+  const ExtensionSettingScreen({super.key});
 
-  static const String routeName = "/setting/service";
+  static const String routeName = "/setting/extension";
 
   @override
-  State<ServiceSettingScreen> createState() => _ServiceSettingScreenState();
+  State<ExtensionSettingScreen> createState() => _ExtensionSettingScreenState();
 }
 
-class _ServiceSettingScreenState extends State<ServiceSettingScreen>
+class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0.2,
-          leadingWidth: 40,
-          leading: IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: AppTheme.darkerText,
-              size: 23,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text(
-            "服务",
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: AppTheme.darkerText,
-                fontSize: 17),
-          ),
-          backgroundColor: AppTheme.background,
-        ),
+        appBar: ItemBuilder.buildAppBar(title: S.current.extensionSetting),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(

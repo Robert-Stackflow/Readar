@@ -1,4 +1,4 @@
-import 'package:cloudreader/Themes/theme.dart';
+import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
 
 class SearchType {

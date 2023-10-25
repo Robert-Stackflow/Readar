@@ -1,27 +1,26 @@
 import 'dart:async';
 
-import 'package:cloudreader/Configs/hive_config.dart';
 import 'package:cloudreader/Models/auto_lock.dart';
-import 'package:cloudreader/Models/bottom_navigation_icon_data.dart';
-import 'package:cloudreader/Screens/Navigation/read_later_screen.dart';
 import 'package:cloudreader/Screens/Setting/about_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/appearance_setting_scrren.dart';
 import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
+import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
+import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/general_setting_screen.dart';
-import 'package:cloudreader/Screens/Setting/lab_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/privacy_setting_screen.dart';
-import 'package:cloudreader/Screens/Setting/service_setting_screen.dart';
-import 'package:cloudreader/Screens/navigation/home_screen.dart';
-import 'package:cloudreader/Themes/theme.dart';
+import 'package:cloudreader/Utils/theme.dart';
+import 'package:cloudreader/Utils/uri_util.dart';
 import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:get/get.dart';
 
-import '../Utils/itoast.dart';
+import '../Utils/hive_util.dart';
 import '../Widgets/item_builder.dart';
+import '../generated/l10n.dart';
 import 'Lock/pin_verify_screen.dart';
+import 'Navigation/home_screen.dart';
+import 'Navigation/read_later_screen.dart';
 import 'Navigation/star_screen.dart';
 import 'Navigation/subscription_screen.dart';
 
@@ -37,36 +36,26 @@ class MainScreen extends StatefulWidget {
 }
 
 class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
-  List<BottomNavigationIconData> tabIconsList =
-      BottomNavigationIconData.tabIconsList;
-  int selectedIndex = 0;
-  final List<Widget> _pageList = [
-    const HomeScreen(),
-    const SubscriptionScreen(),
-    const StarScreen(),
-    const ReadLaterScreen()
-  ];
-  final _pageController = PageController();
+  List<Widget> _pageList = [];
+  List<BottomNavigationBarItem> _navigationBarItemList = [];
   Timer? _timer;
+  int selectedIndex = 0;
   bool _isInVerify = false;
+  final _pageController = PageController();
 
   @override
   void initState() {
-    for (var tab in tabIconsList) {
-      tab.isSelected = false;
-    }
-    tabIconsList[0].isSelected = true;
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    if (HiveConfig.getBool(key: HiveConfig.safeModeKey, defaultValue: false)) {
+    if (HiveUtil.getBool(key: HiveUtil.safeModeKey, defaultValue: false)) {
       FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     } else {
       FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (HiveConfig.getBool(key: HiveConfig.lockEnableKey) &&
-          HiveConfig.getString(key: HiveConfig.lockPinKey)!.isNotEmpty &&
-          HiveConfig.getBool(key: HiveConfig.autoLockKey) &&
+      if (HiveUtil.getBool(key: HiveUtil.lockEnableKey) &&
+          HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty &&
+          HiveUtil.getBool(key: HiveUtil.autoLockKey) &&
           !_isInVerify) {
         Navigator.push(
           context,
@@ -81,14 +70,49 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         );
         _isInVerify = true;
       }
+      S.load(Locale(HiveUtil.getString(key: HiveUtil.languageKey) ?? "en"));
+      initData();
     });
+    initData();
   }
 
-  _launchUrl(String url) async {
-    IToast.showTop(context, text: "缺少跳转权限,链接已复制至剪切板");
-    if (!await launchUrl(Uri(path: url))) {
-      Clipboard.setData(ClipboardData(text: url));
-    }
+  void initData() {
+    setState(() {
+      _navigationBarItemList = [
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.feed_outlined),
+          label: S.current.article,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.rss_feed_rounded),
+          label: S.current.feed,
+        ),
+      ];
+      _pageList = [
+        const HomeScreen(),
+        const FeedScreen(),
+      ];
+      if (HiveUtil.getBool(
+          key: HiveUtil.starNavigationKey, defaultValue: true)) {
+        _navigationBarItemList.add(
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.star_outline_rounded),
+            label: S.current.star,
+          ),
+        );
+        _pageList.add(const StarScreen());
+      }
+      if (HiveUtil.getBool(
+          key: HiveUtil.readLaterNavigationKey, defaultValue: true)) {
+        _navigationBarItemList.add(
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.checklist_rounded),
+            label: S.current.readLater,
+          ),
+        );
+        _pageList.add(const ReadLaterScreen());
+      }
+    });
   }
 
   void onBottomNavigationBarItemTap(int index) {
@@ -105,13 +129,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         bottomNavigationBar: BottomNavigationBar(
-          items: List.generate(
-            tabIconsList.length,
-            (index) => BottomNavigationBarItem(
-              icon: Icon(tabIconsList[index].icon),
-              label: (tabIconsList[index].label),
-            ),
-          ),
+          items: _navigationBarItemList,
           currentIndex: selectedIndex,
           fixedColor: AppTheme.themeColor,
           type: BottomNavigationBarType.fixed,
@@ -142,11 +160,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             Duration(
                 minutes: AutoLock
                     .autoLockOptions[
-                        HiveConfig.getInt(key: HiveConfig.autoLockTimeKey)]
+                        HiveUtil.getInt(key: HiveUtil.autoLockTimeKey)]
                     .minutes), () {
-          if (HiveConfig.getBool(key: HiveConfig.lockEnableKey) &&
-              HiveConfig.getString(key: HiveConfig.lockPinKey)!.isNotEmpty &&
-              HiveConfig.getBool(key: HiveConfig.autoLockKey) &&
+          if (HiveUtil.getBool(key: HiveUtil.lockEnableKey) &&
+              HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty &&
+              HiveUtil.getBool(key: HiveUtil.autoLockKey) &&
               !_isInVerify) {
             _isInVerify = true;
             Navigator.push(
@@ -189,8 +207,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             child: Column(
               children: [
                 Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).padding.top + 10),
+                  margin:
+                      EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 ),
                 Container(
                   margin:
@@ -203,136 +221,117 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                       padding: EdgeInsets.zero,
                       children: [
                         ItemBuilder.buildEntryItem(
-                          title: "集锦",
+                          title: S.current.highlights,
                           topRadius: true,
                           onTap: () {},
                           showIcon: true,
                           leading: Icons.bookmark_border_rounded,
                         ),
                         ItemBuilder.buildEntryItem(
-                          title: "TTS",
-                          showIcon: true,
-                          onTap: () {},
-                          leading: Icons.headset_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          title: "星标文章",
-                          showIcon: true,
-                          onTap: () {},
-                          leading: Icons.star_border_rounded,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          title: "稍后阅读",
-                          showIcon: true,
-                          onTap: () {},
-                          leading: Icons.checklist_rounded,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          title: "文章标签",
+                          title: S.current.tags,
                           showIcon: true,
                           onTap: () {},
                           leading: Icons.tag_rounded,
                         ),
                         ItemBuilder.buildEntryItem(
-                          title: "订阅源社区",
-                          onTap: () {},
                           showIcon: true,
-                          bottomRadius: true,
-                          leading: Icons.add_link_rounded,
-                        ),
-                        const SizedBox(height: 10),
-                        ItemBuilder.buildEntryItem(
-                          showIcon: true,
-                          title: "统计",
-                          topRadius: true,
+                          title: S.current.statistics,
                           onTap: () {},
                           leading: Icons.show_chart_rounded,
                         ),
+                        Visibility(
+                          visible: !HiveUtil.getBool(
+                              key: HiveUtil.starNavigationKey,
+                              defaultValue: true),
+                          child: ItemBuilder.buildEntryItem(
+                            title: S.current.star,
+                            showIcon: true,
+                            onTap: () {},
+                            leading: Icons.star_border_rounded,
+                          ),
+                        ),
+                        Visibility(
+                          visible: !HiveUtil.getBool(
+                              key: HiveUtil.readLaterNavigationKey,
+                              defaultValue: true),
+                          child: ItemBuilder.buildEntryItem(
+                            title: S.current.readLater,
+                            showIcon: true,
+                            onTap: () {},
+                            leading: Icons.checklist_rounded,
+                          ),
+                        ),
                         ItemBuilder.buildEntryItem(
-                          title: "阅读历史",
-                          showIcon: true,
-                          bottomRadius: true,
+                          title: S.current.feedHub,
                           onTap: () {},
-                          leading: Icons.history_outlined,
+                          bottomRadius: true,
+                          showIcon: true,
+                          leading: Icons.add_chart_rounded,
                         ),
                         const SizedBox(height: 10),
                         ItemBuilder.buildEntryItem(
-                          title: "通用",
+                          title: S.current.generalSetting,
                           topRadius: true,
                           showIcon: true,
                           onTap: () {
-                            Navigator.popAndPushNamed(
-                                context, GeneralSettingScreen.routeName);
+                            Get.toNamed(GeneralSettingScreen.routeName);
                           },
                           leading: Icons.settings_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
                           showIcon: true,
-                          title: "外观",
+                          title: S.current.apprearanceSetting,
                           onTap: () {
-                            Navigator.popAndPushNamed(
-                                context, AppearanceSettingScreen.routeName);
+                            Get.toNamed(AppearanceSettingScreen.routeName);
                           },
                           leading: Icons.color_lens_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
-                          title: "服务",
+                          title: S.current.extensionSetting,
                           showIcon: true,
                           onTap: () {
-                            Navigator.popAndPushNamed(
-                                context, ServiceSettingScreen.routeName);
+                            Get.toNamed(ExtensionSettingScreen.routeName);
                           },
                           leading: Icons.extension_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
-                          title: "备份",
+                          title: S.current.backupSetting,
                           showIcon: true,
                           onTap: () {
-                            Navigator.popAndPushNamed(
-                                context, BackupSettingScreen.routeName);
+                            Get.toNamed(BackupSettingScreen.routeName);
                           },
                           leading: Icons.backup_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
                           showIcon: true,
-                          title: "隐私",
+                          title: S.current.privacySetting,
                           onTap: () {
-                            Navigator.popAndPushNamed(
-                                context, PrivacySettingScreen.routeName);
+                            Get.toNamed(PrivacySettingScreen.routeName);
                           },
                           leading: Icons.privacy_tip_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
                           showIcon: true,
-                          title: "实验室",
+                          title: S.current.experimentSetting,
                           onTap: () {
-                            Navigator.popAndPushNamed(
-                                context, LabSettingScreen.routeName);
+                            Get.toNamed(ExperimentSettingScreen.routeName);
                           },
                           bottomRadius: true,
                           leading: Icons.outlined_flag_rounded,
                         ),
                         const SizedBox(height: 10),
                         ItemBuilder.buildEntryItem(
-                          title: "使用指南",
+                          title: S.current.help,
                           topRadius: true,
                           showIcon: true,
                           onTap: () {
-                            _launchUrl(
+                            UriUtil.launchUrlUri(
                                 "https://rssreader.cloudchewie.com/help");
                           },
                           leading: Icons.help_outline_rounded,
                         ),
                         ItemBuilder.buildEntryItem(
-                          title: "意见反馈",
-                          showIcon: true,
-                          onTap: () {
-                            _launchUrl("mailto:2014027378@qq.com");
-                          },
-                          leading: Icons.feedback_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          title: "关于噬云",
+                          title: S.current.about,
                           bottomRadius: true,
                           showIcon: true,
                           onTap: () {

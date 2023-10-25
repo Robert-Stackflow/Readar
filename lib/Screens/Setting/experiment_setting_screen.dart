@@ -1,49 +1,26 @@
-import 'package:cloudreader/Themes/theme.dart';
 import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 
 import '../../Widgets/item_builder.dart';
+import '../../generated/l10n.dart';
 
-class LabSettingScreen extends StatefulWidget {
-  const LabSettingScreen({super.key});
+class ExperimentSettingScreen extends StatefulWidget {
+  const ExperimentSettingScreen({super.key});
 
-  static const String routeName = "/setting/lab";
+  static const String routeName = "/setting/experiment";
 
   @override
-  State<LabSettingScreen> createState() => _LabSettingScreenState();
+  State<ExperimentSettingScreen> createState() => _ExperimentSettingScreenState();
 }
 
-class _LabSettingScreenState extends State<LabSettingScreen>
+class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0.2,
-          leadingWidth: 40,
-          leading: IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: AppTheme.darkerText,
-              size: 23,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text(
-            "实验室",
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: AppTheme.darkerText,
-                fontSize: 17),
-          ),
-          backgroundColor: AppTheme.background,
-        ),
+        appBar: ItemBuilder.buildAppBar(title: S.current.experimentSetting),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -56,20 +33,18 @@ class _LabSettingScreenState extends State<LabSettingScreen>
                 const SizedBox(height: 10),
                 ItemBuilder.buildRadioItem(
                   title: "AI摘要",
-                  description: "关闭后文章详情页将不再显示摘要",
                   value: true,
                   topRadius: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   title: "启用Cloud Reader AI",
-                  description: "关闭后将无法使用Cloud Reader提供的AI服务",
+                  description: "官方提供的AI服务，我们承诺不会泄露您的隐私",
                   value: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   title: "第三方AI服务管理",
-                  description: "通过API Key启用第三方AI服务",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
@@ -80,19 +55,17 @@ class _LabSettingScreenState extends State<LabSettingScreen>
                 const SizedBox(height: 10),
                 ItemBuilder.buildRadioItem(
                   title: "翻译",
-                  description: "关闭后将无法使用文章翻译功能",
                   value: true,
                   topRadius: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   title: "第三方翻译服务管理",
-                  description: "通过API Key启用第三方翻译服务",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   title: "源语言",
-                  description: "自动翻译源语言",
+                  description: "当文章为何种语言时自动翻译",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(

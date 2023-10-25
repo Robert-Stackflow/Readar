@@ -1,10 +1,38 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../Themes/icon.dart';
-import '../Themes/theme.dart';
+import '../Utils/theme.dart';
 
 class ItemBuilder {
+  static AppBar buildAppBar({
+    String title = "",
+    IconData leading = Icons.arrow_back_rounded,
+  }) {
+    return AppBar(
+      elevation: 0,
+      leadingWidth: 30,
+      leading: Container(
+        margin: const EdgeInsets.only(left: 5),
+        child: IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          icon: Icon(
+            leading,
+            color: AppTheme.darkerText,
+            size: 23,
+          ),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+      ),
+      title:
+          title.isNotEmpty ? Text(title, style: AppTheme.title) : Container(),
+      backgroundColor: AppTheme.background,
+    );
+  }
+
   static Widget buildRadioItem({
     double radius = 10,
     bool topRadius = false,
@@ -88,7 +116,7 @@ class ItemBuilder {
     bool topRadius = false,
     bool bottomRadius = false,
     bool showIcon = false,
-    IconData leading = Iconfont.fanbei,
+    IconData leading = Icons.home_filled,
     required String title,
     String tip = "",
     String description = "",

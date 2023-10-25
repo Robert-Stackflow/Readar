@@ -1,5 +1,6 @@
-import 'package:cloudreader/Configs/hive_config.dart';
 import 'package:flutter/foundation.dart';
+
+import '../Utils/hive_util.dart';
 
 enum ActiveTheme {
   light,
@@ -13,8 +14,7 @@ class ThemeProvider extends ChangeNotifier {
 
   static Future<ActiveTheme> getPreferredTheme() async {
     try {
-      return HiveConfig.getBool(
-              key: HiveConfig.darkThemeKey, defaultValue: false)
+      return HiveUtil.getBool(key: HiveUtil.darkThemeKey, defaultValue: false)
           ? ActiveTheme.dark
           : ActiveTheme.light;
     } catch (_) {
@@ -27,7 +27,6 @@ class ThemeProvider extends ChangeNotifier {
   set theme(ActiveTheme theme) {
     _theme = theme;
     notifyListeners();
-    HiveConfig.put(
-        key: HiveConfig.darkThemeKey, value: _theme == ActiveTheme.dark);
+    HiveUtil.put(key: HiveUtil.darkThemeKey, value: _theme == ActiveTheme.dark);
   }
 }

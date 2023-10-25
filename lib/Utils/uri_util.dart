@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UriUtil {
@@ -20,5 +21,11 @@ class UriUtil {
 
   static void launchEmailUri(String email, {String subject = ""}) {
     launchUrl(emailUri(email, subject: subject));
+  }
+
+  static void launchUrlUri(String url) async {
+    if (!await launchUrl(Uri(path: url))) {
+      Clipboard.setData(ClipboardData(text: url));
+    }
   }
 }

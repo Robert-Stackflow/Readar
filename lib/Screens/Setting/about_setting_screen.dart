@@ -1,13 +1,11 @@
-import 'package:cloudreader/Themes/theme.dart';
-import 'package:cloudreader/Utils/itoast.dart';
+import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Utils/uri_util.dart';
 import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../Widgets/item_builder.dart';
+import '../../generated/l10n.dart';
 
 class AboutSettingScreen extends StatefulWidget {
   const AboutSettingScreen({super.key});
@@ -22,13 +20,6 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
     with TickerProviderStateMixin {
   int count = 0;
   late String appName = "";
-
-  _launchUrl(String url) async {
-    IToast.showTop(context, text: "缺少跳转权限,链接已复制至剪切板");
-    if (!await launchUrl(Uri(path: url))) {
-      Clipboard.setData(ClipboardData(text: url));
-    }
-  }
 
   @override
   void initState() {
@@ -49,22 +40,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          leading: IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: const Icon(
-              Icons.close_rounded,
-              color: AppTheme.darkerText,
-              size: 25,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          backgroundColor: AppTheme.background,
-        ),
+        appBar: ItemBuilder.buildAppBar(leading: Icons.close_rounded),
         body: ScrollConfiguration(
           behavior: NoShadowScrollBehavior(),
           child: ListView(
@@ -99,35 +75,41 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                     padding: EdgeInsets.zero,
                     children: [
                       ItemBuilder.buildEntryItem(
-                        title: "贡献者",
+                        title: S.current.contributor,
                         topRadius: true,
                         showIcon: true,
                         onTap: () {},
                         leading: Icons.supervised_user_circle_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
-                        title: "更新日志",
+                        title: S.current.changeLog,
                         showIcon: true,
                         onTap: () {},
                         leading: Icons.merge_type_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
-                        title: "参与翻译",
+                        title: S.current.participateInTranslation,
                         onTap: () {},
                         showIcon: true,
                         leading: Icons.translate_rounded,
                       ),
                       ItemBuilder.buildEntryItem(
-                        title: "Github仓库",
+                        title: S.current.bugReport,
+                        onTap: () {},
+                        showIcon: true,
+                        leading: Icons.bug_report_outlined,
+                      ),
+                      ItemBuilder.buildEntryItem(
+                        title: S.current.githubRepo,
                         onTap: () {
-                          _launchUrl(
+                          UriUtil.launchUrlUri(
                               "https://github.com/Robert-Stackflow/CloudReader");
                         },
                         showIcon: true,
                         leading: Icons.commit_rounded,
                       ),
                       ItemBuilder.buildEntryItem(
-                        title: "开源许可证",
+                        title: S.current.license,
                         showIcon: true,
                         onTap: () {},
                         bottomRadius: true,
@@ -135,44 +117,42 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                       ),
                       const SizedBox(height: 10),
                       ItemBuilder.buildEntryItem(
-                        title: "隐私政策",
+                        title: S.current.privacyPolicy,
                         showIcon: true,
                         onTap: () {},
                         topRadius: true,
                         leading: Icons.group_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
-                        title: "评个分吧",
+                        title: S.current.rate,
                         showIcon: true,
                         onTap: () {},
                         leading: Icons.rate_review_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
-                        title: "联系我们",
+                        title: S.current.contact,
                         onTap: () {
                           UriUtil.launchEmailUri("2014027378@qq.com");
                         },
                         showIcon: true,
-                        tip: "2014027378@qq.com",
                         leading: Icons.contact_support_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
-                        title: "官方网站",
+                        title: S.current.officialWebsite,
                         onTap: () {
-                          _launchUrl("https://rssreader.cloudchewie.com");
+                          UriUtil.launchUrlUri(
+                              "https://rssreader.cloudchewie.com");
                         },
                         showIcon: true,
-                        tip: "https://rssreader.cloudchewie.com",
                         leading: Icons.language_rounded,
                       ),
                       ItemBuilder.buildEntryItem(
-                        title: "Telegram频道",
+                        title: S.current.telegramGroup,
                         onTap: () {
-                          _launchUrl("https://t.me/CloudReader");
+                          UriUtil.launchUrlUri("https://t.me/CloudReader");
                         },
                         bottomRadius: true,
                         showIcon: true,
-                        tip: "https://t.me/CloudReader",
                         leading: Icons.telegram_outlined,
                       ),
                       const SizedBox(height: 10)

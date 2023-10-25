@@ -1,4 +1,4 @@
-import 'package:cloudreader/Themes/theme.dart';
+import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
 import 'package:cloudreader/Widgets/tab_indicator.dart';
 import 'package:flutter/material.dart';

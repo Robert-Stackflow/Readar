@@ -6,9 +6,7 @@ class CacheUtil {
   static Future<String> loadCache() async {
     Directory tempDir = await getTemporaryDirectory();
     double value = await _getTotalSizeOfFilesInDir(tempDir);
-    /*tempDir.list(followLinks: false,recursive: true).listen((file){
-        print(file.path);
-      });*/
+    tempDir.list(followLinks: false, recursive: true).listen((file) {});
     return _renderSize(value);
   }
 

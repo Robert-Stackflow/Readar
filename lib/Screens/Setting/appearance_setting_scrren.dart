@@ -1,7 +1,12 @@
-import 'package:cloudreader/Themes/theme.dart';
+import 'package:cloudreader/Utils/hive_util.dart';
+import 'package:cloudreader/Widgets/BottomSheet/bottom_sheet_builder.dart'
+    as bottom_sheet_builder;
 import 'package:cloudreader/Widgets/item_builder.dart';
 import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
+
+import '../../Widgets/BottomSheet/list_bottom_sheet.dart';
+import '../../generated/l10n.dart';
 
 class AppearanceSettingScreen extends StatefulWidget {
   const AppearanceSettingScreen({super.key});
@@ -15,35 +20,38 @@ class AppearanceSettingScreen extends StatefulWidget {
 
 class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
     with TickerProviderStateMixin {
+  bool _starNavigation =
+      HiveUtil.getBool(key: HiveUtil.starNavigationKey, defaultValue: true);
+  bool _readLaterNavigation = HiveUtil.getBool(
+      key: HiveUtil.readLaterNavigationKey, defaultValue: true);
+  int _localeOption = 0;
+  List<String> labels = [];
+
+  @override
+  initState() {
+    super.initState();
+    filterLocale();
+  }
+
+  List<String> filterLocale() {
+    List<Locale> locales = S.delegate.supportedLocales;
+    for (Locale locale in locales) {
+      labels.add(locale.toString());
+      if (HiveUtil.getString(key: HiveUtil.languageKey) == locale.toString()) {
+        setState(() {
+          _localeOption = locales.indexOf(locale);
+        });
+      }
+    }
+    return labels;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0.2,
-          leadingWidth: 40,
-          leading: IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: AppTheme.darkerText,
-              size: 23,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text(
-            "外观",
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: AppTheme.darkerText,
-                fontSize: 17),
-          ),
-          backgroundColor: AppTheme.background,
-        ),
+        appBar: ItemBuilder.buildAppBar(title: S.current.apprearanceSetting),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -56,15 +64,33 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
                   title: "语言",
-                  tip: "跟随系统",
+                  tip: HiveUtil.getString(key: HiveUtil.languageKey) ?? "跟随系统",
                   topRadius: true,
                   bottomRadius: true,
-                  onTap: () {},
+                  onTap: () {
+                    bottom_sheet_builder.showModalBottomSheet(
+                      backgroundColor: Colors.white.withOpacity(0),
+                      context: context,
+                      builder: (context) => ListBottomSheet(
+                        currentIndex: _localeOption,
+                        title: "选择语言",
+                        labels: labels,
+                        onChanged: (int index) {
+                          setState(() {
+                            _localeOption = index;
+                            HiveUtil.put(
+                                key: HiveUtil.languageKey,
+                                value: labels[index]);
+                            S.load(Locale(labels[index]));
+                          });
+                        },
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
                   title: "主题颜色",
-                  description: "选择图标、按钮等控件的强调色",
                   tip: "森林绿",
                   topRadius: true,
                   bottomRadius: true,
@@ -73,7 +99,6 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                 const SizedBox(height: 10),
                 ItemBuilder.buildRadioItem(
                   title: "深色模式跟随系统",
-                  description: "开启后软件的深色模式跟随系统设置",
                   value: true,
                   topRadius: true,
                   onTap: () {},
@@ -81,31 +106,53 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                 ItemBuilder.buildRadioItem(
                   title: "深色模式",
                   value: true,
-                  description: "由你自己控制软件的深浅色模式",
                   bottomRadius: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
+                ItemBuilder.buildRadioItem(
+                  title: "星标",
+                  value: _starNavigation,
+                  description: "关闭后，底部导航栏的星标入口将移至侧边栏中",
+                  topRadius: true,
+                  onTap: () {
+                    setState(() {
+                      _starNavigation = !_starNavigation;
+                    });
+                    HiveUtil.put(
+                        key: HiveUtil.starNavigationKey,
+                        value: _starNavigation);
+                  },
+                ),
+                ItemBuilder.buildRadioItem(
+                  title: "稍后阅读",
+                  value: _readLaterNavigation,
+                  description: "关闭后，底部导航栏的稍后阅读入口将移至侧边栏中",
+                  bottomRadius: true,
+                  onTap: () {
+                    setState(() {
+                      _readLaterNavigation = !_readLaterNavigation;
+                    });
+                    HiveUtil.put(
+                        key: HiveUtil.readLaterNavigationKey,
+                        value: _readLaterNavigation);
+                  },
+                ),
+                const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
-                  title: "文章详情页视图选项",
+                  title: "文章详情页-视图选项",
                   description: "选择视图样式",
                   tip: "左右滑动-卡片式布局",
                   topRadius: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
-                  title: "文章详情页布局设置",
+                  title: "文章详情页-布局设置",
                   description: "是否显示头图、各种Meta",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
-                  title: "文章详情页是否显示回到顶部按钮",
-                  value: true,
-                  description: "关闭后将不再显示回到顶部悬浮按钮",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  title: "文章详情页重绘超链接",
+                  title: "文章详情页-重绘超链接",
                   value: false,
                   description: "关闭后将不再重绘超链接为卡片样式",
                   bottomRadius: true,

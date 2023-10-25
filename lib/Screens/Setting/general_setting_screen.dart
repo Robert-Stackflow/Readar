@@ -1,5 +1,3 @@
-import 'package:cloudreader/Themes/icon.dart';
-import 'package:cloudreader/Themes/theme.dart';
 import 'package:cloudreader/Utils/cache_util.dart';
 import 'package:cloudreader/Utils/itoast.dart';
 import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
@@ -7,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../Widgets/item_builder.dart';
+import '../../generated/l10n.dart';
 
 class GeneralSettingScreen extends StatefulWidget {
   const GeneralSettingScreen({super.key});
@@ -36,30 +35,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0.2,
-          leadingWidth: 40,
-          leading: IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: AppTheme.darkerText,
-              size: 23,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text(
-            "通用",
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: AppTheme.darkerText,
-                fontSize: 17),
-          ),
-          backgroundColor: AppTheme.background,
-        ),
+        appBar: ItemBuilder.buildAppBar(title: S.current.generalSetting),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -125,7 +101,6 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                   onTap: () {
                     IToast.showTop(context, text: "已经是最新版本");
                   },
-                  leading: Iconfont.jiju,
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
@@ -146,7 +121,6 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                       });
                     });
                   },
-                  leading: Iconfont.anquan,
                 ),
                 const SizedBox(height: 10),
               ],
