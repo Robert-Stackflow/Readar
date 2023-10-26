@@ -1,7 +1,7 @@
-import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
+import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 
-import '../../Widgets/item_builder.dart';
+import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
 class BackupSettingScreen extends StatefulWidget {
@@ -20,7 +20,8 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(title: S.current.backupSetting),
+        appBar: ItemBuilder.buildAppBar(
+            title: S.current.backupSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(

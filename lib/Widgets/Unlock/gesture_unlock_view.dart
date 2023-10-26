@@ -11,49 +11,35 @@ enum UnlockType { solid, hollow }
 enum UnlockStatus { normal, success, failed, disable }
 
 class GestureUnlockView extends StatefulWidget {
-  ///控件大小
   final double size;
 
-  ///解锁类型（实心、空心）
   final UnlockType type;
 
-  ///与父布局的间距
   final double padding;
 
-  ///圆之间的间距
   final double roundSpace;
 
-  ///圆之间的间距比例(以圆半径作为基准)，[roundSpace]设置时无效
   final double roundSpaceRatio;
 
-  ///默认颜色
   final Color defaultColor;
 
-  ///选中颜色
   final Color selectedColor;
 
-  ///验证失败颜色
   final Color failedColor;
 
-  ///无法使用颜色
   final Color disableColor;
 
-  ///线长度
   final double lineWidth;
 
-  ///实心圆半径比例(以圆半径作为基准)
   final double solidRadiusRatio;
 
-  ///触摸有效区半径比例(以圆半径作为基准)
   final double touchRadiusRatio;
 
-  ///延迟显示时间
   final int delayTime;
 
-  ///回调
   final Function(List<int>, UnlockStatus) onCompleted;
 
-  GestureUnlockView({
+  const GestureUnlockView({
     super.key,
     required this.size,
     this.type = UnlockType.solid,

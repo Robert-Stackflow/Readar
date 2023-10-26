@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../Utils/theme.dart';
+import '../../Utils/theme.dart';
 
 class ItemBuilder {
   static AppBar buildAppBar({
     String title = "",
     IconData leading = Icons.arrow_back_rounded,
+    required BuildContext context,
   }) {
     return AppBar(
       elevation: 0,
@@ -23,7 +23,7 @@ class ItemBuilder {
             size: 23,
           ),
           onPressed: () {
-            Get.back();
+            Navigator.pop(context);
           },
         ),
       ),
@@ -39,7 +39,7 @@ class ItemBuilder {
     bool bottomRadius = false,
     required bool value,
     Color? titleColor,
-    bool showIcon = false,
+    bool showLeading = false,
     IconData leading = Icons.check_box_outline_blank,
     required String title,
     String description = "",
@@ -64,7 +64,8 @@ class ItemBuilder {
           ),
         ),
         child: Ink(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          padding: EdgeInsets.symmetric(
+              vertical: description.isNotEmpty ? 15 : 8, horizontal: 10),
           decoration: BoxDecoration(
             color: AppTheme.white,
             shape: BoxShape.rectangle,
@@ -80,7 +81,10 @@ class ItemBuilder {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              showIcon ? Icon(leading, size: 20) : Container(),
+              Visibility(
+                visible: showLeading,
+                child: Icon(leading, size: 20, color: AppTheme.darkerText),
+              ),
               const SizedBox(width: 5),
               Expanded(
                 child: Column(
@@ -115,7 +119,9 @@ class ItemBuilder {
     double radius = 10,
     bool topRadius = false,
     bool bottomRadius = false,
-    bool showIcon = false,
+    bool showLeading = false,
+    bool showTrailing = true,
+    bool isCaption = false,
     IconData leading = Icons.home_filled,
     required String title,
     String tip = "",
@@ -129,7 +135,7 @@ class ItemBuilder {
           bottom: bottomRadius
               ? Radius.circular(radius)
               : const Radius.circular(0)),
-      onTap: onTap,
+      onTap: isCaption ? null : onTap,
       child: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -141,7 +147,8 @@ class ItemBuilder {
           ),
         ),
         child: Ink(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          padding: EdgeInsets.symmetric(
+              vertical: isCaption ? 12 : 15, horizontal: 10),
           decoration: BoxDecoration(
             color: AppTheme.white,
             shape: BoxShape.rectangle,
@@ -157,15 +164,22 @@ class ItemBuilder {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              showIcon ? Icon(leading, size: 20) : Container(),
-              showIcon ? const SizedBox(width: 10) : const SizedBox(width: 5),
+              Visibility(
+                visible: showLeading,
+                child: Icon(leading, size: 20, color: AppTheme.darkerText),
+              ),
+              showLeading
+                  ? const SizedBox(width: 10)
+                  : const SizedBox(width: 5),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: AppTheme.itemTitle,
+                      style: isCaption
+                          ? AppTheme.itemTitleLittle
+                          : AppTheme.itemTitle,
                     ),
                     description.isNotEmpty
                         ? Text(description, style: AppTheme.itemTip)
@@ -178,7 +192,10 @@ class ItemBuilder {
                 style: AppTheme.itemTip,
               ),
               const SizedBox(width: 5),
-              Icon(trailing, size: 20, color: Colors.grey),
+              Visibility(
+                visible: showTrailing,
+                child: Icon(trailing, size: 20, color: Colors.grey),
+              ),
             ],
           ),
         ),

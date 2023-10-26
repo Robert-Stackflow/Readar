@@ -5,28 +5,28 @@ import 'package:flutter/material.dart';
 class CircularLayout extends StatelessWidget {
   final List<Widget> children;
 
-  /// 初始角度
+  /// Initial angle
   final double initAngle;
 
-  /// 排列方向
+  /// Arrangement direction
   final bool reverse;
 
-  /// 缩放子部件圆心到容器圆心的距离
+  /// Scale the distance from the center of the subcomponent's circle to the center of the container's circle
   final double radiusRatio;
 
-  /// 容器角度大小，1表示圆
+  /// The angle size of the container, 1 represents a circle
   final double angleRatio;
 
-  /// 自定义坐标
+  /// Custom coordinates
   final Offset center;
 
-  /// 一个使子组件呈现圆状布局的Layout
+  /// A Layout that makes sub-components present a circular layout
   ///
-  /// * [reverse] 用来控制子部件的排列方向 false表示顺时针排列 true表示逆时针排列
+  /// * [reverse] Used to control the arrangement direction of sub-components. False means clockwise arrangement. True means counterclockwise arrangement.
   ///
-  /// * [initAngle] 用来来设置第一个子部件的位置 0 ~ 360之间
+  /// * [initAngle] Used to set the position of the first sub-component between 0 ~ 360
   ///
-  /// * [radiusRatio] 用来调节子部件圆心与容器圆心的距离
+  /// * [radiusRatio] Used to adjust the distance between the center of the subcomponent and the center of the container.
   ///
   const CircularLayout({
     super.key,
@@ -77,27 +77,26 @@ class _RingDelegate extends MultiChildLayoutDelegate {
 
   @override
   void performLayout(Size size) {
-    /// 中心点坐标
+    /// Center point coordinates
     Offset centralPoint = Offset(size.width / 2, size.height / 2 + 43);
     // Offset centralPoint = center;
 
-    /// 容器半径参考值
+    /// Container radius reference value
     double fatherRadius = min(size.width, size.height) / 2;
 
     double childRadius = _getChildRadius(fatherRadius, 360 / count);
 
     Size constraintsSize = Size(childRadius * 2, childRadius * 2);
 
-    /// 遍历child获取他们所需的空间,得到最宽child的宽度以及最高child的高度
-    /// 用来计算一个可用半径r
-    /// r = 父容器给定的半径 - 最大子部件的"半径"
+    /// Traverse the children to get the space they need, and get the width of the widest child and the height of the tallest child.
+    /// Used to calculate an available radius r
+    /// r = radius given by the parent container - the "radius" of the largest child component
     List<Size> sizeCache = [];
     double largersRadius = 0;
     for (int i = 0; i < count; i++) {
       if (!hasChild(i)) break;
 
       Size childSize = layoutChild(i, BoxConstraints.loose(constraintsSize));
-      // 缓存所有子部件尺寸 备用
       sizeCache.add(Size.copy(childSize));
 
       double radius = max(childSize.width, childSize.height) / 2;
@@ -105,7 +104,7 @@ class _RingDelegate extends MultiChildLayoutDelegate {
     }
     fatherRadius -= largersRadius;
 
-    /// 摆放组件
+    /// Place components
     for (int i = 0; i < count; i++) {
       if (!hasChild(i)) break;
 
@@ -117,7 +116,7 @@ class _RingDelegate extends MultiChildLayoutDelegate {
           initAngle: initAngle,
           angleRatio: angleRatio,
           direction: reverse ? -1 : 1);
-      // 由于绘制方向是lt-rb, 为了避免绘制时超出父容器边界所以还需要去掉子控件自身的"半径"
+      // Since the drawing direction is lt-rb, in order to avoid drawing beyond the boundaries of the parent container, the "radius" of the child control itself needs to be removed.
       double cr = max(sizeCache[i].width, sizeCache[i].height) / 2;
       offset -= Offset(cr, cr);
 
@@ -129,19 +128,19 @@ class _RingDelegate extends MultiChildLayoutDelegate {
   bool shouldRelayout(covariant MultiChildLayoutDelegate oldDelegate) => true;
 }
 
-/// 获得子部件中心点在容器中的偏移量
+/// Get the offset of the center point of the subcomponent in the container
 ///
-///  [centerPoint] 容器中心点
+/// * [centerPoint] container center point
 ///
-/// * [radius] 容器半径
+/// * [radius] container radius
 ///
-/// * [which] 第几个child
+/// * [which] which child
 ///
-/// * [count] 子部件总数
+/// * [count] Total number of sub-components
 ///
-/// * [initAngle] 用来决定起始位置,建议取值范围0-360
+/// * [initAngle] is used to determine the starting position, the recommended value range is 0-360
 ///
-/// * [direction] 用来决定排列方向 1顺时针,-1逆时针
+/// * [direction] is used to determine the arrangement direction: 1 clockwise, -1 counterclockwise
 ///
 Offset _getChildCenterOffset({
   required Offset centerPoint,
@@ -152,12 +151,12 @@ Offset _getChildCenterOffset({
   required int direction,
   required double angleRatio,
 }) {
-  /// 圆心坐标(a, b)
-  /// 半径: r
-  /// 弧度: radian (π / 180 * 角度)
+  /// Circle center coordinates (a, b)
+  /// Radius: r
+  /// Radian: radian (π / 180 * angle)
   ///
-  /// 求圆上任一点为(x, y)
-  /// 则
+  /// Find any point on the circle to be (x, y)
+  /// but
   /// x = a + r * cos(radian)
   /// y = b + r * sin(radian)
   double radian = angleRatio == 1.0
@@ -190,13 +189,12 @@ Offset _getChildCenterOffset({
   return Offset(x, y);
 }
 
-/// 获取child半径
-/// 根据扇形半径内最大圆公式计算
+/// Get the child radius. Calculated based on the formula of the largest circle within the sector radius
 double _getChildRadius(double r, double a) {
-  /// 大于180因为只放了一个child，因为公式无法计算钝角直接return容器半径算了。
+  /// It is greater than 180 because only one child is placed, and because the formula cannot calculate the obtuse angle, just return the radius of the container.
   if (a > 180) return r;
 
-  /// 扇形的半径为R，扇形的圆心角为A，扇形的内切圆的半径为r。
+  /// The radius of the sector is R, the central angle is A, and the radius of the inscribed circle is r.
   /// SIN(A/2)=r/(R-r)
   /// r=(R-r)*SIN(A/2)
   /// r=R*SIN(A/2)-r*SIN(A/2)
@@ -205,7 +203,7 @@ double _getChildRadius(double r, double a) {
   return (r * sin(_radian(a / 2))) / (1 + sin(_radian(a / 2)));
 }
 
-/// 角度转换弧度
+/// Convert angle to radian
 double _radian(double angle) {
   return pi / 180 * angle;
 }

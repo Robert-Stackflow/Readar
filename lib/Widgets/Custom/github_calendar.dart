@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
-import '../Utils/theme.dart';
+import '../../Utils/theme.dart';
 
 class GithubCalendar extends StatelessWidget {
   const GithubCalendar({

@@ -1,11 +1,9 @@
 import 'package:cloudreader/Models/auto_lock.dart';
 import 'package:cloudreader/Screens/Lock/pin_change_screen.dart';
 import 'package:cloudreader/Utils/itoast.dart';
-import 'package:cloudreader/Widgets/BottomSheet/bottom_sheet_builder.dart'
-    as bottom_sheet_builder;
 import 'package:cloudreader/Widgets/BottomSheet/list_bottom_sheet.dart';
-import 'package:cloudreader/Widgets/item_builder.dart';
-import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
+import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:cloudreader/Widgets/Item/item_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:local_auth/local_auth.dart';
@@ -79,7 +77,8 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(title: S.current.privacySetting),
+        appBar: ItemBuilder.buildAppBar(
+            title: S.current.privacySetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -228,7 +227,7 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
                     bottomRadius: true,
                     tip: AutoLock.optionLabels[_autoLockOption],
                     onTap: () {
-                      bottom_sheet_builder.showModalBottomSheet(
+                      showModalBottomSheet(
                         backgroundColor: Colors.white.withOpacity(0),
                         context: context,
                         builder: (context) => ListBottomSheet(

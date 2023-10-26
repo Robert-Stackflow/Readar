@@ -26,30 +26,73 @@ class MessageLookup extends MessageLookupByLibrary {
         "appName": MessageLookupByLibrary.simpleMessage("Cloud Reader"),
         "apprearanceSetting": MessageLookupByLibrary.simpleMessage("外观"),
         "article": MessageLookupByLibrary.simpleMessage("文章"),
+        "articleDetailHeaderImageDisplayMode":
+            MessageLookupByLibrary.simpleMessage("头图显示方式"),
+        "articleDetailMetaSetting":
+            MessageLookupByLibrary.simpleMessage("Meta设置"),
+        "articleDetailRedrawHyperLink":
+            MessageLookupByLibrary.simpleMessage("重绘超链接"),
+        "articleDetailRedrawHyperLinkTip":
+            MessageLookupByLibrary.simpleMessage("关闭后将不再重绘超链接为卡片样式"),
+        "articleDetailSetting": MessageLookupByLibrary.simpleMessage("文章详情页设置"),
+        "articleDetailShowRelated":
+            MessageLookupByLibrary.simpleMessage("显示相关文章"),
+        "articleDetailVideoDisplayMode":
+            MessageLookupByLibrary.simpleMessage("视频显示方式"),
+        "articleDetailViewOption": MessageLookupByLibrary.simpleMessage("视图选项"),
         "backupSetting": MessageLookupByLibrary.simpleMessage("备份"),
+        "bottomNavigationBarSetting":
+            MessageLookupByLibrary.simpleMessage("导航栏设置"),
         "bugReport": MessageLookupByLibrary.simpleMessage("报告BUG"),
         "changeLog": MessageLookupByLibrary.simpleMessage("更新日志"),
+        "checkUpdates": MessageLookupByLibrary.simpleMessage("检查更新"),
+        "checkUpdatesAlreadyLatest":
+            MessageLookupByLibrary.simpleMessage("已经是最新版本"),
+        "checkUpdatesTip": MessageLookupByLibrary.simpleMessage("上次检查更新："),
+        "chooseLanguage": MessageLookupByLibrary.simpleMessage("选择语言"),
+        "clearCache": MessageLookupByLibrary.simpleMessage("清除缓存"),
+        "clearCacheSuccess": MessageLookupByLibrary.simpleMessage("清除缓存成功"),
         "contact": MessageLookupByLibrary.simpleMessage("联系我们"),
         "contributor": MessageLookupByLibrary.simpleMessage("贡献者"),
         "experimentSetting": MessageLookupByLibrary.simpleMessage("实验室"),
         "extensionSetting": MessageLookupByLibrary.simpleMessage("插件"),
         "feed": MessageLookupByLibrary.simpleMessage("订阅"),
         "feedHub": MessageLookupByLibrary.simpleMessage("订阅源社区"),
+        "followSystem": MessageLookupByLibrary.simpleMessage("跟随系统"),
         "generalSetting": MessageLookupByLibrary.simpleMessage("通用"),
         "githubRepo": MessageLookupByLibrary.simpleMessage("Github仓库"),
         "help": MessageLookupByLibrary.simpleMessage("使用指南"),
         "highlights": MessageLookupByLibrary.simpleMessage("集锦"),
+        "language": MessageLookupByLibrary.simpleMessage("语言"),
         "license": MessageLookupByLibrary.simpleMessage("开源许可证"),
         "officialWebsite": MessageLookupByLibrary.simpleMessage("官方网站"),
+        "operationSetting": MessageLookupByLibrary.simpleMessage("操作"),
         "participateInTranslation":
             MessageLookupByLibrary.simpleMessage("参与翻译"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("隐私政策"),
         "privacySetting": MessageLookupByLibrary.simpleMessage("隐私"),
         "rate": MessageLookupByLibrary.simpleMessage("评个分吧"),
         "readLater": MessageLookupByLibrary.simpleMessage("稍后阅读"),
+        "readLaterNav": MessageLookupByLibrary.simpleMessage("稍后阅读入口"),
         "star": MessageLookupByLibrary.simpleMessage("星标"),
+        "starNav": MessageLookupByLibrary.simpleMessage("星标入口"),
         "statistics": MessageLookupByLibrary.simpleMessage("统计"),
         "tags": MessageLookupByLibrary.simpleMessage("标签"),
-        "telegramGroup": MessageLookupByLibrary.simpleMessage("Telegram频道")
+        "telegramGroup": MessageLookupByLibrary.simpleMessage("Telegram频道"),
+        "themeColor": MessageLookupByLibrary.simpleMessage("主题颜色"),
+        "themeMode": MessageLookupByLibrary.simpleMessage("主题模式"),
+        "ttsAutoHaveRead": MessageLookupByLibrary.simpleMessage("自动标记为已读"),
+        "ttsAutoHaveReadTip":
+            MessageLookupByLibrary.simpleMessage("文章朗读完毕后自动标记为已读"),
+        "ttsEnable": MessageLookupByLibrary.simpleMessage("启用TTS"),
+        "ttsEngine": MessageLookupByLibrary.simpleMessage("TTS引擎"),
+        "ttsSetting": MessageLookupByLibrary.simpleMessage("TTS设置"),
+        "ttsSpeed": MessageLookupByLibrary.simpleMessage("默认朗读速度"),
+        "ttsSpot": MessageLookupByLibrary.simpleMessage("忽略音频焦点"),
+        "ttsSpotTip": MessageLookupByLibrary.simpleMessage("允许与其他应用同时播放音频"),
+        "ttsSystemSetting": MessageLookupByLibrary.simpleMessage("系统TTS设置"),
+        "ttsWakeLock": MessageLookupByLibrary.simpleMessage("唤醒锁"),
+        "ttsWakeLockTip":
+            MessageLookupByLibrary.simpleMessage("朗读时启用唤醒锁(可能会被杀后台)")
       };
 }

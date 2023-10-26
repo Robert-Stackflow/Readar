@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../Widgets/Wave/config.dart';
-import '../../Widgets/Wave/controller.dart';
-import '../../Widgets/Wave/wave.dart';
+import '../../Widgets/Wave/wave_controller.dart';
+import '../../Widgets/Wave/wave_widget.dart';
 
 class TTSScreen extends StatefulWidget {
   const TTSScreen({super.key});

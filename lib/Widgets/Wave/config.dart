@@ -82,12 +82,10 @@ class CustomConfig extends Config {
         super(colorMode: ColorMode.custom);
 }
 
-/// todo
 class RandomConfig extends Config {
   RandomConfig() : super(colorMode: ColorMode.random);
 }
 
-/// todo
 class SingleConfig extends Config {
   SingleConfig() : super(colorMode: ColorMode.single);
 }

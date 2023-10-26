@@ -12,8 +12,7 @@ class FeedScreen extends StatefulWidget {
   State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen>
-    with TickerProviderStateMixin {
+class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     if (Platform.isAndroid) {

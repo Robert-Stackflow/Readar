@@ -1,7 +1,7 @@
-import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
+import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 
-import '../../Widgets/item_builder.dart';
+import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
 class ExtensionSettingScreen extends StatefulWidget {
@@ -20,7 +20,8 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(title: S.current.extensionSetting),
+        appBar: ItemBuilder.buildAppBar(
+            title: S.current.extensionSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -31,104 +32,170 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
               padding: EdgeInsets.zero,
               children: [
                 const SizedBox(height: 10),
+                ItemBuilder.buildEntryItem(
+                  title: "以下自建类型服务可用于同步订阅源",
+                  isCaption: true,
+                  showTrailing: false,
+                  topRadius: true,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  title: "Fever API",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  title: "FreshRSS API",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  title: "Google Reader API",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  title: "Miniflux",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  title: "Nextcloud News API",
+                  bottomRadius: true,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 10),
+                ItemBuilder.buildEntryItem(
+                  title: "以下商业服务可用于同步订阅源",
+                  isCaption: true,
+                  showTrailing: false,
+                  topRadius: true,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
+                  title: "Inoreader",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
+                  title: "Feedbin",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
+                  title: "The Old Reader",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
+                  title: "BazQux Reader",
+                  bottomRadius: true,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
+                  title: "NewsBlur",
+                  bottomRadius: true,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 10),
+                ItemBuilder.buildEntryItem(
+                  title: "以下服务可用于备份数据，并保存文章为PDF",
+                  isCaption: true,
+                  showTrailing: false,
+                  topRadius: true,
+                  onTap: () {},
+                ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "Dropbox",
-                  description: "向你的Dropbox帐号中备份数据并保存文章为PDF",
-                  topRadius: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "Google Drive",
-                  description: "向你的Google Drive帐号中备份数据并保存文章为PDF",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
+                  title: "OneDrive",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "坚果云",
-                  description: "向你的坚果云帐号中备份数据并保存文章为PDF",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
-                  title: "WebDAV",
-                  description: "向你的WebDAV帐号中备份数据并保存文章为PDF",
+                  title: "其他WebDAV服务",
                   bottomRadius: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildRadioItem(
-                  value: false,
-                  title: "Pocket",
-                  description: "将文章保存到你的Pocket帐号中",
+                ItemBuilder.buildEntryItem(
+                  title: "以下服务可用于直接保存文章",
+                  isCaption: true,
+                  showTrailing: false,
                   topRadius: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
+                  title: "Pocket",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
                   title: "Evernote",
-                  description: "将文章保存到你的Evernote帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "Instapaper",
-                  description: "将文章保存到你的Instapaper帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "OneNote",
-                  description: "将文章保存到你的OneNote帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "Notion",
-                  description: "将文章保存到你的Notion帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "印象笔记",
-                  description: "将文章保存到你的印象笔记帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "为知笔记",
-                  description: "将文章保存到你的为知笔记帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "专注笔记",
-                  description: "将文章保存到你的专注笔记帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "有道云笔记",
-                  description: "将文章保存到你的有道云笔记帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "Joplin",
-                  description: "将文章保存到你的Joplin帐号中",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "flomo",
-                  description: "将文章保存到你的flomo帐号中",
                   bottomRadius: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
-                  title: "其他帐户",
-                  description: "向我们建议你希望支持的云服务",
+                  title: "建议新的服务",
+                  description: "向我们建议你希望支持的服务（包括订阅源服务、云盘服务、笔记服务）",
                   topRadius: true,
                   bottomRadius: true,
                   onTap: () {},

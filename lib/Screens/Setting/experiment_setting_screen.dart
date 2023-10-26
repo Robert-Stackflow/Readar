@@ -1,7 +1,7 @@
-import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
+import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 
-import '../../Widgets/item_builder.dart';
+import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
 class ExperimentSettingScreen extends StatefulWidget {
@@ -10,7 +10,8 @@ class ExperimentSettingScreen extends StatefulWidget {
   static const String routeName = "/setting/experiment";
 
   @override
-  State<ExperimentSettingScreen> createState() => _ExperimentSettingScreenState();
+  State<ExperimentSettingScreen> createState() =>
+      _ExperimentSettingScreenState();
 }
 
 class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
@@ -20,7 +21,8 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(title: S.current.experimentSetting),
+        appBar: ItemBuilder.buildAppBar(
+            title: S.current.experimentSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -79,15 +81,6 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
                   title: "硬件加速",
                   value: true,
                   description: "启用以提高软件运行流畅度，也可能会造成一些问题",
-                  topRadius: true,
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                ItemBuilder.buildRadioItem(
-                  title: "预览视频",
-                  value: true,
-                  description: "启用后将在文章详情页显示解析到的视频",
                   topRadius: true,
                   bottomRadius: true,
                   onTap: () {},

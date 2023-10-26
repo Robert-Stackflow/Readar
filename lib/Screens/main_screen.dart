@@ -2,29 +2,29 @@ import 'dart:async';
 
 import 'package:cloudreader/Models/auto_lock.dart';
 import 'package:cloudreader/Screens/Setting/about_setting_screen.dart';
-import 'package:cloudreader/Screens/Setting/appearance_setting_scrren.dart';
+import 'package:cloudreader/Screens/Setting/appearance_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/general_setting_screen.dart';
+import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/privacy_setting_screen.dart';
 import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Utils/uri_util.dart';
-import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
+import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
-import 'package:get/get.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import '../Providers/global.dart';
 import '../Utils/hive_util.dart';
-import '../Widgets/item_builder.dart';
+import '../Widgets/Item/item_builder.dart';
 import '../generated/l10n.dart';
 import 'Lock/pin_verify_screen.dart';
 import 'Navigation/home_screen.dart';
 import 'Navigation/read_later_screen.dart';
 import 'Navigation/star_screen.dart';
 import 'Navigation/subscription_screen.dart';
-
-GlobalKey<MainScreenState> drawerKey = GlobalKey();
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -37,7 +37,7 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   List<Widget> _pageList = [];
-  List<BottomNavigationBarItem> _navigationBarItemList = [];
+  List<SalomonBottomBarItem> _navigationBarItemList = [];
   Timer? _timer;
   int selectedIndex = 0;
   bool _isInVerify = false;
@@ -70,44 +70,43 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         );
         _isInVerify = true;
       }
-      S.load(Locale(HiveUtil.getString(key: HiveUtil.languageKey) ?? "en"));
       initData();
     });
-    initData();
+    Global.globalProvider?.addListener(() {
+      initData();
+    });
   }
 
   void initData() {
     setState(() {
       _navigationBarItemList = [
-        BottomNavigationBarItem(
+        SalomonBottomBarItem(
           icon: const Icon(Icons.feed_outlined),
-          label: S.current.article,
+          title: Text(S.current.article),
         ),
-        BottomNavigationBarItem(
+        SalomonBottomBarItem(
           icon: const Icon(Icons.rss_feed_rounded),
-          label: S.current.feed,
+          title: Text(S.current.feed),
         ),
       ];
       _pageList = [
         const HomeScreen(),
         const FeedScreen(),
       ];
-      if (HiveUtil.getBool(
-          key: HiveUtil.starNavigationKey, defaultValue: true)) {
+      if (HiveUtil.starNavigationVisible()) {
         _navigationBarItemList.add(
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.star_outline_rounded),
-            label: S.current.star,
+          SalomonBottomBarItem(
+            icon: const Icon(Icons.star_outline_rounded, size: 25),
+            title: Text(S.current.star),
           ),
         );
         _pageList.add(const StarScreen());
       }
-      if (HiveUtil.getBool(
-          key: HiveUtil.readLaterNavigationKey, defaultValue: true)) {
+      if (HiveUtil.readLaterNavigationVisible()) {
         _navigationBarItemList.add(
-          BottomNavigationBarItem(
+          SalomonBottomBarItem(
             icon: const Icon(Icons.checklist_rounded),
-            label: S.current.readLater,
+            title: Text(S.current.readLater),
           ),
         );
         _pageList.add(const ReadLaterScreen());
@@ -124,16 +123,18 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    initData();
     return Container(
       color: AppTheme.background,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        bottomNavigationBar: BottomNavigationBar(
+        bottomNavigationBar: SalomonBottomBar(
+          margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
           items: _navigationBarItemList,
           currentIndex: selectedIndex,
-          fixedColor: AppTheme.themeColor,
-          type: BottomNavigationBarType.fixed,
-          onTap: onBottomNavigationBarItemTap, //
+          backgroundColor: AppTheme.white,
+          selectedItemColor: AppTheme.themeColor,
+          onTap: onBottomNavigationBarItemTap,
         ),
         body: PageView(
           controller: _pageController,
@@ -145,41 +146,45 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     );
   }
 
+  void cancleTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+  }
+
+  void setTimer() {
+    _timer = Timer(
+        Duration(
+            minutes: AutoLock
+                .autoLockOptions[HiveUtil.getInt(key: HiveUtil.autoLockTimeKey)]
+                .minutes), () {
+      if (HiveUtil.shouldAutoLock() && !_isInVerify) {
+        _isInVerify = true;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PinVerifyScreen(
+              onSuccess: () {
+                _isInVerify = false;
+              },
+              isModal: true,
+            ),
+          ),
+        );
+      }
+    });
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.resumed:
-        if (_timer != null) {
-          _timer!.cancel();
-        }
+        cancleTimer();
         break;
       case AppLifecycleState.paused:
-        _timer = Timer(
-            Duration(
-                minutes: AutoLock
-                    .autoLockOptions[
-                        HiveUtil.getInt(key: HiveUtil.autoLockTimeKey)]
-                    .minutes), () {
-          if (HiveUtil.getBool(key: HiveUtil.lockEnableKey) &&
-              HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty &&
-              HiveUtil.getBool(key: HiveUtil.autoLockKey) &&
-              !_isInVerify) {
-            _isInVerify = true;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PinVerifyScreen(
-                  onSuccess: () {
-                    _isInVerify = false;
-                  },
-                  isModal: true,
-                ),
-              ),
-            );
-          }
-        });
+        setTimer();
         break;
       case AppLifecycleState.detached:
         break;
@@ -224,17 +229,17 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           title: S.current.highlights,
                           topRadius: true,
                           onTap: () {},
-                          showIcon: true,
+                          showLeading: true,
                           leading: Icons.bookmark_border_rounded,
                         ),
                         ItemBuilder.buildEntryItem(
                           title: S.current.tags,
-                          showIcon: true,
+                          showLeading: true,
                           onTap: () {},
                           leading: Icons.tag_rounded,
                         ),
                         ItemBuilder.buildEntryItem(
-                          showIcon: true,
+                          showLeading: true,
                           title: S.current.statistics,
                           onTap: () {},
                           leading: Icons.show_chart_rounded,
@@ -245,7 +250,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                               defaultValue: true),
                           child: ItemBuilder.buildEntryItem(
                             title: S.current.star,
-                            showIcon: true,
+                            showLeading: true,
                             onTap: () {},
                             leading: Icons.star_border_rounded,
                           ),
@@ -256,7 +261,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                               defaultValue: true),
                           child: ItemBuilder.buildEntryItem(
                             title: S.current.readLater,
-                            showIcon: true,
+                            showLeading: true,
                             onTap: () {},
                             leading: Icons.checklist_rounded,
                           ),
@@ -265,56 +270,71 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           title: S.current.feedHub,
                           onTap: () {},
                           bottomRadius: true,
-                          showIcon: true,
+                          showLeading: true,
                           leading: Icons.add_chart_rounded,
                         ),
                         const SizedBox(height: 10),
                         ItemBuilder.buildEntryItem(
                           title: S.current.generalSetting,
                           topRadius: true,
-                          showIcon: true,
+                          showLeading: true,
                           onTap: () {
-                            Get.toNamed(GeneralSettingScreen.routeName);
+                            Navigator.pushNamed(
+                                context, GeneralSettingScreen.routeName);
                           },
                           leading: Icons.settings_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
-                          showIcon: true,
+                          showLeading: true,
                           title: S.current.apprearanceSetting,
                           onTap: () {
-                            Get.toNamed(AppearanceSettingScreen.routeName);
+                            Navigator.pushNamed(
+                                context, AppearanceSettingScreen.routeName);
                           },
                           leading: Icons.color_lens_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
                           title: S.current.extensionSetting,
-                          showIcon: true,
+                          showLeading: true,
                           onTap: () {
-                            Get.toNamed(ExtensionSettingScreen.routeName);
+                            Navigator.pushNamed(
+                                context, ExtensionSettingScreen.routeName);
                           },
                           leading: Icons.extension_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
                           title: S.current.backupSetting,
-                          showIcon: true,
+                          showLeading: true,
                           onTap: () {
-                            Get.toNamed(BackupSettingScreen.routeName);
+                            Navigator.pushNamed(
+                                context, BackupSettingScreen.routeName);
                           },
                           leading: Icons.backup_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
-                          showIcon: true,
+                          title: S.current.operationSetting,
+                          showLeading: true,
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, OperationSettingScreen.routeName);
+                          },
+                          leading: Icons.layers_outlined,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          showLeading: true,
                           title: S.current.privacySetting,
                           onTap: () {
-                            Get.toNamed(PrivacySettingScreen.routeName);
+                            Navigator.pushNamed(
+                                context, PrivacySettingScreen.routeName);
                           },
                           leading: Icons.privacy_tip_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
-                          showIcon: true,
+                          showLeading: true,
                           title: S.current.experimentSetting,
                           onTap: () {
-                            Get.toNamed(ExperimentSettingScreen.routeName);
+                            Navigator.pushNamed(
+                                context, ExperimentSettingScreen.routeName);
                           },
                           bottomRadius: true,
                           leading: Icons.outlined_flag_rounded,
@@ -323,7 +343,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         ItemBuilder.buildEntryItem(
                           title: S.current.help,
                           topRadius: true,
-                          showIcon: true,
+                          showLeading: true,
                           onTap: () {
                             UriUtil.launchUrlUri(
                                 "https://rssreader.cloudchewie.com/help");
@@ -333,7 +353,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         ItemBuilder.buildEntryItem(
                           title: S.current.about,
                           bottomRadius: true,
-                          showIcon: true,
+                          showLeading: true,
                           onTap: () {
                             Navigator.pushNamed(
                                 context, AboutSettingScreen.routeName);

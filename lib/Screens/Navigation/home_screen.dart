@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       icon: const Icon(
-                        Icons.check_circle_outline_rounded,
+                        Icons.done_all_rounded,
                         size: 23,
                       ),
                       onPressed: () {},

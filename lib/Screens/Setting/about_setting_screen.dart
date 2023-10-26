@@ -1,10 +1,10 @@
 import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Utils/uri_util.dart';
-import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
+import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../Widgets/item_builder.dart';
+import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
 class AboutSettingScreen extends StatefulWidget {
@@ -40,7 +40,8 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(leading: Icons.close_rounded),
+        appBar: ItemBuilder.buildAppBar(
+            leading: Icons.close_rounded, context: context),
         body: ScrollConfiguration(
           behavior: NoShadowScrollBehavior(),
           child: ListView(
@@ -77,27 +78,33 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                       ItemBuilder.buildEntryItem(
                         title: S.current.contributor,
                         topRadius: true,
-                        showIcon: true,
+                        showLeading: true,
                         onTap: () {},
                         leading: Icons.supervised_user_circle_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
                         title: S.current.changeLog,
-                        showIcon: true,
+                        showLeading: true,
                         onTap: () {},
                         leading: Icons.merge_type_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
                         title: S.current.participateInTranslation,
                         onTap: () {},
-                        showIcon: true,
+                        showLeading: true,
                         leading: Icons.translate_rounded,
                       ),
                       ItemBuilder.buildEntryItem(
                         title: S.current.bugReport,
                         onTap: () {},
-                        showIcon: true,
+                        showLeading: true,
                         leading: Icons.bug_report_outlined,
+                      ),
+                      ItemBuilder.buildEntryItem(
+                        title: S.current.license,
+                        showLeading: true,
+                        onTap: () {},
+                        leading: Icons.local_library_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
                         title: S.current.githubRepo,
@@ -105,27 +112,21 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                           UriUtil.launchUrlUri(
                               "https://github.com/Robert-Stackflow/CloudReader");
                         },
-                        showIcon: true,
-                        leading: Icons.commit_rounded,
-                      ),
-                      ItemBuilder.buildEntryItem(
-                        title: S.current.license,
-                        showIcon: true,
-                        onTap: () {},
+                        showLeading: true,
                         bottomRadius: true,
-                        leading: Icons.local_library_outlined,
+                        leading: Icons.commit_rounded,
                       ),
                       const SizedBox(height: 10),
                       ItemBuilder.buildEntryItem(
                         title: S.current.privacyPolicy,
-                        showIcon: true,
+                        showLeading: true,
                         onTap: () {},
                         topRadius: true,
                         leading: Icons.group_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
                         title: S.current.rate,
-                        showIcon: true,
+                        showLeading: true,
                         onTap: () {},
                         leading: Icons.rate_review_outlined,
                       ),
@@ -134,7 +135,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         onTap: () {
                           UriUtil.launchEmailUri("2014027378@qq.com");
                         },
-                        showIcon: true,
+                        showLeading: true,
                         leading: Icons.contact_support_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
@@ -143,7 +144,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                           UriUtil.launchUrlUri(
                               "https://rssreader.cloudchewie.com");
                         },
-                        showIcon: true,
+                        showLeading: true,
                         leading: Icons.language_rounded,
                       ),
                       ItemBuilder.buildEntryItem(
@@ -152,7 +153,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                           UriUtil.launchUrlUri("https://t.me/CloudReader");
                         },
                         bottomRadius: true,
-                        showIcon: true,
+                        showLeading: true,
                         leading: Icons.telegram_outlined,
                       ),
                       const SizedBox(height: 10)

@@ -61,6 +61,13 @@ class AppTheme {
     color: darkText,
   );
 
+  static const TextStyle itemTitleLittle = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 13,
+    letterSpacing: 0.1,
+    color: Colors.grey,
+  );
+
   static const TextStyle itemTip = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 13,

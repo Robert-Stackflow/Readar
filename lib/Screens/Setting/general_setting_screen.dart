@@ -1,10 +1,10 @@
 import 'package:cloudreader/Utils/cache_util.dart';
 import 'package:cloudreader/Utils/itoast.dart';
-import 'package:cloudreader/Widgets/no_shadow_scroll_behavior.dart';
+import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../Widgets/item_builder.dart';
+import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
 class GeneralSettingScreen extends StatefulWidget {
@@ -35,7 +35,8 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(title: S.current.generalSetting),
+        appBar: ItemBuilder.buildAppBar(
+            title: S.current.generalSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -46,66 +47,72 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
               padding: EdgeInsets.zero,
               children: [
                 const SizedBox(height: 10),
-                ItemBuilder.buildRadioItem(
-                  title: "启用TTS",
-                  value: true,
+                ItemBuilder.buildEntryItem(
+                  title: "默认外部浏览器",
+                  bottomRadius: true,
                   topRadius: true,
                   onTap: () {},
                 ),
+                const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
-                  title: "TTS引擎",
+                  title: S.current.ttsSetting,
+                  isCaption: true,
+                  topRadius: true,
+                  showTrailing: false,
+                ),
+                ItemBuilder.buildRadioItem(
+                  title: S.current.ttsEnable,
+                  value: true,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  title: S.current.ttsEngine,
                   tip: "默认引擎",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
-                  title: "默认朗读速度",
+                  title: S.current.ttsSpeed,
                   tip: "1.0x",
                   onTap: () {},
                 ),
-                ItemBuilder.buildRadioItem(
-                  title: "忽略音频焦点",
-                  value: true,
-                  description: "允许与其他应用同时播放音频",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  title: "自动阅读",
-                  value: true,
-                  description: "文章朗读完毕后自动阅读下一篇",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  title: "自动标记为已读",
-                  value: true,
-                  description: "文章朗读完毕后自动标记为已读",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  title: "唤醒锁",
-                  value: true,
-                  description: "开启朗读时启用唤醒锁(可能会被杀后台)",
-                  onTap: () {},
-                ),
                 ItemBuilder.buildEntryItem(
-                  title: "系统TTS设置",
+                  title: S.current.ttsSystemSetting,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  title: S.current.ttsSpot,
+                  value: true,
+                  description: S.current.ttsSpotTip,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  title: S.current.ttsAutoHaveRead,
+                  value: true,
+                  description: S.current.ttsAutoHaveReadTip,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  title: S.current.ttsWakeLock,
+                  value: true,
+                  description: S.current.ttsWakeLockTip,
                   bottomRadius: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
-                  title: "检查更新",
+                  title: S.current.checkUpdates,
                   topRadius: true,
                   bottomRadius: true,
-                  description: "上次检查更新:2023-04-15",
+                  description: "${S.current.checkUpdatesTip}2023-04-15",
                   tip: "1.0.0",
                   onTap: () {
-                    IToast.showTop(context, text: "已经是最新版本");
+                    IToast.showTop(context,
+                        text: S.current.checkUpdatesAlreadyLatest);
                   },
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
-                  title: "清除缓存",
-                  description: "包含下载的图片、文章等",
+                  title: S.current.clearCache,
                   topRadius: true,
                   bottomRadius: true,
                   tip: _cacheSize,
@@ -115,7 +122,8 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                         CacheUtil.loadCache().then((value) {
                           setState(() {
                             _cacheSize = value;
-                            IToast.showTop(context, text: '清除缓存成功');
+                            IToast.showTop(context,
+                                text: S.current.clearCacheSuccess);
                           });
                         });
                       });

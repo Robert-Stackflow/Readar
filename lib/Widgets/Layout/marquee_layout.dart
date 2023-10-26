@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 
 class MarqueeWidget extends StatefulWidget {
-  /// 子视图数量
+  /// Number of subviews
   final int count;
 
-  ///子视图构建器
+  /// Subview builder
   final IndexedWidgetBuilder itemBuilder;
 
-  ///轮播的时间间隔
+  /// Carousel time interval
   final int loopSeconds;
 
   final bool autoPlay;

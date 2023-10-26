@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:cloudreader/Utils/iprint.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../Providers/global_provider.dart';
 
 class HiveUtil {
   //Database
@@ -17,15 +20,13 @@ class HiveUtil {
   static const String ttsEngineKey = "ttsEngine";
   static const String ttsSpeedKey = "ttsSpeed";
   static const String ttsSpotKey = "ttsSpot";
-  static const String ttsAutoNextKey = "ttsAutoNext";
   static const String ttsAutoHaveReadKey = "ttsAutoHaveRead";
   static const String ttsWakeLockKey = "ttsWakeLock";
 
   //Appearance
-  static const String languageKey = "language";
+  static const String localeKey = "locale";
   static const String themeColorKey = "themeColor";
-  static const String autoDarkThemeKey = "autoDarkTheme";
-  static const String darkThemeKey = "darkTheme";
+  static const String activeThemeKey = "activeTheme";
   static const String starNavigationKey = "starNavigation";
   static const String readLaterNavigationKey = "readLaterNavigation";
   static const String articleLayoutKey = "articleLayout";
@@ -66,6 +67,58 @@ class HiveUtil {
     if (getBool(key: firstLoginKey, defaultValue: true) == true) return true;
     return false;
   }
+
+  static ActiveTheme getTheme() {
+    return ActiveTheme
+        .values[HiveUtil.getInt(key: HiveUtil.activeThemeKey, defaultValue: 0)];
+  }
+
+  static void setTheme(ActiveTheme theme) {
+    HiveUtil.put(key: HiveUtil.activeThemeKey, value: theme.index);
+  }
+
+  static Locale? stringToLocale(String? localeString) {
+    if (localeString == null || localeString.isEmpty) {
+      return null;
+    }
+    var splitted = localeString.split('_');
+    if (splitted.length > 1) {
+      return Locale(splitted[0], splitted[1]);
+    } else {
+      return Locale(localeString);
+    }
+  }
+
+  static Locale? getLocale() {
+    return stringToLocale(HiveUtil.getString(key: HiveUtil.localeKey));
+  }
+
+  static void setLocale(Locale? locale) {
+    if (locale == null) {
+      HiveUtil.delete(key: HiveUtil.localeKey);
+    } else {
+      HiveUtil.put(key: HiveUtil.localeKey, value: locale.toString());
+    }
+  }
+
+  static bool starNavigationVisible() =>
+      HiveUtil.getBool(key: HiveUtil.starNavigationKey, defaultValue: true);
+
+  static bool readLaterNavigationVisible() => HiveUtil.getBool(
+      key: HiveUtil.readLaterNavigationKey, defaultValue: true);
+
+  static void setStarNavigationVisible(bool value) =>
+      HiveUtil.put(key: HiveUtil.starNavigationKey, value: value);
+
+  static void setReadLaterNavigationVisible(bool value) =>
+      HiveUtil.put(key: HiveUtil.readLaterNavigationKey, value: value);
+
+  static bool shouldAutoLock() =>
+      HiveUtil.getBool(key: HiveUtil.lockEnableKey) &&
+      HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty &&
+      HiveUtil.getBool(key: HiveUtil.autoLockKey);
+
+  //Essential
 
   static int getInt(
       {String boxName = HiveUtil.settingsBox,
@@ -118,6 +171,12 @@ class HiveUtil {
       {String boxName = HiveUtil.settingsBox, required String key}) {
     final Box box = Hive.box(boxName);
     box.delete(key);
+  }
+
+  static bool contains(
+      {String boxName = HiveUtil.settingsBox, required String key}) {
+    final Box box = Hive.box(boxName);
+    return box.containsKey(key);
   }
 
   static Future<void> openHiveBox(String boxName, {bool limit = false}) async {

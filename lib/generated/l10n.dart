@@ -190,6 +190,16 @@ class S {
     );
   }
 
+  /// `Operation`
+  String get operationSetting {
+    return Intl.message(
+      'Operation',
+      name: 'operationSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Experiment`
   String get experimentSetting {
     return Intl.message(
@@ -230,30 +240,30 @@ class S {
     );
   }
 
-  /// `Change log`
+  /// `Change Log`
   String get changeLog {
     return Intl.message(
-      'Change log',
+      'Change Log',
       name: 'changeLog',
       desc: '',
       args: [],
     );
   }
 
-  /// `Participate in translation`
+  /// `Participate In Translation`
   String get participateInTranslation {
     return Intl.message(
-      'Participate in translation',
+      'Participate In Translation',
       name: 'participateInTranslation',
       desc: '',
       args: [],
     );
   }
 
-  /// `Bug report`
+  /// `Bug Report`
   String get bugReport {
     return Intl.message(
-      'Bug report',
+      'Bug Report',
       name: 'bugReport',
       desc: '',
       args: [],
@@ -280,30 +290,30 @@ class S {
     );
   }
 
-  /// `Privacy policy`
+  /// `Privacy Policy`
   String get privacyPolicy {
     return Intl.message(
-      'Privacy policy',
+      'Privacy Policy',
       name: 'privacyPolicy',
       desc: '',
       args: [],
     );
   }
 
-  /// `Rate us`
+  /// `Rate Us`
   String get rate {
     return Intl.message(
-      'Rate us',
+      'Rate Us',
       name: 'rate',
       desc: '',
       args: [],
     );
   }
 
-  /// `Contact us`
+  /// `Contact Us`
   String get contact {
     return Intl.message(
-      'Contact us',
+      'Contact Us',
       name: 'contact',
       desc: '',
       args: [],
@@ -320,11 +330,331 @@ class S {
     );
   }
 
-  /// `Telegram group`
+  /// `Telegram Group`
   String get telegramGroup {
     return Intl.message(
-      'Telegram group',
+      'Telegram Group',
       name: 'telegramGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language`
+  String get language {
+    return Intl.message(
+      'Language',
+      name: 'language',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Language`
+  String get chooseLanguage {
+    return Intl.message(
+      'Choose Language',
+      name: 'chooseLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Follow System`
+  String get followSystem {
+    return Intl.message(
+      'Follow System',
+      name: 'followSystem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme Color`
+  String get themeColor {
+    return Intl.message(
+      'Theme Color',
+      name: 'themeColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme Mode`
+  String get themeMode {
+    return Intl.message(
+      'Theme Mode',
+      name: 'themeMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Navigation Bar Setting`
+  String get bottomNavigationBarSetting {
+    return Intl.message(
+      'Navigation Bar Setting',
+      name: 'bottomNavigationBarSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Star Nav`
+  String get starNav {
+    return Intl.message(
+      'Star Nav',
+      name: 'starNav',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Read Later Nav`
+  String get readLaterNav {
+    return Intl.message(
+      'Read Later Nav',
+      name: 'readLaterNav',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Article Detail Setting`
+  String get articleDetailSetting {
+    return Intl.message(
+      'Article Detail Setting',
+      name: 'articleDetailSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Option`
+  String get articleDetailViewOption {
+    return Intl.message(
+      'View Option',
+      name: 'articleDetailViewOption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Header Image Display Mode`
+  String get articleDetailHeaderImageDisplayMode {
+    return Intl.message(
+      'Header Image Display Mode',
+      name: 'articleDetailHeaderImageDisplayMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Video Display Mode`
+  String get articleDetailVideoDisplayMode {
+    return Intl.message(
+      'Video Display Mode',
+      name: 'articleDetailVideoDisplayMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Meta Setting`
+  String get articleDetailMetaSetting {
+    return Intl.message(
+      'Meta Setting',
+      name: 'articleDetailMetaSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redraw Hyperlink`
+  String get articleDetailRedrawHyperLink {
+    return Intl.message(
+      'Redraw Hyperlink',
+      name: 'articleDetailRedrawHyperLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show Related Articles`
+  String get articleDetailShowRelated {
+    return Intl.message(
+      'Show Related Articles',
+      name: 'articleDetailShowRelated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `After closing, the hyperlink will no longer be redrawn in card style.`
+  String get articleDetailRedrawHyperLinkTip {
+    return Intl.message(
+      'After closing, the hyperlink will no longer be redrawn in card style.',
+      name: 'articleDetailRedrawHyperLinkTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TTS Setting`
+  String get ttsSetting {
+    return Intl.message(
+      'TTS Setting',
+      name: 'ttsSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable TTS`
+  String get ttsEnable {
+    return Intl.message(
+      'Enable TTS',
+      name: 'ttsEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TTS Engine`
+  String get ttsEngine {
+    return Intl.message(
+      'TTS Engine',
+      name: 'ttsEngine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reading Speed`
+  String get ttsSpeed {
+    return Intl.message(
+      'Reading Speed',
+      name: 'ttsSpeed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ignore audio focus`
+  String get ttsSpot {
+    return Intl.message(
+      'Ignore audio focus',
+      name: 'ttsSpot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow simultaneous audio playback with other applications`
+  String get ttsSpotTip {
+    return Intl.message(
+      'Allow simultaneous audio playback with other applications',
+      name: 'ttsSpotTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatically mark as read`
+  String get ttsAutoHaveRead {
+    return Intl.message(
+      'Automatically mark as read',
+      name: 'ttsAutoHaveRead',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The article will be automatically marked as read after it is read aloud`
+  String get ttsAutoHaveReadTip {
+    return Intl.message(
+      'The article will be automatically marked as read after it is read aloud',
+      name: 'ttsAutoHaveReadTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wake Lock`
+  String get ttsWakeLock {
+    return Intl.message(
+      'Wake Lock',
+      name: 'ttsWakeLock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable wake lock when reading (may be killed in the background)`
+  String get ttsWakeLockTip {
+    return Intl.message(
+      'Enable wake lock when reading (may be killed in the background)',
+      name: 'ttsWakeLockTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System TTS settings`
+  String get ttsSystemSetting {
+    return Intl.message(
+      'System TTS settings',
+      name: 'ttsSystemSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check for Updates`
+  String get checkUpdates {
+    return Intl.message(
+      'Check for Updates',
+      name: 'checkUpdates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last checked:`
+  String get checkUpdatesTip {
+    return Intl.message(
+      'Last checked:',
+      name: 'checkUpdatesTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already the latest version`
+  String get checkUpdatesAlreadyLatest {
+    return Intl.message(
+      'Already the latest version',
+      name: 'checkUpdatesAlreadyLatest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear Cache`
+  String get clearCache {
+    return Intl.message(
+      'Clear Cache',
+      name: 'clearCache',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear cache successfully`
+  String get clearCacheSuccess {
+    return Intl.message(
+      'Clear cache successfully',
+      name: 'clearCacheSuccess',
       desc: '',
       args: [],
     );

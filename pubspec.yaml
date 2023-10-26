@@ -23,11 +23,12 @@ dependencies:
   animated_text_kit: ^4.2.2
   percent_indicator: ^4.2.3
   sliding_up_panel: ^2.0.0+1
+  salomon_bottom_bar: ^3.3.2
   modal_bottom_sheet: ^3.0.0-pre
   flutter_swiper_null_safety: ^1.0.0
   flutter_staggered_grid_view: ^0.6.2
   # 系统
-  get: ^4.6.6
+  provider: ^6.0.5
   event_bus: ^2.0.0
   local_auth: ^2.1.6
   local_auth_android: ^1.0.35

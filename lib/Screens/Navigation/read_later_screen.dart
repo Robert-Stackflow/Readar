@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloudreader/Screens/Content/tts_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
 class ReadLaterScreen extends StatefulWidget {
   const ReadLaterScreen({super.key});
@@ -66,7 +65,7 @@ class _ReadLaterScreenState extends State<ReadLaterScreen>
                         size: 23,
                       ),
                       onPressed: () {
-                        Get.toNamed(TTSScreen.routeName);
+                        Navigator.pushNamed(context, TTSScreen.routeName);
                       },
                     ),
                     IconButton(
