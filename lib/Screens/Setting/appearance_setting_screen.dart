@@ -95,39 +95,58 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                     onTap: () {},
                   ),
                   const SizedBox(height: 10),
-                  ItemBuilder.buildEntryItem(
+                  ItemBuilder.buildCaptionItem(
                     title: S.current.bottomNavigationBarSetting,
                     topRadius: true,
-                    showTrailing: false,
-                    isCaption: true,
                   ),
                   ItemBuilder.buildRadioItem(
-                    title: S.current.starNav,
-                    value: globalProvider.starNavigationVisible,
+                    title: S.current.showNavBar,
+                    value: globalProvider.showNavigationBar,
+                    bottomRadius: !globalProvider.showNavigationBar,
                     onTap: () {
                       setState(() {
-                        globalProvider.starNavigationVisible =
-                            !globalProvider.starNavigationVisible;
+                        globalProvider.showNavigationBar =
+                            !globalProvider.showNavigationBar;
                       });
                     },
                   ),
-                  ItemBuilder.buildRadioItem(
-                    title: S.current.readLaterNav,
-                    value: globalProvider.readLaterNavigationVisible,
-                    bottomRadius: true,
-                    onTap: () {
-                      setState(() {
-                        globalProvider.readLaterNavigationVisible =
-                            !globalProvider.readLaterNavigationVisible;
-                      });
-                    },
+                  // ItemBuilder.buildEntryItem(
+                  //   title: "入口设置与排序",
+                  //   description: "",
+                  //   bottomRadius: true,
+                  //   onTap: () {},
+                  // ),
+                  Visibility(
+                    visible: globalProvider.showNavigationBar,
+                    child: ItemBuilder.buildRadioItem(
+                      title: S.current.starNav,
+                      value: globalProvider.starNavigationVisible,
+                      onTap: () {
+                        setState(() {
+                          globalProvider.starNavigationVisible =
+                              !globalProvider.starNavigationVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  Visibility(
+                    visible: globalProvider.showNavigationBar,
+                    child: ItemBuilder.buildRadioItem(
+                      title: S.current.readLaterNav,
+                      value: globalProvider.readLaterNavigationVisible,
+                      bottomRadius: true,
+                      onTap: () {
+                        setState(() {
+                          globalProvider.readLaterNavigationVisible =
+                              !globalProvider.readLaterNavigationVisible;
+                        });
+                      },
+                    ),
                   ),
                   const SizedBox(height: 10),
-                  ItemBuilder.buildEntryItem(
+                  ItemBuilder.buildCaptionItem(
                     title: S.current.articleDetailSetting,
                     topRadius: true,
-                    showTrailing: false,
-                    isCaption: true,
                   ),
                   ItemBuilder.buildEntryItem(
                     title: S.current.articleDetailViewOption,

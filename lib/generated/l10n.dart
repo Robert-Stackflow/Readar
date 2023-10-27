@@ -140,6 +140,16 @@ class S {
     );
   }
 
+  /// `Setting`
+  String get setting {
+    return Intl.message(
+      'Setting',
+      name: 'setting',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `General`
   String get generalSetting {
     return Intl.message(
@@ -395,6 +405,16 @@ class S {
     return Intl.message(
       'Navigation Bar Setting',
       name: 'bottomNavigationBarSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show Navigation Bar`
+  String get showNavBar {
+    return Intl.message(
+      'Show Navigation Bar',
+      name: 'showNavBar',
       desc: '',
       args: [],
     );

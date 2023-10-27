@@ -3,16 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class ArticleScreen extends StatefulWidget {
+  const ArticleScreen({super.key});
 
   static const String routeName = "/nav/home";
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ArticleScreen> createState() => _ArticleScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _ArticleScreenState extends State<ArticleScreen>
+    with TickerProviderStateMixin {
   @override
   void initState() {
     if (Platform.isAndroid) {

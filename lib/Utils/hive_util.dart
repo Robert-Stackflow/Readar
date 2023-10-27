@@ -27,6 +27,8 @@ class HiveUtil {
   static const String localeKey = "locale";
   static const String themeColorKey = "themeColor";
   static const String activeThemeKey = "activeTheme";
+  static const String showNavigationBarKey = "showNavigationBar";
+  static const String navDataKey = "navData";
   static const String starNavigationKey = "starNavigation";
   static const String readLaterNavigationKey = "readLaterNavigation";
   static const String articleLayoutKey = "articleLayout";
@@ -101,11 +103,17 @@ class HiveUtil {
     }
   }
 
+  static bool showNavigationBar() =>
+      HiveUtil.getBool(key: HiveUtil.showNavigationBarKey, defaultValue: true);
+
   static bool starNavigationVisible() =>
       HiveUtil.getBool(key: HiveUtil.starNavigationKey, defaultValue: true);
 
   static bool readLaterNavigationVisible() => HiveUtil.getBool(
       key: HiveUtil.readLaterNavigationKey, defaultValue: true);
+
+  static void setShowNavigationBar(bool value) =>
+      HiveUtil.put(key: HiveUtil.showNavigationBarKey, value: value);
 
   static void setStarNavigationVisible(bool value) =>
       HiveUtil.put(key: HiveUtil.starNavigationKey, value: value);

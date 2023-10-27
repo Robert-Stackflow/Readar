@@ -81,6 +81,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "rate": MessageLookupByLibrary.simpleMessage("Rate Us"),
         "readLater": MessageLookupByLibrary.simpleMessage("Read Later"),
         "readLaterNav": MessageLookupByLibrary.simpleMessage("Read Later Nav"),
+        "setting": MessageLookupByLibrary.simpleMessage("Setting"),
+        "showNavBar":
+            MessageLookupByLibrary.simpleMessage("Show Navigation Bar"),
         "star": MessageLookupByLibrary.simpleMessage("Star"),
         "starNav": MessageLookupByLibrary.simpleMessage("Star Nav"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),

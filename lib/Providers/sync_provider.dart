@@ -1,0 +1,62 @@
+// ignore_for_file: unnecessary_getters_setters
+
+import 'package:flutter/cupertino.dart';
+
+import 'global.dart';
+
+class SyncProvider with ChangeNotifier {
+  bool hasService = Global.serviceHandler != null;
+  bool syncing = false;
+  bool _lastSyncSuccess = true;
+  DateTime _lastSyncedTime = DateTime.fromMillisecondsSinceEpoch(0);
+
+  void checkHasService() {
+    var value = Global.serviceHandler != null;
+    if (value != hasService) {
+      hasService = value;
+      notifyListeners();
+    }
+  }
+
+  Future<void> removeService() async {
+    if (syncing || Global.serviceHandler == null) return;
+    syncing = true;
+    notifyListeners();
+    var sids = Global.sourcesProvider.getSources().map((s) => s.id).toList();
+    await Global.sourcesProvider.removeSources(sids);
+    Global.serviceHandler?.remove();
+    hasService = false;
+    syncing = false;
+    notifyListeners();
+  }
+
+  bool get lastSyncSuccess => _lastSyncSuccess;
+
+  set lastSyncSuccess(bool value) {
+    _lastSyncSuccess = value;
+  }
+
+  DateTime get lastSyncedTime => _lastSyncedTime;
+
+  set lastSyncedTime(DateTime value) {
+    _lastSyncedTime = value;
+  }
+
+  Future<void> syncWithService() async {
+    if (syncing || Global.serviceHandler == null) return;
+    syncing = true;
+    notifyListeners();
+    try {
+      await Global.serviceHandler?.reauthenticate();
+      await Global.sourcesProvider.updateSources();
+      await Global.itemsProvider.syncItems();
+      await Global.itemsProvider.fetchItems();
+      lastSyncSuccess = true;
+    } catch (exp) {
+      lastSyncSuccess = false;
+    }
+    lastSyncedTime = DateTime.now();
+    syncing = false;
+    notifyListeners();
+  }
+}

@@ -7,7 +7,6 @@ import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/general_setting_screen.dart';
-import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/privacy_setting_screen.dart';
 import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Utils/uri_util.dart';
@@ -21,10 +20,11 @@ import '../Utils/hive_util.dart';
 import '../Widgets/Item/item_builder.dart';
 import '../generated/l10n.dart';
 import 'Lock/pin_verify_screen.dart';
-import 'Navigation/home_screen.dart';
+import 'Navigation/article_screen.dart';
 import 'Navigation/read_later_screen.dart';
 import 'Navigation/star_screen.dart';
 import 'Navigation/subscription_screen.dart';
+import 'Setting/operation_setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -42,6 +42,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   int selectedIndex = 0;
   bool _isInVerify = false;
   final _pageController = PageController();
+  final _homeScreen = const ArticleScreen();
+  final _feedScreen = const FeedScreen();
+  final _starScreen = const StarScreen();
+  final _readLaterScreen = const ReadLaterScreen();
 
   @override
   void initState() {
@@ -72,7 +76,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       }
       initData();
     });
-    Global.globalProvider?.addListener(() {
+    Global.globalProvider.addListener(() {
       initData();
     });
   }
@@ -90,8 +94,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         ),
       ];
       _pageList = [
-        const HomeScreen(),
-        const FeedScreen(),
+        _homeScreen,
+        _feedScreen,
       ];
       if (HiveUtil.starNavigationVisible()) {
         _navigationBarItemList.add(
@@ -100,7 +104,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             title: Text(S.current.star),
           ),
         );
-        _pageList.add(const StarScreen());
+        _pageList.add(_starScreen);
       }
       if (HiveUtil.readLaterNavigationVisible()) {
         _navigationBarItemList.add(
@@ -109,7 +113,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             title: Text(S.current.readLater),
           ),
         );
-        _pageList.add(const ReadLaterScreen());
+        _pageList.add(_readLaterScreen);
       }
     });
   }
@@ -126,23 +130,30 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     initData();
     return Container(
       color: AppTheme.background,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        bottomNavigationBar: SalomonBottomBar(
-          margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-          items: _navigationBarItemList,
-          currentIndex: selectedIndex,
-          backgroundColor: AppTheme.white,
-          selectedItemColor: AppTheme.themeColor,
-          onTap: onBottomNavigationBarItemTap,
-        ),
-        body: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: _pageList,
-        ),
-        drawer: _drawer(),
-      ),
+      child: HiveUtil.showNavigationBar()
+          ? Scaffold(
+              backgroundColor: Colors.transparent,
+              bottomNavigationBar: SalomonBottomBar(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                items: _navigationBarItemList,
+                currentIndex: selectedIndex,
+                backgroundColor: AppTheme.white,
+                selectedItemColor: AppTheme.themeColor,
+                onTap: onBottomNavigationBarItemTap,
+              ),
+              body: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: _pageList,
+              ),
+              drawer: _drawer(),
+            )
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: _homeScreen,
+              drawer: _drawer(),
+            ),
     );
   }
 
@@ -225,29 +236,30 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                       shrinkWrap: true,
                       padding: EdgeInsets.zero,
                       children: [
-                        ItemBuilder.buildEntryItem(
-                          title: S.current.highlights,
+                        ItemBuilder.buildCaptionItem(
+                          title: "内容中心",
                           topRadius: true,
-                          onTap: () {},
-                          showLeading: true,
-                          leading: Icons.bookmark_border_rounded,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          title: S.current.tags,
-                          showLeading: true,
-                          onTap: () {},
-                          leading: Icons.tag_rounded,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          showLeading: true,
-                          title: S.current.statistics,
-                          onTap: () {},
-                          leading: Icons.show_chart_rounded,
                         ),
                         Visibility(
-                          visible: !HiveUtil.getBool(
-                              key: HiveUtil.starNavigationKey,
-                              defaultValue: true),
+                          visible: !HiveUtil.showNavigationBar(),
+                          child: ItemBuilder.buildEntryItem(
+                            title: S.current.article,
+                            onTap: () {},
+                            showLeading: true,
+                            leading: Icons.feed_outlined,
+                          ),
+                        ),
+                        Visibility(
+                          visible: !HiveUtil.showNavigationBar(),
+                          child: ItemBuilder.buildEntryItem(
+                            title: S.current.feed,
+                            showLeading: true,
+                            onTap: () {},
+                            leading: Icons.rss_feed_rounded,
+                          ),
+                        ),
+                        Visibility(
+                          visible: !HiveUtil.starNavigationVisible(),
                           child: ItemBuilder.buildEntryItem(
                             title: S.current.star,
                             showLeading: true,
@@ -256,9 +268,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           ),
                         ),
                         Visibility(
-                          visible: !HiveUtil.getBool(
-                              key: HiveUtil.readLaterNavigationKey,
-                              defaultValue: true),
+                          visible: !HiveUtil.readLaterNavigationVisible(),
                           child: ItemBuilder.buildEntryItem(
                             title: S.current.readLater,
                             showLeading: true,
@@ -267,16 +277,31 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           ),
                         ),
                         ItemBuilder.buildEntryItem(
-                          title: S.current.feedHub,
+                          title: S.current.highlights,
                           onTap: () {},
-                          bottomRadius: true,
                           showLeading: true,
-                          leading: Icons.add_chart_rounded,
+                          leading: Icons.bookmark_border_rounded,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          title: "探索",
+                          showLeading: true,
+                          onTap: () {},
+                          leading: Icons.explore_outlined,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          showLeading: true,
+                          title: S.current.statistics,
+                          bottomRadius: true,
+                          onTap: () {},
+                          leading: Icons.show_chart_rounded,
                         ),
                         const SizedBox(height: 10),
+                        ItemBuilder.buildCaptionItem(
+                          title: S.current.setting,
+                          topRadius: true,
+                        ),
                         ItemBuilder.buildEntryItem(
                           title: S.current.generalSetting,
-                          topRadius: true,
                           showLeading: true,
                           onTap: () {
                             Navigator.pushNamed(

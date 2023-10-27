@@ -32,12 +32,9 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
               padding: EdgeInsets.zero,
               children: [
                 const SizedBox(height: 10),
-                ItemBuilder.buildEntryItem(
+                ItemBuilder.buildCaptionItem(
                   title: "以下自建类型服务可用于同步订阅源",
-                  isCaption: true,
-                  showTrailing: false,
                   topRadius: true,
-                  onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   title: "Fever API",
@@ -61,12 +58,9 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildEntryItem(
-                  title: "以下商业服务可用于同步订阅源",
-                  isCaption: true,
-                  showTrailing: false,
+                ItemBuilder.buildCaptionItem(
+                  title: "以下第三方服务可用于同步订阅源",
                   topRadius: true,
-                  onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
@@ -75,7 +69,17 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
+                  title: "FeedHQ",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
                   title: "Feedbin",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
+                  title: "Feed Wrangler",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
@@ -96,12 +100,10 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildEntryItem(
+                ItemBuilder.buildCaptionItem(
                   title: "以下服务可用于备份数据，并保存文章为PDF",
-                  isCaption: true,
                   showTrailing: false,
                   topRadius: true,
-                  onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
@@ -129,12 +131,10 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildEntryItem(
+                ItemBuilder.buildCaptionItem(
                   title: "以下服务可用于直接保存文章",
-                  isCaption: true,
                   showTrailing: false,
                   topRadius: true,
-                  onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
                   value: false,
@@ -159,6 +159,11 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                 ItemBuilder.buildRadioItem(
                   value: false,
                   title: "Notion",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  value: false,
+                  title: "PinBoard",
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(

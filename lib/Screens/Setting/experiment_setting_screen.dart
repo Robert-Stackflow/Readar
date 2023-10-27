@@ -33,10 +33,13 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
               padding: EdgeInsets.zero,
               children: [
                 const SizedBox(height: 10),
+                ItemBuilder.buildCaptionItem(
+                  title: "AI摘要",
+                  topRadius: true,
+                ),
                 ItemBuilder.buildRadioItem(
                   title: "AI摘要",
                   value: true,
-                  topRadius: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
@@ -50,15 +53,26 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
+                  title: "内容发送模板",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  title: "内容发送字数上限",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
                   title: "聊天室",
                   bottomRadius: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildRadioItem(
+                ItemBuilder.buildCaptionItem(
                   title: "翻译",
-                  value: true,
                   topRadius: true,
+                ),
+                ItemBuilder.buildRadioItem(
+                  title: "启用翻译",
+                  value: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(

@@ -202,4 +202,28 @@ class ItemBuilder {
       ),
     );
   }
+
+  static Widget buildCaptionItem({
+    double radius = 10,
+    bool topRadius = false,
+    bool bottomRadius = false,
+    bool showLeading = false,
+    bool showTrailing = true,
+    IconData leading = Icons.home_filled,
+    required String title,
+    IconData trailing = Icons.keyboard_arrow_right_rounded,
+  }) {
+    return buildEntryItem(
+      title: title,
+      radius: radius,
+      topRadius: topRadius,
+      bottomRadius: bottomRadius,
+      showTrailing: false,
+      showLeading: showLeading,
+      onTap: null,
+      leading: leading,
+      trailing: trailing,
+      isCaption: true,
+    );
+  }
 }

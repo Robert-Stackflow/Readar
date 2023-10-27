@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloudreader/Api/service_handler.dart';
 import 'package:cloudreader/Providers/global_provider.dart';
 import 'package:cloudreader/Screens/Content/tts_screen.dart';
 import 'package:cloudreader/Screens/Lock/pin_change_screen.dart';
@@ -16,26 +17,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Bridge/android_back_desktop.dart';
-import 'Configs/db_config.dart';
 import 'Providers/global.dart';
 import 'Screens/Lock/pin_verify_screen.dart';
+import 'Screens/Navigation/article_screen.dart';
 import 'Screens/Navigation/subscription_screen.dart';
 import 'Screens/Setting/about_setting_screen.dart';
 import 'Screens/Setting/general_setting_screen.dart';
 import 'Screens/Setting/privacy_setting_screen.dart';
 import 'Screens/main_screen.dart';
-import 'Screens/navigation/home_screen.dart';
+import 'Utils/store.dart';
 import 'generated/l10n.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initHive();
-  await initSqlite();
+  Store.sp = await SharedPreferences.getInstance();
+  Store.sp.setInt(StoreKeys.SYNC_SERVICE, SyncService.googleReader.index);
+  Store.sp.setString(StoreKeys.ENDPOINT, "https://theoldreader.com");
+  Store.sp.setString(StoreKeys.USERNAME, "yutuan.victory@gmail.com");
+  Store.sp.setString(StoreKeys.PASSWORD, "6Jv#f9g@cXNPs9z");
   Global.init();
   runApp(const MyApp());
   if (Platform.isAndroid) {
@@ -54,16 +58,6 @@ Future<void> initHive() async {
   }
   await HiveUtil.openHiveBox(HiveUtil.settingsBox);
   await HiveUtil.openHiveBox(HiveUtil.servicesBox);
-}
-
-Future<void> initSqlite() async {
-  openDatabase(
-    join(await getDatabasesPath(), DBConfig.dbname),
-    onCreate: (db, version) {
-      return db.execute(DBConfig.chatTableCreateSql);
-    },
-    version: 1,
-  );
 }
 
 class MyApp extends StatelessWidget {
@@ -113,7 +107,7 @@ class MyApp extends StatelessWidget {
           },
           routes: {
             TTSScreen.routeName: (context) => const TTSScreen(),
-            HomeScreen.routeName: (context) => const HomeScreen(),
+            ArticleScreen.routeName: (context) => const ArticleScreen(),
             StarScreen.routeName: (context) => const StarScreen(),
             PinChangeScreen.routeName: (context) => const PinChangeScreen(),
             ReadLaterScreen.routeName: (context) => const ReadLaterScreen(),

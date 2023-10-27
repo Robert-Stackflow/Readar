@@ -9,6 +9,18 @@ enum ActiveTheme {
 }
 
 class GlobalProvider with ChangeNotifier {
+  bool _showNavigationBar = HiveUtil.showNavigationBar();
+
+  bool get showNavigationBar => _showNavigationBar;
+
+  set showNavigationBar(bool value) {
+    if (value != _showNavigationBar) {
+      _showNavigationBar = value;
+      notifyListeners();
+      HiveUtil.setShowNavigationBar(value);
+    }
+  }
+
   bool _starNavigationVisible = HiveUtil.starNavigationVisible();
 
   bool get starNavigationVisible => _starNavigationVisible;
@@ -45,6 +57,17 @@ class GlobalProvider with ChangeNotifier {
     }
   }
 
+  String? _homeRoute;
+
+  String? get homeRoute => _homeRoute;
+
+  set homeRoute(String? value) {
+    if (value != _homeRoute) {
+      _homeRoute = value;
+      notifyListeners();
+    }
+  }
+
   ActiveTheme _theme = HiveUtil.getTheme();
 
   ActiveTheme get theme => _theme;
@@ -63,5 +86,21 @@ class GlobalProvider with ChangeNotifier {
     } else {
       return _theme == ActiveTheme.light ? Brightness.light : Brightness.dark;
     }
+  }
+
+  int _keepItemsDays = 21;
+
+  int get keepItemsDays => _keepItemsDays;
+
+  set keepItemsDays(int value) {
+    _keepItemsDays = value;
+  }
+
+  bool _syncOnStart = true;
+
+  bool get syncOnStart => _syncOnStart;
+
+  set syncOnStart(bool value) {
+    _syncOnStart = value;
   }
 }

@@ -6,13 +6,11 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
-import '../Configs/http_config.dart';
-
 class HttpUtil {
   static HttpUtil instance = HttpUtil();
   late Dio dio;
   late BaseOptions options;
-
+  String baseUrl = "";
   CancelToken cancelToken = CancelToken();
 
   static HttpUtil getInstance() {
@@ -21,7 +19,7 @@ class HttpUtil {
 
   HttpUtil() {
     options = BaseOptions(
-      baseUrl: HTTPConfig.baseURL,
+      baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 5),
       headers: {},

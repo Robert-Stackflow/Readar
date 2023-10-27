@@ -54,11 +54,9 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildEntryItem(
+                ItemBuilder.buildCaptionItem(
                   title: S.current.ttsSetting,
-                  isCaption: true,
                   topRadius: true,
-                  showTrailing: false,
                 ),
                 ItemBuilder.buildRadioItem(
                   title: S.current.ttsEnable,
