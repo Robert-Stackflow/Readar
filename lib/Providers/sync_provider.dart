@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_getters_setters
 
+import 'package:cloudreader/Utils/iprint.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'global.dart';
@@ -48,9 +49,13 @@ class SyncProvider with ChangeNotifier {
     notifyListeners();
     try {
       await Global.serviceHandler?.reauthenticate();
+      IPrint.debug("authed");
       await Global.sourcesProvider.updateSources();
+      IPrint.debug("updated");
       await Global.itemsProvider.syncItems();
+      IPrint.debug("synced");
       await Global.itemsProvider.fetchItems();
+      IPrint.debug("fetched");
       lastSyncSuccess = true;
     } catch (exp) {
       lastSyncSuccess = false;

@@ -9,7 +9,7 @@ class AppTheme {
 
   static const Color nearlyWhite = Color(0xFFFAFAFA);
   static const Color white = Color(0xFFFFFFFF);
-  static const Color background = Color(0xFFFAFAFA);
+  static const Color background = Color(0xFFF8F8F8);
   static const Color nearlyDarkBlue = Color(0xFF2633C5);
 
   static const Color nearlyBlue = Color(0xFF00B6F0);
@@ -71,6 +71,13 @@ class AppTheme {
   static const TextStyle itemTip = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 13,
+    letterSpacing: 0.1,
+    color: Colors.grey,
+  );
+
+  static const TextStyle itemTipLittle = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 11,
     letterSpacing: 0.1,
     color: Colors.grey,
   );

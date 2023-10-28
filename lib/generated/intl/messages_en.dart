@@ -60,11 +60,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearCacheSuccess":
             MessageLookupByLibrary.simpleMessage("Clear cache successfully"),
         "contact": MessageLookupByLibrary.simpleMessage("Contact Us"),
+        "contentCenter": MessageLookupByLibrary.simpleMessage("Content Center"),
         "contributor": MessageLookupByLibrary.simpleMessage("Contributor"),
         "experimentSetting": MessageLookupByLibrary.simpleMessage("Experiment"),
+        "explore": MessageLookupByLibrary.simpleMessage("Explore"),
         "extensionSetting": MessageLookupByLibrary.simpleMessage("Extension"),
         "feed": MessageLookupByLibrary.simpleMessage("Feed"),
-        "feedHub": MessageLookupByLibrary.simpleMessage("Feed Hub"),
         "followSystem": MessageLookupByLibrary.simpleMessage("Follow System"),
         "generalSetting": MessageLookupByLibrary.simpleMessage("General"),
         "githubRepo": MessageLookupByLibrary.simpleMessage("Github Repo"),
@@ -87,10 +88,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "star": MessageLookupByLibrary.simpleMessage("Star"),
         "starNav": MessageLookupByLibrary.simpleMessage("Star Nav"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
-        "tags": MessageLookupByLibrary.simpleMessage("Tags"),
         "telegramGroup": MessageLookupByLibrary.simpleMessage("Telegram Group"),
         "themeColor": MessageLookupByLibrary.simpleMessage("Theme Color"),
         "themeMode": MessageLookupByLibrary.simpleMessage("Theme Mode"),
+        "tts": MessageLookupByLibrary.simpleMessage("TTS"),
         "ttsAutoHaveRead":
             MessageLookupByLibrary.simpleMessage("Automatically mark as read"),
         "ttsAutoHaveReadTip": MessageLookupByLibrary.simpleMessage(

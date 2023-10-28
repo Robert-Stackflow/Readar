@@ -8,6 +8,7 @@ import 'package:tuple/tuple.dart';
 import '../Models/feed.dart';
 import '../Models/rss_item.dart';
 import '../Providers/global.dart';
+import '../Utils/iprint.dart';
 import '../Utils/store.dart';
 import 'service_handler.dart';
 
@@ -93,18 +94,18 @@ class GReaderServiceHandler extends ServiceHandler {
     Global.serviceHandler = null;
   }
 
-  int get lastFetched => _lastFetched!;
+  int? get lastFetched => _lastFetched;
 
-  set lastFetched(int value) {
+  set lastFetched(int? value) {
     _lastFetched = value;
-    Store.sp.setInt(StoreKeys.LAST_FETCHED, value);
+    Store.sp.setInt(StoreKeys.LAST_FETCHED, value ?? 0);
   }
 
-  String get lastId => _lastId!;
+  String? get lastId => _lastId;
 
-  set lastId(String value) {
+  set lastId(String? value) {
     _lastId = value;
-    Store.sp.setString(StoreKeys.LAST_ID, value);
+    Store.sp.setString(StoreKeys.LAST_ID, value ?? "");
   }
 
   String? get auth => _auth;
@@ -158,7 +159,7 @@ class GReaderServiceHandler extends ServiceHandler {
 
   String _compactId(String longId) {
     final last = longId.split("/").last;
-    if (!useInt64!) return last;
+    if (useInt64 == null || !useInt64!) return last;
     return int.parse(last, radix: 16).toString();
   }
 
@@ -221,8 +222,8 @@ class GReaderServiceHandler extends ServiceHandler {
       try {
         final limit = min(fetchLimit! - items.length, 1000);
         var params = "/reader/api/0/stream/contents?output=json&n=$limit";
-        params += "&ot=$lastFetched";
-        params += "&c=$continuation";
+        if (lastFetched != null) params += "&ot=$lastFetched";
+        if (continuation != null) params += "&c=$continuation";
         final response = await _fetchAPI(params);
         assert(response.statusCode == 200);
         final fetched = jsonDecode(response.body);
@@ -235,8 +236,10 @@ class GReaderServiceHandler extends ServiceHandler {
             items.add(i);
           }
         }
-        continuation = fetched["continuation"];
+        // continuation = fetched["continuation"];
+        continuation = "";
       } catch (exp) {
+        IPrint.debug(exp);
         break;
       }
     } while (continuation != null && items.length < fetchLimit!);

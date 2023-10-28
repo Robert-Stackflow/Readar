@@ -10,6 +10,7 @@ import 'package:cloudreader/Screens/Setting/appearance_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
+import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
 import 'package:cloudreader/Utils/hive_util.dart';
 import 'package:cloudreader/Utils/theme.dart';
@@ -24,7 +25,7 @@ import 'Bridge/android_back_desktop.dart';
 import 'Providers/global.dart';
 import 'Screens/Lock/pin_verify_screen.dart';
 import 'Screens/Navigation/article_screen.dart';
-import 'Screens/Navigation/subscription_screen.dart';
+import 'Screens/Navigation/feed_screen.dart';
 import 'Screens/Setting/about_setting_screen.dart';
 import 'Screens/Setting/general_setting_screen.dart';
 import 'Screens/Setting/privacy_setting_screen.dart';
@@ -40,6 +41,8 @@ Future<void> main() async {
   Store.sp.setString(StoreKeys.ENDPOINT, "https://theoldreader.com");
   Store.sp.setString(StoreKeys.USERNAME, "yutuan.victory@gmail.com");
   Store.sp.setString(StoreKeys.PASSWORD, "6Jv#f9g@cXNPs9z");
+  Store.sp.setInt(StoreKeys.FETCH_LIMIT, 500);
+  Store.sp.setBool(StoreKeys.USE_INT_64, false);
   Global.init();
   runApp(const MyApp());
   if (Platform.isAndroid) {
@@ -68,6 +71,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: Global.globalProvider),
+        ChangeNotifierProvider.value(value: Global.feedsProvider),
+        ChangeNotifierProvider.value(value: Global.sourcesProvider),
+        ChangeNotifierProvider.value(value: Global.groupsProvider),
+        ChangeNotifierProvider.value(value: Global.itemsProvider),
+        ChangeNotifierProvider.value(value: Global.syncProvider),
       ],
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
@@ -107,10 +115,12 @@ class MyApp extends StatelessWidget {
           },
           routes: {
             TTSScreen.routeName: (context) => const TTSScreen(),
-            ArticleScreen.routeName: (context) => const ArticleScreen(),
+            ArticleScreen.routeName: (context) =>
+                ArticleScreen(ScrollTopNotifier()),
             StarScreen.routeName: (context) => const StarScreen(),
             PinChangeScreen.routeName: (context) => const PinChangeScreen(),
             ReadLaterScreen.routeName: (context) => const ReadLaterScreen(),
+            NavSettingScreen.routeName: (context) => const NavSettingScreen(),
             ExperimentSettingScreen.routeName: (context) =>
                 const ExperimentSettingScreen(),
             FeedScreen.routeName: (context) => const FeedScreen(),

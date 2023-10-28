@@ -7,6 +7,8 @@ class ItemBuilder {
   static AppBar buildAppBar({
     String title = "",
     IconData leading = Icons.arrow_back_rounded,
+    IconData? trailing,
+    Function()? onTrailingTap,
     required BuildContext context,
   }) {
     return AppBar(
@@ -29,6 +31,20 @@ class ItemBuilder {
       ),
       title:
           title.isNotEmpty ? Text(title, style: AppTheme.title) : Container(),
+      actions: <Widget>[
+        trailing != null
+            ? IconButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                icon: Icon(
+                  trailing,
+                  color: AppTheme.darkerText,
+                  size: 23,
+                ),
+                onPressed: onTrailingTap,
+              )
+            : Container(),
+      ],
       backgroundColor: AppTheme.background,
     );
   }

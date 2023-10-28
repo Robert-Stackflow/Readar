@@ -31,7 +31,8 @@ class _PrivacySettingScreenState extends State<PrivacySettingScreen>
   int _autoLockOption = HiveUtil.getInt(key: HiveUtil.autoLockTimeKey);
   String _availableBiometricString = "";
   bool _isBiometricAvailable = false;
-  bool _existPin = HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty;
+  bool _existPin = HiveUtil.getString(key: HiveUtil.lockPinKey) != null &&
+      HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty;
 
   getAuth() async {
     LocalAuthentication localAuth = LocalAuthentication();

@@ -1,4 +1,5 @@
 import 'package:cloudreader/Providers/global_provider.dart';
+import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Utils/locale_util.dart';
 import 'package:cloudreader/Widgets/BottomSheet/bottom_sheet_builder.dart';
 import 'package:cloudreader/Widgets/BottomSheet/tile_list.dart';
@@ -95,53 +96,16 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                     onTap: () {},
                   ),
                   const SizedBox(height: 10),
-                  ItemBuilder.buildCaptionItem(
+                  ItemBuilder.buildEntryItem(
                     title: S.current.bottomNavigationBarSetting,
                     topRadius: true,
-                  ),
-                  ItemBuilder.buildRadioItem(
-                    title: S.current.showNavBar,
-                    value: globalProvider.showNavigationBar,
-                    bottomRadius: !globalProvider.showNavigationBar,
+                    bottomRadius: true,
                     onTap: () {
                       setState(() {
-                        globalProvider.showNavigationBar =
-                            !globalProvider.showNavigationBar;
+                        Navigator.of(context)
+                            .pushNamed(NavSettingScreen.routeName);
                       });
                     },
-                  ),
-                  // ItemBuilder.buildEntryItem(
-                  //   title: "入口设置与排序",
-                  //   description: "",
-                  //   bottomRadius: true,
-                  //   onTap: () {},
-                  // ),
-                  Visibility(
-                    visible: globalProvider.showNavigationBar,
-                    child: ItemBuilder.buildRadioItem(
-                      title: S.current.starNav,
-                      value: globalProvider.starNavigationVisible,
-                      onTap: () {
-                        setState(() {
-                          globalProvider.starNavigationVisible =
-                              !globalProvider.starNavigationVisible;
-                        });
-                      },
-                    ),
-                  ),
-                  Visibility(
-                    visible: globalProvider.showNavigationBar,
-                    child: ItemBuilder.buildRadioItem(
-                      title: S.current.readLaterNav,
-                      value: globalProvider.readLaterNavigationVisible,
-                      bottomRadius: true,
-                      onTap: () {
-                        setState(() {
-                          globalProvider.readLaterNavigationVisible =
-                              !globalProvider.readLaterNavigationVisible;
-                        });
-                      },
-                    ),
                   ),
                   const SizedBox(height: 10),
                   ItemBuilder.buildCaptionItem(

@@ -60,6 +60,16 @@ class S {
     );
   }
 
+  /// `Content Center`
+  String get contentCenter {
+    return Intl.message(
+      'Content Center',
+      name: 'contentCenter',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Articles`
   String get article {
     return Intl.message(
@@ -110,21 +120,11 @@ class S {
     );
   }
 
-  /// `Tags`
-  String get tags {
+  /// `Explore`
+  String get explore {
     return Intl.message(
-      'Tags',
-      name: 'tags',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Feed Hub`
-  String get feedHub {
-    return Intl.message(
-      'Feed Hub',
-      name: 'feedHub',
+      'Explore',
+      name: 'explore',
       desc: '',
       args: [],
     );
@@ -135,6 +135,16 @@ class S {
     return Intl.message(
       'Statistics',
       name: 'statistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TTS`
+  String get tts {
+    return Intl.message(
+      'TTS',
+      name: 'tts',
       desc: '',
       args: [],
     );

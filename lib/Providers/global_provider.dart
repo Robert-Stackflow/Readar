@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+import '../Models/nav_data.dart';
 import '../Utils/hive_util.dart';
 
 enum ActiveTheme {
@@ -21,27 +22,15 @@ class GlobalProvider with ChangeNotifier {
     }
   }
 
-  bool _starNavigationVisible = HiveUtil.starNavigationVisible();
+  List<NavData> _navData = HiveUtil.getNavData();
 
-  bool get starNavigationVisible => _starNavigationVisible;
+  List<NavData> get navData => _navData;
 
-  set starNavigationVisible(bool value) {
-    if (value != _starNavigationVisible) {
-      _starNavigationVisible = value;
+  set navData(List<NavData> value) {
+    if (value != _navData) {
+      _navData = value;
       notifyListeners();
-      HiveUtil.setStarNavigationVisible(value);
-    }
-  }
-
-  bool _readLaterNavigationVisible = HiveUtil.readLaterNavigationVisible();
-
-  bool get readLaterNavigationVisible => _readLaterNavigationVisible;
-
-  set readLaterNavigationVisible(bool value) {
-    if (value != _readLaterNavigationVisible) {
-      _readLaterNavigationVisible = value;
-      notifyListeners();
-      HiveUtil.setReadLaterNavigationVisible(value);
+      HiveUtil.setNavData(value);
     }
   }
 

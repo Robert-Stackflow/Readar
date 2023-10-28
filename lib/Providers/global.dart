@@ -1,5 +1,5 @@
 import 'package:cloudreader/Api/service_handler.dart';
-import 'package:cloudreader/Providers/sources_provider.dart';
+import 'package:cloudreader/Providers/feeds_provider.dart';
 import 'package:cloudreader/Providers/sync_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jaguar/serve/server.dart';
@@ -9,7 +9,7 @@ import 'package:sqflite/sqflite.dart';
 import '../Api/google_reader_request.dart';
 import '../Utils/db.dart';
 import '../Utils/store.dart';
-import 'feeds_provider.dart';
+import 'feed_content_provider.dart';
 import 'global_provider.dart';
 import 'groups_provider.dart';
 import 'items_provider.dart';
@@ -17,9 +17,9 @@ import 'items_provider.dart';
 abstract class Global {
   static bool _initialized = false;
   static GlobalProvider globalProvider = GlobalProvider();
-  static SourcesProvider sourcesProvider = SourcesProvider();
+  static FeedsProvider sourcesProvider = FeedsProvider();
   static ItemsProvider itemsProvider = ItemsProvider();
-  static FeedsProvider feedsProvider = FeedsProvider();
+  static FeedContentProvider feedsProvider = FeedContentProvider();
   static GroupsProvider groupsProvider = GroupsProvider();
   static SyncProvider syncProvider = SyncProvider();
   static ServiceHandler? serviceHandler;

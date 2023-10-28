@@ -44,7 +44,7 @@ class TTSScreenState extends State<TTSScreen> with TickerProviderStateMixin {
     if (Platform.isAndroid) {
       SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light);
+          statusBarIconBrightness: Brightness.dark);
       SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     }
   }
@@ -88,7 +88,7 @@ class TTSScreenState extends State<TTSScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppTheme.background,
       body: InkWell(
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
@@ -108,14 +108,12 @@ class TTSScreenState extends State<TTSScreen> with TickerProviderStateMixin {
                       IconButton(
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        icon: const Icon(Icons.close_rounded),
-                        color: Colors.white,
-                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.dehaze_rounded),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
                       ),
                       const Text(
                         "",
                         style: TextStyle(
-                          color: Colors.white,
                           fontSize: 18,
                         ),
                       ),
@@ -123,7 +121,6 @@ class TTSScreenState extends State<TTSScreen> with TickerProviderStateMixin {
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         icon: const Icon(Icons.queue_music_rounded),
-                        color: Colors.black,
                         onPressed: () {},
                       ),
                     ],
@@ -202,7 +199,7 @@ class TTSScreenState extends State<TTSScreen> with TickerProviderStateMixin {
                           durations: [8000, 10800, 14000, 19440, 35000],
                           heightPercentages: [0.46, 0.48, 0.50, 0.52, 0.54],
                         ),
-                        backgroundColor: Colors.transparent,
+                        backgroundColor: AppTheme.background,
                         waveAmplitude: 10,
                         size: const Size(double.infinity, double.infinity),
                       ),
@@ -225,8 +222,8 @@ class TTSScreenState extends State<TTSScreen> with TickerProviderStateMixin {
                         progress: duration,
                         total: const Duration(milliseconds: 0),
                         progressBarColor: AppTheme.themeColor,
-                        baseBarColor: Colors.white.withOpacity(0.24),
-                        bufferedBarColor: Colors.white.withOpacity(0.24),
+                        baseBarColor: AppTheme.darkerText.withOpacity(0.24),
+                        bufferedBarColor: AppTheme.darkerText.withOpacity(0.24),
                         thumbColor: AppTheme.themeColor,
                         barHeight: 2.0,
                         thumbRadius: 3.0,

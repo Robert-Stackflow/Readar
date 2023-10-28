@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloudreader/Utils/iprint.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../Models/nav_data.dart';
 import '../Providers/global_provider.dart';
 
 class HiveUtil {
@@ -29,8 +31,6 @@ class HiveUtil {
   static const String activeThemeKey = "activeTheme";
   static const String showNavigationBarKey = "showNavigationBar";
   static const String navDataKey = "navData";
-  static const String starNavigationKey = "starNavigation";
-  static const String readLaterNavigationKey = "readLaterNavigation";
   static const String articleLayoutKey = "articleLayout";
   static const String articleMetaKey = "articleMeta";
   static const String articleShowGoToTopKey = "articleShowGoToTop";
@@ -106,25 +106,28 @@ class HiveUtil {
   static bool showNavigationBar() =>
       HiveUtil.getBool(key: HiveUtil.showNavigationBarKey, defaultValue: true);
 
-  static bool starNavigationVisible() =>
-      HiveUtil.getBool(key: HiveUtil.starNavigationKey, defaultValue: true);
-
-  static bool readLaterNavigationVisible() => HiveUtil.getBool(
-      key: HiveUtil.readLaterNavigationKey, defaultValue: true);
-
   static void setShowNavigationBar(bool value) =>
       HiveUtil.put(key: HiveUtil.showNavigationBarKey, value: value);
 
-  static void setStarNavigationVisible(bool value) =>
-      HiveUtil.put(key: HiveUtil.starNavigationKey, value: value);
-
-  static void setReadLaterNavigationVisible(bool value) =>
-      HiveUtil.put(key: HiveUtil.readLaterNavigationKey, value: value);
-
   static bool shouldAutoLock() =>
       HiveUtil.getBool(key: HiveUtil.lockEnableKey) &&
+      HiveUtil.getString(key: HiveUtil.lockPinKey) != null &&
       HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty &&
       HiveUtil.getBool(key: HiveUtil.autoLockKey);
+
+  static List<NavData> getNavData() {
+    String? json = HiveUtil.getString(key: HiveUtil.navDataKey);
+    if (json == null || json.isEmpty) {
+      return NavData.defaultNavs;
+    } else {
+      List<dynamic> list = jsonDecode(json);
+      return List<NavData>.from(
+          list.map((item) => NavData.fromJson(item)).toList());
+    }
+  }
+
+  static void setNavData(List<NavData> navs) =>
+      HiveUtil.put(key: HiveUtil.navDataKey, value: jsonEncode(navs));
 
   //Essential
 
@@ -156,7 +159,22 @@ class HiveUtil {
       {String boxName = HiveUtil.settingsBox,
       required String key,
       bool autoCreate = true,
-      String defaultValue = ""}) {
+      String? defaultValue}) {
+    final Box box = Hive.box(boxName);
+    if (!box.containsKey(key)) {
+      if (!autoCreate) {
+        return null;
+      }
+      put(boxName: boxName, key: key, value: defaultValue);
+    }
+    return box.get(key);
+  }
+
+  static List<dynamic>? getList(
+      {String boxName = HiveUtil.settingsBox,
+      required String key,
+      bool autoCreate = true,
+      List<dynamic>? defaultValue}) {
     final Box box = Hive.box(boxName);
     if (!box.containsKey(key)) {
       if (!autoCreate) {
