@@ -34,9 +34,9 @@ class PinVerifyScreen extends StatefulWidget {
 // );
 
 class PinVerifyScreenState extends State<PinVerifyScreen> {
-  final String? _password = HiveUtil.getString(key: HiveUtil.lockPinKey);
+  final String? _password = HiveUtil.getString(key: HiveUtil.guesturePasswdKey);
   late final bool _isUseBiometric =
-      HiveUtil.getBool(key: HiveUtil.biometricEnableKey);
+      HiveUtil.getBool(key: HiveUtil.enableBiometricKey);
   late final GestureNotifier _notifier =
       GestureNotifier(status: GestureStatus.verify, gestureText: "验证密码");
   final GlobalKey<GestureState> _gestureUnlockView = GlobalKey();
@@ -111,7 +111,7 @@ class PinVerifyScreenState extends State<PinVerifyScreen> {
                     padding: 60,
                     roundSpace: 40,
                     defaultColor: Colors.grey.withOpacity(0.5),
-                    selectedColor: AppTheme.themeColor,
+                    selectedColor: Theme.of(context).primaryColor,
                     failedColor: Colors.redAccent,
                     disableColor: Colors.grey,
                     solidRadiusRatio: 0.3,

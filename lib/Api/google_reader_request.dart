@@ -339,7 +339,7 @@ class GReaderServiceHandler extends ServiceHandler {
       if (refs.isNotEmpty) _editTag(refs.join("&i="), _READ_TAG);
     } else {
       if (sids.isEmpty) {
-        sids = Set.from(Global.sourcesProvider.getSources().map((s) => s.id));
+        sids = Set.from(Global.feedsProvider.getSources().map((s) => s.id));
       }
       for (var sid in sids) {
         final body = {"s": sid};

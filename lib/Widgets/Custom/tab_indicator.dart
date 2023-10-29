@@ -1,4 +1,3 @@
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
 
 class TabIndicator extends Decoration {
@@ -7,7 +6,7 @@ class TabIndicator extends Decoration {
   final double indicatorWidth;
 
   const TabIndicator({
-    this.borderSide = const BorderSide(width: 6, color: AppTheme.themeColor),
+    this.borderSide = const BorderSide(width: 6),
     this.tabController,
     this.indicatorBottom = 16,
     this.indicatorWidth = 34,

@@ -1,12 +1,9 @@
-import 'package:cloudreader/Utils/hive_util.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
 import '../generated/l10n.dart';
 
 class LocaleUtil with ChangeNotifier {
-
-
   static List<Tuple2<String, Locale?>> localeLabels = <Tuple2<String, Locale?>>[
     Tuple2(S.current.followSystem, null),
     const Tuple2("Deutsch", Locale("de")),

@@ -34,11 +34,13 @@ class PinChangeScreen extends StatefulWidget {
 
 class PinChangeScreenState extends State<PinChangeScreen> {
   String _gesturePassword = "";
-  final String? _oldPassword = HiveUtil.getString(key: HiveUtil.lockPinKey);
-  bool _isEditMode = HiveUtil.getString(key: HiveUtil.lockPinKey) != null &&
-      HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty;
+  final String? _oldPassword =
+      HiveUtil.getString(key: HiveUtil.guesturePasswdKey);
+  bool _isEditMode =
+      HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
+          HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!.isNotEmpty;
   late final bool _isUseBiometric =
-      _isEditMode && HiveUtil.getBool(key: HiveUtil.biometricEnableKey);
+      _isEditMode && HiveUtil.getBool(key: HiveUtil.enableBiometricKey);
   late final GestureNotifier _notifier = _isEditMode
       ? GestureNotifier(status: GestureStatus.verify, gestureText: "绘制旧手势密码")
       : GestureNotifier(status: GestureStatus.create, gestureText: "绘制新手势密码");
@@ -124,7 +126,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
                   padding: 60,
                   roundSpace: 40,
                   defaultColor: Colors.grey.withOpacity(0.5),
-                  selectedColor: AppTheme.themeColor,
+                  selectedColor: Theme.of(context).primaryColor,
                   failedColor: Colors.redAccent,
                   disableColor: Colors.grey,
                   solidRadiusRatio: 0.3,
@@ -223,7 +225,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
               Navigator.pop(context);
             });
             HiveUtil.put(
-                key: HiveUtil.lockPinKey,
+                key: HiveUtil.guesturePasswdKey,
                 value: GestureUnlockView.selectedToString(selected));
           } else {
             setState(() {

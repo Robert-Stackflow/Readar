@@ -60,11 +60,11 @@ class S {
     );
   }
 
-  /// `Content Center`
-  String get contentCenter {
+  /// `Content`
+  String get content {
     return Intl.message(
-      'Content Center',
-      name: 'contentCenter',
+      'Content',
+      name: 'content',
       desc: '',
       args: [],
     );
@@ -180,6 +180,16 @@ class S {
     );
   }
 
+  /// `Service`
+  String get serviceSetting {
+    return Intl.message(
+      'Service',
+      name: 'serviceSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Extension`
   String get extensionSetting {
     return Intl.message(
@@ -200,21 +210,21 @@ class S {
     );
   }
 
-  /// `Privacy`
-  String get privacySetting {
-    return Intl.message(
-      'Privacy',
-      name: 'privacySetting',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Operation`
   String get operationSetting {
     return Intl.message(
       'Operation',
       name: 'operationSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy`
+  String get privacySetting {
+    return Intl.message(
+      'Privacy',
+      name: 'privacySetting',
       desc: '',
       args: [],
     );
@@ -390,11 +400,21 @@ class S {
     );
   }
 
-  /// `Theme Color`
-  String get themeColor {
+  /// `Theme Setting`
+  String get themeSetting {
     return Intl.message(
-      'Theme Color',
-      name: 'themeColor',
+      'Theme Setting',
+      name: 'themeSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Theme`
+  String get selectTheme {
+    return Intl.message(
+      'Select Theme',
+      name: 'selectTheme',
       desc: '',
       args: [],
     );
@@ -405,6 +425,36 @@ class S {
     return Intl.message(
       'Theme Mode',
       name: 'themeMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Primary Color`
+  String get primaryColor {
+    return Intl.message(
+      'Primary Color',
+      name: 'primaryColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Light Theme`
+  String get lightTheme {
+    return Intl.message(
+      'Light Theme',
+      name: 'lightTheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dark Theme`
+  String get darkTheme {
+    return Intl.message(
+      'Dark Theme',
+      name: 'darkTheme',
       desc: '',
       args: [],
     );
@@ -421,30 +471,50 @@ class S {
   }
 
   /// `Show Navigation Bar`
-  String get showNavBar {
+  String get showNavigationBar {
     return Intl.message(
       'Show Navigation Bar',
-      name: 'showNavBar',
+      name: 'showNavigationBar',
       desc: '',
       args: [],
     );
   }
 
-  /// `Star Nav`
-  String get starNav {
+  /// `Entries displayed in navigation bar`
+  String get navigationBarEntries {
     return Intl.message(
-      'Star Nav',
-      name: 'starNav',
+      'Entries displayed in navigation bar',
+      name: 'navigationBarEntries',
       desc: '',
       args: [],
     );
   }
 
-  /// `Read Later Nav`
-  String get readLaterNav {
+  /// `Entries displayed in sidebar`
+  String get sidebarEntries {
     return Intl.message(
-      'Read Later Nav',
-      name: 'readLaterNav',
+      'Entries displayed in sidebar',
+      name: 'sidebarEntries',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All entries have been moved to the sidebar, and the navigation bar will no longer be displayed.`
+  String get allEntriesHidddenTip {
+    return Intl.message(
+      'All entries have been moved to the sidebar, and the navigation bar will no longer be displayed.',
+      name: 'allEntriesHidddenTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Long press and drag an item here to move it to the end of the list.`
+  String get dragTip {
+    return Intl.message(
+      'Long press and drag an item here to move it to the end of the list.',
+      name: 'dragTip',
       desc: '',
       args: [],
     );
@@ -500,31 +570,11 @@ class S {
     );
   }
 
-  /// `Redraw Hyperlink`
-  String get articleDetailRedrawHyperLink {
-    return Intl.message(
-      'Redraw Hyperlink',
-      name: 'articleDetailRedrawHyperLink',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Show Related Articles`
   String get articleDetailShowRelated {
     return Intl.message(
       'Show Related Articles',
       name: 'articleDetailShowRelated',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `After closing, the hyperlink will no longer be redrawn in card style.`
-  String get articleDetailRedrawHyperLinkTip {
-    return Intl.message(
-      'After closing, the hyperlink will no longer be redrawn in card style.',
-      name: 'articleDetailRedrawHyperLinkTip',
       desc: '',
       args: [],
     );

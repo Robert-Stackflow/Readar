@@ -12,6 +12,7 @@ class TileList extends StatelessWidget {
     dynamic selected,
     Function onSelected, {
     required this.title,
+    required BuildContext context,
     super.key,
   }) : children = options.map(
           (t) => ItemBuilder.buildEntryItem(
@@ -21,6 +22,7 @@ class TileList extends StatelessWidget {
             onTap: () {
               onSelected(t.item2);
             },
+            context: context,
           ),
         );
 

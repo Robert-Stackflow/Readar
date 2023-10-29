@@ -1,5 +1,6 @@
 import 'package:cloudreader/Providers/global_provider.dart';
 import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
+import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Utils/locale_util.dart';
 import 'package:cloudreader/Widgets/BottomSheet/bottom_sheet_builder.dart';
 import 'package:cloudreader/Widgets/BottomSheet/tile_list.dart';
@@ -60,8 +61,8 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
                 children: [
-                  const SizedBox(height: 10),
                   ItemBuilder.buildEntryItem(
+                    context: context,
                     title: S.current.language,
                     tip: LocaleUtil.getLabel(globalProvider.locale)!,
                     topRadius: true,
@@ -77,28 +78,32 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                             globalProvider.locale = item2;
                             Navigator.pop(context);
                           },
+                          context: context,
                           title: S.current.chooseLanguage,
                         ),
                       );
                     },
                   ),
                   const SizedBox(height: 10),
+                  ItemBuilder.buildCaptionItem(
+                      context: context, title: S.current.themeSetting),
                   ItemBuilder.buildEntryItem(
-                    title: S.current.themeColor,
-                    tip: "森林绿",
-                    topRadius: true,
-                    onTap: () {},
+                    context: context,
+                    title: S.current.selectTheme,
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed(SelectThemeScreen.routeName);
+                    },
                   ),
                   ItemBuilder.buildEntryItem(
+                    context: context,
                     title: S.current.themeMode,
                     tip: S.current.followSystem,
-                    bottomRadius: true,
                     onTap: () {},
                   ),
-                  const SizedBox(height: 10),
                   ItemBuilder.buildEntryItem(
+                    context: context,
                     title: S.current.bottomNavigationBarSetting,
-                    topRadius: true,
                     bottomRadius: true,
                     onTap: () {
                       setState(() {
@@ -109,37 +114,34 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                   ),
                   const SizedBox(height: 10),
                   ItemBuilder.buildCaptionItem(
-                    title: S.current.articleDetailSetting,
-                    topRadius: true,
-                  ),
+                      context: context, title: S.current.articleDetailSetting),
                   ItemBuilder.buildEntryItem(
+                    context: context,
                     title: S.current.articleDetailViewOption,
                     tip: "左右滑动-卡片式布局",
                     onTap: () {},
                   ),
                   ItemBuilder.buildEntryItem(
+                    context: context,
                     title: S.current.articleDetailMetaSetting,
                     onTap: () {},
                   ),
                   ItemBuilder.buildEntryItem(
+                    context: context,
                     title: S.current.articleDetailHeaderImageDisplayMode,
                     tip: "全文图片轮播",
                     onTap: () {},
                   ),
                   ItemBuilder.buildEntryItem(
+                    context: context,
                     title: S.current.articleDetailVideoDisplayMode,
                     tip: "截取图片",
                     onTap: () {},
                   ),
                   ItemBuilder.buildRadioItem(
+                    context: context,
                     title: S.current.articleDetailShowRelated,
                     value: false,
-                    onTap: () {},
-                  ),
-                  ItemBuilder.buildRadioItem(
-                    title: S.current.articleDetailRedrawHyperLink,
-                    value: false,
-                    description: S.current.articleDetailRedrawHyperLinkTip,
                     bottomRadius: true,
                     onTap: () {},
                   ),

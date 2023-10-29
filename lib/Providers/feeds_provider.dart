@@ -151,7 +151,7 @@ class FeedsProvider with ChangeNotifier {
       _deleted[id] = source!;
     }
     await batch.commit(noResult: true);
-    Global.feedsProvider.initAll();
+    Global.feedContentProvider.initAll();
     notifyListeners();
   }
 

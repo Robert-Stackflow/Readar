@@ -107,7 +107,7 @@ class ListBottomSheetState extends State<ListBottomSheet> {
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: isSelected ? AppTheme.themeColor : AppTheme.white,
+        color: isSelected ? Theme.of(context).primaryColor : AppTheme.white,
         boxShadow: <BoxShadow>[
           BoxShadow(
               color: Colors.grey.withOpacity(0.1),
@@ -121,8 +121,8 @@ class ListBottomSheetState extends State<ListBottomSheet> {
           ? RadioItem<int>(
               contentPadding: EdgeInsets.zero,
               enableFeedback: true,
-              selectedTileColor: AppTheme.themeColor,
-              activeColor: AppTheme.themeColor,
+              selectedTileColor: Theme.of(context).primaryColor,
+              activeColor: Theme.of(context).primaryColor,
               title: Center(
                 child: Text(
                   label,
@@ -164,8 +164,8 @@ class ListBottomSheetState extends State<ListBottomSheet> {
           : RadioItem<int>(
               contentPadding: EdgeInsets.zero,
               enableFeedback: true,
-              selectedTileColor: AppTheme.themeColor,
-              activeColor: AppTheme.themeColor,
+              selectedTileColor: Theme.of(context).primaryColor,
+              activeColor: Theme.of(context).primaryColor,
               title: Center(
                 child: Text(
                   label,

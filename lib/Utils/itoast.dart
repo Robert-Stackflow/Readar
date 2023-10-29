@@ -10,12 +10,13 @@ class IToast {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
-          color: AppTheme.white,
+          color: Theme.of(context).canvasColor,
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                offset: const Offset(1.0, 1.0),
-                blurRadius: 4.0),
+              color: Theme.of(context).primaryColor.withOpacity(0.2),
+              offset: const Offset(1.0, 1.0),
+              blurRadius: 4.0,
+            ),
           ],
         ),
         child: Row(
@@ -23,10 +24,8 @@ class IToast {
           children: [
             Text(
               text,
-              style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: AppTheme.darkerText),
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
             ),
           ],
         ),

@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'package:cloudreader/Providers/feed_content_provider.dart';
-import 'package:cloudreader/Utils/iprint.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../Models/feed.dart';
@@ -14,7 +13,6 @@ import '../../Models/rss_item.dart';
 import '../../Providers/feeds_provider.dart';
 import '../../Providers/global.dart';
 import '../../Providers/items_provider.dart';
-import '../../Providers/sync_control.dart';
 import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
 import '../../Widgets/Item/article_item.dart';
 
@@ -33,7 +31,7 @@ class ArticleScreen extends StatefulWidget {
 
   final ScrollTopNotifier scrollTopNotifier;
 
-  static const String routeName = "/nav/home";
+  static const String routeName = "/nav/article";
 
   @override
   State<ArticleScreen> createState() => _ArticleScreenState();
@@ -41,7 +39,53 @@ class ArticleScreen extends StatefulWidget {
 
 class _ArticleScreenState extends State<ArticleScreen>
     with TickerProviderStateMixin {
-  DateTime? _lastLoadedMore;
+  DateTime? _lastLoadedMoreTime;
+  late RefreshController _refreshController;
+
+  @override
+  void initState() {
+    if (Platform.isAndroid) {
+      SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark);
+      SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+    }
+    super.initState();
+    widget.scrollTopNotifier.addListener(_onScrollTop);
+    _refreshController = RefreshController(initialRefresh: false);
+  }
+
+  @override
+  void dispose() {
+    widget.scrollTopNotifier.removeListener(_onScrollTop);
+    super.dispose();
+  }
+
+  FeedContent getFeed() {
+    return ModalRoute.of(context)?.settings.arguments != null
+        ? Global.feedContentProvider.source
+        : Global.feedContentProvider.all;
+  }
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(const Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    var feed = getFeed();
+    if (feed.loading) {
+      return;
+    } else if (feed.allLoaded) {
+      _refreshController.loadNoData();
+    } else if ((_lastLoadedMoreTime == null ||
+        DateTime.now().difference(_lastLoadedMoreTime!).inSeconds > 1)) {
+      _lastLoadedMoreTime = DateTime.now();
+      feed.loadMore().then((value) => _refreshController.loadComplete());
+    }
+  }
 
   void _onScrollTop() {
     var expectedCanPop = widget.scrollTopNotifier.index == 1;
@@ -54,31 +98,6 @@ class _ArticleScreenState extends State<ArticleScreen>
     }
   }
 
-  @override
-  void initState() {
-    if (Platform.isAndroid) {
-      SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark);
-      SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-      // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    }
-    super.initState();
-    widget.scrollTopNotifier.addListener(_onScrollTop);
-  }
-
-  @override
-  void dispose() {
-    widget.scrollTopNotifier.removeListener(_onScrollTop);
-    super.dispose();
-  }
-
-  FeedContent getFeed() {
-    return ModalRoute.of(context)?.settings.arguments != null
-        ? Global.feedsProvider.source
-        : Global.feedsProvider.all;
-  }
-
   bool _onScroll(ScrollNotification scrollInfo) {
     var feed = getFeed();
     if (!ModalRoute.of(context)!.isCurrent ||
@@ -89,9 +108,9 @@ class _ArticleScreenState extends State<ArticleScreen>
     }
     if (scrollInfo.metrics.extentAfter == 0.0 &&
         scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.8 &&
-        (_lastLoadedMore == null ||
-            DateTime.now().difference(_lastLoadedMore!).inSeconds > 1)) {
-      _lastLoadedMore = DateTime.now();
+        (_lastLoadedMoreTime == null ||
+            DateTime.now().difference(_lastLoadedMoreTime!).inSeconds > 1)) {
+      _lastLoadedMoreTime = DateTime.now();
       feed.loadMore();
     }
     return false;
@@ -99,111 +118,117 @@ class _ArticleScreenState extends State<ArticleScreen>
 
   @override
   Widget build(BuildContext context) {
-    final itemList = Consumer<FeedContentProvider>(
-      builder: (context, feedsProvider, child) {
-        var feed = getFeed();
-        IPrint.debug(feed.iids);
-        return SliverList(
-          delegate: SliverChildBuilderDelegate((content, index) {
-            return Selector2<ItemsProvider, FeedsProvider,
-                Tuple2<RSSItem, Feed>>(
-              selector: (context, itemsProvider, sourcesProvider) {
-                var item = itemsProvider.getItem(feed.iids[index]);
-                var source = sourcesProvider.getSource(item.source);
-                return Tuple2(item, source);
-              },
-              builder: (context, tuple, child) =>
-                  ArticleItem(tuple.item1, tuple.item2, () {}),
-            );
-          }, childCount: feed.iids.length),
-        );
-      },
-    );
-    return NotificationListener<ScrollNotification>(
-      onNotification: _onScroll,
-      child: Theme(
-        data: ThemeData(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
-        child: CupertinoScrollbar(
-          child: ScrollConfiguration(
-            behavior: NoShadowScrollBehavior(),
-            child: CustomScrollView(
-              slivers: [
-                _buildBar(),
-                const SyncControl(),
-                itemList,
-              ],
-            ),
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: ScrollConfiguration(
+        behavior: NoShadowScrollBehavior(),
+        child: SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: true,
+          header: MaterialClassicHeader(color: Theme.of(context).primaryColor),
+          footer: CustomFooter(
+            builder: (BuildContext context, LoadStatus? mode) {
+              Widget body;
+              if (mode == LoadStatus.idle) {
+                body = const Text("pull up load");
+              } else if (mode == LoadStatus.loading) {
+                body = const CupertinoActivityIndicator();
+              } else if (mode == LoadStatus.failed) {
+                body = const Text("Load Failed!Click retry!");
+              } else if (mode == LoadStatus.canLoading) {
+                body = const Text("release to load more");
+              } else {
+                body = const Text("No more Data");
+              }
+              return SizedBox(
+                height: 55.0,
+                child: Center(child: body),
+              );
+            },
           ),
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoading: _onLoading,
+          child: _buildList(),
         ),
       ),
     );
   }
 
-  Widget _buildBar() {
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const SizedBox(width: 5),
-            IconButton(
+  Widget _buildList() {
+    var feed = getFeed();
+    return ListView.builder(
+      itemCount: feed.iids.length,
+      itemBuilder: (content, index) {
+        return Selector2<ItemsProvider, FeedsProvider, Tuple2<RSSItem, Feed>>(
+          selector: (context, itemsProvider, sourcesProvider) {
+            var item = itemsProvider.getItem(feed.iids[index]);
+            var source = sourcesProvider.getSource(item.source);
+            return Tuple2(item, source);
+          },
+          builder: (context, tuple, child) =>
+              ArticleItem(tuple.item1, tuple.item2, () {}),
+        );
+      },
+    );
+  }
+
+  bool _isNavigationBarEntry() {
+    String? name = ModalRoute.of(context)!.settings.name;
+    Object? arguments = ModalRoute.of(context)!.settings.arguments;
+    if (name != null && arguments != null && name == "isNavigationBarEntry") {
+      return arguments as bool;
+    } else {
+      return true;
+    }
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      elevation: 0,
+      leading: _isNavigationBarEntry()
+          ? IconButton(
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
-              icon: const Icon(
-                Icons.dehaze_rounded,
-                size: 23,
-              ),
+              icon:
+                  Icon(Icons.menu_rounded, color: IconTheme.of(context).color),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
-            ),
-            Expanded(
-              child: Container(),
-            ),
-            IconButton(
+            )
+          : IconButton(
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
-              icon: const Icon(
-                Icons.headset_outlined,
-                size: 23,
-              ),
-              onPressed: () {},
+              icon: Icon(Icons.arrow_back_rounded,
+                  color: IconTheme.of(context).color),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-            IconButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              icon: const Icon(
-                Icons.search_rounded,
-                size: 25,
-              ),
-              onPressed: () {},
-            ),
-            IconButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              icon: const Icon(
-                Icons.done_all_rounded,
-                size: 23,
-              ),
-              onPressed: () {},
-            ),
-            IconButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              icon: const Icon(
-                Icons.filter_list_rounded,
-                size: 25,
-              ),
-              onPressed: () {},
-            ),
-            const SizedBox(width: 5),
-          ],
+      actions: [
+        IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          icon:
+              Icon(Icons.done_all_rounded, color: IconTheme.of(context).color),
+          onPressed: () {},
         ),
-      ),
+        IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          icon: Icon(Icons.search_rounded, color: IconTheme.of(context).color),
+          onPressed: () {},
+        ),
+        IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          icon: Icon(Icons.filter_list_rounded,
+              color: IconTheme.of(context).color),
+          onPressed: () {},
+        ),
+        const SizedBox(width: 5),
+      ],
     );
   }
 }

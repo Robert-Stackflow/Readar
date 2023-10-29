@@ -1,4 +1,4 @@
-import 'package:cloudreader/Models/nav_data.dart';
+import 'package:cloudreader/Models/nav_entry.dart';
 import 'package:cloudreader/Providers/global.dart';
 import 'package:cloudreader/Providers/global_provider.dart';
 import 'package:cloudreader/Utils/itoast.dart';
@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
-import '../../Utils/theme.dart';
 import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
 import '../../Widgets/Draggable/drag_and_drop_lists.dart';
-import '../../Widgets/Item/entry_item.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
@@ -33,50 +31,59 @@ class _NavSettingScreenState extends State<NavSettingScreen>
   @override
   initState() {
     super.initState();
-    initList();
-    updateNavBar();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initList();
+      updateNavBar();
+    });
   }
 
   void initList() {
-    List<NavData> shownNavs = NavData.getShownNavs();
-    List<NavData> hiddenNavs = NavData.getHiddenNavs();
+    List<NavEntry> navigationBarEntries = NavEntry.getNavigationBarEntries();
+    List<NavEntry> sidebarEntries = NavEntry.getSidebarEntries();
     _contents = <DragAndDropList>[
       DragAndDropList(
         canDrag: false,
         header: ItemBuilder.buildCaptionItem(
-          title: _navHasItem ? "显示在导航栏的入口" : "所有入口均移至侧边栏，导航栏将不再显示",
-          topRadius: true,
-        ),
+            context: context,
+            title: _navHasItem
+                ? S.current.navigationBarEntries
+                : S.current.allEntriesHidddenTip),
         lastTarget: ItemBuilder.buildCaptionItem(
-          title: "长按项目拖动到此处，将其移至列表末尾",
-          bottomRadius: true,
-        ),
+            context: context,
+            title: S.current.dragTip,
+            topRadius: false,
+            bottomRadius: true),
         contentsWhenEmpty: Container(),
         children: List.generate(
-          shownNavs.length,
+          navigationBarEntries.length,
           (index) => DragAndDropItem(
-            child: EntryItem(
-              title: NavData.getLabel(shownNavs[index].id),
+            child: ItemBuilder.buildEntryItem(
+              context: context,
+              title: NavEntry.getLabel(navigationBarEntries[index].id),
               trailing: Icons.dehaze_rounded,
             ),
-            data: shownNavs[index],
+            data: navigationBarEntries[index],
           ),
         ),
       ),
       DragAndDropList(
         canDrag: false,
-        header:
-            ItemBuilder.buildCaptionItem(title: "显示在侧边栏的入口", topRadius: true),
+        header: ItemBuilder.buildCaptionItem(
+            context: context, title: S.current.sidebarEntries),
         lastTarget: ItemBuilder.buildCaptionItem(
-            title: "长按项目拖动到此处，将其移至列表末尾", bottomRadius: true),
+            context: context,
+            title: S.current.dragTip,
+            topRadius: false,
+            bottomRadius: true),
         children: List.generate(
-          hiddenNavs.length,
+          sidebarEntries.length,
           (index) => DragAndDropItem(
-            child: EntryItem(
-              title: NavData.getLabel(hiddenNavs[index].id),
+            child: ItemBuilder.buildEntryItem(
+              context: context,
+              title: NavEntry.getLabel(sidebarEntries[index].id),
               trailing: Icons.dehaze_rounded,
             ),
-            data: hiddenNavs[index],
+            data: sidebarEntries[index],
           ),
         ),
       ),
@@ -89,35 +96,34 @@ class _NavSettingScreenState extends State<NavSettingScreen>
       _navigationBarItemList = [];
       for (DragAndDropItem item in _contents[0].children) {
         _navigationBarItemList.add(SalomonBottomBarItem(
-            icon: Icon(NavData.getIcon((item.data as NavData).id)),
-            title: Text(NavData.getLabel((item.data as NavData).id))));
+            icon: Icon(NavEntry.getIcon((item.data as NavEntry).id)),
+            title: Text(NavEntry.getLabel((item.data as NavEntry).id))));
       }
       _navHasItem = _navigationBarItemList.isNotEmpty;
     });
     _contents[0].header = ItemBuilder.buildCaptionItem(
-      title: _navHasItem ? "显示在导航栏的入口" : "所有入口均移至侧边栏，导航栏将不再显示",
-      topRadius: true,
-    );
+        context: context,
+        title: _navHasItem ? "显示在导航栏的入口" : "所有入口均移至侧边栏，导航栏将不再显示");
   }
 
   void persist() {
-    List<NavData> navs = [];
+    List<NavEntry> navs = [];
     int cur = 0;
     for (DragAndDropItem item in _contents[0].children) {
-      NavData data = item.data;
+      NavEntry data = item.data;
       data.visible = true;
       data.index = cur;
       cur += 1;
       navs.add(data);
     }
     for (DragAndDropItem item in _contents[1].children) {
-      NavData data = item.data;
+      NavEntry data = item.data;
       data.visible = false;
       data.index = cur;
       cur += 1;
       navs.add(data);
     }
-    Global.globalProvider.navData = navs;
+    Global.globalProvider.navEntries = navs;
   }
 
   @override
@@ -140,7 +146,8 @@ class _NavSettingScreenState extends State<NavSettingScreen>
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       child: ItemBuilder.buildRadioItem(
-                        title: S.current.showNavBar,
+                        context: context,
+                        title: S.current.showNavigationBar,
                         value: globalProvider.showNavigationBar,
                         topRadius: true,
                         bottomRadius: true,
@@ -174,8 +181,8 @@ class _NavSettingScreenState extends State<NavSettingScreen>
               margin: const EdgeInsets.all(10),
               items: _navigationBarItemList,
               currentIndex: _selectedIndex,
-              backgroundColor: AppTheme.white,
-              selectedItemColor: AppTheme.themeColor,
+              backgroundColor: Theme.of(context).canvasColor,
+              selectedItemColor: Theme.of(context).primaryColor,
               onTap: (index) => setState(() => _selectedIndex = index),
             ),
           ),
@@ -188,8 +195,8 @@ class _NavSettingScreenState extends State<NavSettingScreen>
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
     if (newListIndex == 0 &&
         oldListIndex == 1 &&
-        _contents[0].children.length >= NavData.maxShown) {
-      IToast.showTop(context, text: "导航栏最多显示${NavData.maxShown}个入口");
+        _contents[0].children.length >= NavEntry.maxShown) {
+      IToast.showTop(context, text: "导航栏最多显示${NavEntry.maxShown}个入口");
     } else {
       setState(() {
         var movedItem = _contents[oldListIndex].children.removeAt(oldItemIndex);
@@ -197,21 +204,6 @@ class _NavSettingScreenState extends State<NavSettingScreen>
       });
       persist();
       updateNavBar();
-    }
-  }
-
-  updateBottomRadius() {
-    for (DragAndDropItem widget in _contents[0].children) {
-      (widget.child as EntryItem).setBottomRadius(false);
-    }
-    for (DragAndDropItem widget in _contents[1].children) {
-      (widget.child as EntryItem).setBottomRadius(false);
-    }
-    if (_contents[0].children.isNotEmpty) {
-      (_contents[0].children.last.child as EntryItem).setBottomRadius(true);
-    }
-    if (_contents[1].children.isNotEmpty) {
-      (_contents[1].children.last.child as EntryItem).setBottomRadius(true);
     }
   }
 }

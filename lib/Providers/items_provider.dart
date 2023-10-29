@@ -39,7 +39,7 @@ class ItemsProvider with ChangeNotifier {
             Global.serviceHandler!.markUnread(item);
           }
         }
-        Global.sourcesProvider.updateUnreadCount(item.source, read ? -1 : 1);
+        Global.feedsProvider.updateUnreadCount(item.source, read ? -1 : 1);
       }
       if (starred != null) {
         item.starred = starred;
@@ -93,7 +93,7 @@ class ItemsProvider with ChangeNotifier {
       item.hasRead = true;
     }
     notifyListeners();
-    Global.sourcesProvider.updateUnreadCounts();
+    Global.feedsProvider.updateUnreadCounts();
   }
 
   Future<void> fetchItems() async {
@@ -101,7 +101,7 @@ class ItemsProvider with ChangeNotifier {
     final items = await Global.serviceHandler!.fetchItems();
     final batch = Global.db.batch();
     for (var item in items) {
-      if (!Global.sourcesProvider.has(item.source)) continue;
+      if (!Global.feedsProvider.has(item.source)) continue;
       _items[item.id] = item;
       batch.insert(
         "items",
@@ -111,8 +111,8 @@ class ItemsProvider with ChangeNotifier {
     }
     await batch.commit(noResult: true);
     // notifyListeners();
-    Global.sourcesProvider.updateWithFetchedItems(items);
-    Global.feedsProvider.addFetchedItems(items);
+    Global.feedsProvider.updateWithFetchedItems(items);
+    Global.feedContentProvider.addFetchedItems(items);
   }
 
   Future<void> syncItems() async {
@@ -144,6 +144,6 @@ class ItemsProvider with ChangeNotifier {
     }
     notifyListeners();
     await batch.commit(noResult: true);
-    await Global.sourcesProvider.updateUnreadCounts();
+    await Global.feedsProvider.updateUnreadCounts();
   }
 }

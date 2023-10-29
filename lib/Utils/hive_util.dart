@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../Models/nav_data.dart';
+import '../Models/nav_entry.dart';
 import '../Providers/global_provider.dart';
 
 class HiveUtil {
@@ -27,14 +27,16 @@ class HiveUtil {
 
   //Appearance
   static const String localeKey = "locale";
-  static const String themeColorKey = "themeColor";
-  static const String activeThemeKey = "activeTheme";
+  static const String lighthemeIdKey = "lighthemeId";
+  static const String darkThemeIdKey = "darkThemeId";
+  static const String themeModeKey = "themeMode";
+  static const String primaryColorIdKey = "primaryColorId";
+  static const String customPrimaryColorKey = "customPrimaryColor";
+  static const String customThemeListKey = "customThemeList";
   static const String showNavigationBarKey = "showNavigationBar";
-  static const String navDataKey = "navData";
+  static const String navEntriesKey = "navEntries";
   static const String articleLayoutKey = "articleLayout";
   static const String articleMetaKey = "articleMeta";
-  static const String articleShowGoToTopKey = "articleShowGoToTop";
-  static const String articleRedrawHyperlinkKey = "articleRedrawHyperlink";
 
   //AI Summary
   static const String aiSummaryEnableKey = "aiSummaryEnable";
@@ -48,12 +50,12 @@ class HiveUtil {
   static const String previewVideoKey = "previewVideo";
 
   //Privacy
-  static const String lockEnableKey = "lockEnable";
-  static const String lockPinKey = "lockPin";
-  static const String biometricEnableKey = "biometricEnable";
+  static const String enableGuesturePasswdKey = "enableGuesturePasswd";
+  static const String guesturePasswdKey = "guesturePasswd";
+  static const String enableBiometricKey = "enableBiometric";
   static const String autoLockKey = "autoLock";
   static const String autoLockTimeKey = "autoLockTime";
-  static const String safeModeKey = "safeMode";
+  static const String enableSafeModeKey = "enableSafeMode";
 
   //System
   static const String firstLoginKey = "firstLogin";
@@ -72,11 +74,11 @@ class HiveUtil {
 
   static ActiveTheme getTheme() {
     return ActiveTheme
-        .values[HiveUtil.getInt(key: HiveUtil.activeThemeKey, defaultValue: 0)];
+        .values[HiveUtil.getInt(key: HiveUtil.themeModeKey, defaultValue: 0)];
   }
 
   static void setTheme(ActiveTheme theme) {
-    HiveUtil.put(key: HiveUtil.activeThemeKey, value: theme.index);
+    HiveUtil.put(key: HiveUtil.themeModeKey, value: theme.index);
   }
 
   static Locale? stringToLocale(String? localeString) {
@@ -110,24 +112,24 @@ class HiveUtil {
       HiveUtil.put(key: HiveUtil.showNavigationBarKey, value: value);
 
   static bool shouldAutoLock() =>
-      HiveUtil.getBool(key: HiveUtil.lockEnableKey) &&
-      HiveUtil.getString(key: HiveUtil.lockPinKey) != null &&
-      HiveUtil.getString(key: HiveUtil.lockPinKey)!.isNotEmpty &&
+      HiveUtil.getBool(key: HiveUtil.enableGuesturePasswdKey) &&
+      HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
+      HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!.isNotEmpty &&
       HiveUtil.getBool(key: HiveUtil.autoLockKey);
 
-  static List<NavData> getNavData() {
-    String? json = HiveUtil.getString(key: HiveUtil.navDataKey);
+  static List<NavEntry> getNavEntries() {
+    String? json = HiveUtil.getString(key: HiveUtil.navEntriesKey);
     if (json == null || json.isEmpty) {
-      return NavData.defaultNavs;
+      return NavEntry.defaultEntries;
     } else {
       List<dynamic> list = jsonDecode(json);
-      return List<NavData>.from(
-          list.map((item) => NavData.fromJson(item)).toList());
+      return List<NavEntry>.from(
+          list.map((item) => NavEntry.fromJson(item)).toList());
     }
   }
 
-  static void setNavData(List<NavData> navs) =>
-      HiveUtil.put(key: HiveUtil.navDataKey, value: jsonEncode(navs));
+  static void setNavEntries(List<NavEntry> entries) =>
+      HiveUtil.put(key: HiveUtil.navEntriesKey, value: jsonEncode(entries));
 
   //Essential
 

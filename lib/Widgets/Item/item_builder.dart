@@ -12,6 +12,7 @@ class ItemBuilder {
     required BuildContext context,
   }) {
     return AppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       leadingWidth: 30,
       leading: Container(
@@ -19,33 +20,25 @@ class ItemBuilder {
         child: IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
-          icon: Icon(
-            leading,
-            color: AppTheme.darkerText,
-            size: 23,
-          ),
+          icon: Icon(leading, color: IconTheme.of(context).color),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      title:
-          title.isNotEmpty ? Text(title, style: AppTheme.title) : Container(),
+      title: title.isNotEmpty
+          ? Text(title, style: Theme.of(context).textTheme.titleSmall)
+          : Container(),
       actions: <Widget>[
         trailing != null
             ? IconButton(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                icon: Icon(
-                  trailing,
-                  color: AppTheme.darkerText,
-                  size: 23,
-                ),
+                icon: Icon(trailing, color: IconTheme.of(context).color),
                 onPressed: onTrailingTap,
               )
             : Container(),
       ],
-      backgroundColor: AppTheme.background,
     );
   }
 
@@ -61,6 +54,7 @@ class ItemBuilder {
     String description = "",
     Function()? onTap,
     Function(bool?)? onChanged,
+    required BuildContext context,
   }) {
     return InkWell(
       borderRadius: BorderRadius.vertical(
@@ -83,7 +77,7 @@ class ItemBuilder {
           padding: EdgeInsets.symmetric(
               vertical: description.isNotEmpty ? 15 : 8, horizontal: 10),
           decoration: BoxDecoration(
-            color: AppTheme.white,
+            color: Theme.of(context).canvasColor,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.vertical(
               top: topRadius
@@ -111,7 +105,8 @@ class ItemBuilder {
                       style: AppTheme.itemTitle,
                     ),
                     description.isNotEmpty
-                        ? Text(description, style: AppTheme.itemTip)
+                        ? Text(description,
+                            style: Theme.of(context).textTheme.bodySmall)
                         : Container(),
                   ],
                 ),
@@ -120,7 +115,7 @@ class ItemBuilder {
                 scale: 0.9,
                 child: CupertinoSwitch(
                   value: value,
-                  activeColor: AppTheme.themeColor,
+                  activeColor: Theme.of(context).primaryColor,
                   onChanged: onChanged,
                 ),
               ),
@@ -132,6 +127,7 @@ class ItemBuilder {
   }
 
   static Widget buildEntryItem({
+    required BuildContext context,
     double radius = 10,
     bool topRadius = false,
     bool bottomRadius = false,
@@ -147,11 +143,11 @@ class ItemBuilder {
   }) {
     return InkWell(
       borderRadius: BorderRadius.vertical(
-          top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
-          bottom: bottomRadius
-              ? Radius.circular(radius)
-              : const Radius.circular(0)),
-      onTap: isCaption ? null : onTap,
+        top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
+        bottom:
+            bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
+      ),
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -166,7 +162,7 @@ class ItemBuilder {
           padding: EdgeInsets.symmetric(
               vertical: isCaption ? 12 : 15, horizontal: 10),
           decoration: BoxDecoration(
-            color: AppTheme.white,
+            color: Theme.of(context).canvasColor,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.vertical(
               top: topRadius
@@ -182,7 +178,7 @@ class ItemBuilder {
             children: [
               Visibility(
                 visible: showLeading,
-                child: Icon(leading, size: 20, color: AppTheme.darkerText),
+                child: Icon(leading, size: 20),
               ),
               showLeading
                   ? const SizedBox(width: 10)
@@ -194,18 +190,19 @@ class ItemBuilder {
                     Text(
                       title,
                       style: isCaption
-                          ? AppTheme.itemTitleLittle
+                          ? Theme.of(context).textTheme.bodySmall
                           : AppTheme.itemTitle,
                     ),
                     description.isNotEmpty
-                        ? Text(description, style: AppTheme.itemTip)
+                        ? Text(description,
+                            style: Theme.of(context).textTheme.bodySmall)
                         : Container(),
                   ],
                 ),
               ),
               Text(
                 tip,
-                style: AppTheme.itemTip,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(width: 5),
               Visibility(
@@ -220,8 +217,9 @@ class ItemBuilder {
   }
 
   static Widget buildCaptionItem({
+    required BuildContext context,
     double radius = 10,
-    bool topRadius = false,
+    bool topRadius = true,
     bool bottomRadius = false,
     bool showLeading = false,
     bool showTrailing = true,
@@ -230,6 +228,7 @@ class ItemBuilder {
     IconData trailing = Icons.keyboard_arrow_right_rounded,
   }) {
     return buildEntryItem(
+      context: context,
       title: title,
       radius: radius,
       topRadius: topRadius,
@@ -240,6 +239,42 @@ class ItemBuilder {
       leading: leading,
       trailing: trailing,
       isCaption: true,
+    );
+  }
+
+  static Widget buildContainerItem({
+    double radius = 10,
+    bool topRadius = false,
+    bool bottomRadius = false,
+    required Widget child,
+    required BuildContext context,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).canvasColor,
+        borderRadius: BorderRadius.vertical(
+          top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
+          bottom:
+              bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.grey,
+              width: 0.05,
+              style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
+            ),
+            top: BorderSide(
+              color: Colors.grey,
+              width: 0.05,
+              style: topRadius ? BorderStyle.none : BorderStyle.solid,
+            ),
+          ),
+        ),
+        child: child,
+      ),
     );
   }
 }

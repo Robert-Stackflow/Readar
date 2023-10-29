@@ -1,4 +1,3 @@
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Utils/uri_util.dart';
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
@@ -46,26 +45,26 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
           behavior: NoShadowScrollBehavior(),
           child: ListView(
             children: [
-              Container(
-                alignment: Alignment.center,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
-                  'assets/screenshots/dog.png',
+                  'assets/logo.png',
+                  height: 50,
+                  width: 50,
                   fit: BoxFit.fitHeight,
-                  width: MediaQuery.of(context).size.width / 4,
                 ),
               ),
               Container(
+                margin: const EdgeInsets.only(top: 16, bottom: 8),
                 alignment: Alignment.center,
                 child: Text(
                   appName,
                   style: const TextStyle(
                     fontSize: 17,
-                    color: AppTheme.darkerText,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
               Container(
                 margin: const EdgeInsets.all(10),
                 child: ScrollConfiguration(
@@ -76,6 +75,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                     padding: EdgeInsets.zero,
                     children: [
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.contributor,
                         topRadius: true,
                         showLeading: true,
@@ -83,30 +83,35 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         leading: Icons.supervised_user_circle_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.changeLog,
                         showLeading: true,
                         onTap: () {},
                         leading: Icons.merge_type_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.participateInTranslation,
                         onTap: () {},
                         showLeading: true,
                         leading: Icons.translate_rounded,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.bugReport,
                         onTap: () {},
                         showLeading: true,
                         leading: Icons.bug_report_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.license,
                         showLeading: true,
                         onTap: () {},
                         leading: Icons.local_library_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.githubRepo,
                         onTap: () {
                           UriUtil.launchUrlUri(
@@ -118,6 +123,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                       ),
                       const SizedBox(height: 10),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.privacyPolicy,
                         showLeading: true,
                         onTap: () {},
@@ -125,12 +131,14 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         leading: Icons.group_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.rate,
                         showLeading: true,
                         onTap: () {},
                         leading: Icons.rate_review_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.contact,
                         onTap: () {
                           UriUtil.launchEmailUri("2014027378@qq.com");
@@ -139,6 +147,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         leading: Icons.contact_support_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.officialWebsite,
                         onTap: () {
                           UriUtil.launchUrlUri(
@@ -148,6 +157,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         leading: Icons.language_rounded,
                       ),
                       ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.telegramGroup,
                         onTap: () {
                           UriUtil.launchUrlUri("https://t.me/CloudReader");

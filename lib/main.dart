@@ -2,16 +2,18 @@ import 'dart:io';
 
 import 'package:cloudreader/Api/service_handler.dart';
 import 'package:cloudreader/Providers/global_provider.dart';
-import 'package:cloudreader/Screens/Content/tts_screen.dart';
+import 'package:cloudreader/Screens/Content/article_detail_screen.dart';
 import 'package:cloudreader/Screens/Lock/pin_change_screen.dart';
 import 'package:cloudreader/Screens/Navigation/read_later_screen.dart';
 import 'package:cloudreader/Screens/Navigation/star_screen.dart';
+import 'package:cloudreader/Screens/Navigation/tts_screen.dart';
 import 'package:cloudreader/Screens/Setting/appearance_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
+import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Utils/hive_util.dart';
 import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +23,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Bridge/android_back_desktop.dart';
+import 'Channel/android_back_desktop.dart';
 import 'Providers/global.dart';
 import 'Screens/Lock/pin_verify_screen.dart';
 import 'Screens/Navigation/article_screen.dart';
 import 'Screens/Navigation/feed_screen.dart';
 import 'Screens/Setting/about_setting_screen.dart';
 import 'Screens/Setting/general_setting_screen.dart';
-import 'Screens/Setting/privacy_setting_screen.dart';
+import 'Screens/Setting/service_setting_screen.dart';
 import 'Screens/main_screen.dart';
 import 'Utils/store.dart';
 import 'generated/l10n.dart';
@@ -71,8 +73,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: Global.globalProvider),
+        ChangeNotifierProvider.value(value: Global.feedContentProvider),
         ChangeNotifierProvider.value(value: Global.feedsProvider),
-        ChangeNotifierProvider.value(value: Global.sourcesProvider),
         ChangeNotifierProvider.value(value: Global.groupsProvider),
         ChangeNotifierProvider.value(value: Global.itemsProvider),
         ChangeNotifierProvider.value(value: Global.syncProvider),
@@ -80,8 +82,8 @@ class MyApp extends StatelessWidget {
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
           title: 'Cloud Reader',
-          theme: ThemeData(scaffoldBackgroundColor: AppTheme.background),
-          darkTheme: ThemeData.dark(),
+          theme: AppTheme.getTheme(isDarkMode: false),
+          darkTheme: AppTheme.getTheme(isDarkMode: true),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             S.delegate,
@@ -102,17 +104,17 @@ class MyApp extends StatelessWidget {
           },
           home: WillPopScope(
             onWillPop: () async {
-              AndroidBackDesktop.backToDesktop();
+              AndroidBackDesktopChannel.backToDesktop();
               return false;
             },
             child: const MainScreen(),
           ),
-          builder: (context, widget) {
-            return MediaQuery(
-              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-              child: widget!,
-            );
-          },
+          // builder: (context, widget) {
+          //   return MediaQuery(
+          //     data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          //     child: widget!,
+          //   );
+          // },
           routes: {
             TTSScreen.routeName: (context) => const TTSScreen(),
             ArticleScreen.routeName: (context) =>
@@ -121,6 +123,8 @@ class MyApp extends StatelessWidget {
             PinChangeScreen.routeName: (context) => const PinChangeScreen(),
             ReadLaterScreen.routeName: (context) => const ReadLaterScreen(),
             NavSettingScreen.routeName: (context) => const NavSettingScreen(),
+            SelectThemeScreen.routeName: (context) => const SelectThemeScreen(),
+            ArticleDetailScreen.routeName: (context) => ArticleDetailScreen(),
             ExperimentSettingScreen.routeName: (context) =>
                 const ExperimentSettingScreen(),
             FeedScreen.routeName: (context) => const FeedScreen(),
@@ -130,14 +134,14 @@ class MyApp extends StatelessWidget {
                 const OperationSettingScreen(),
             BackupSettingScreen.routeName: (context) =>
                 const BackupSettingScreen(),
+            ServiceSettingScreen.routeName: (context) =>
+                const ServiceSettingScreen(),
             GeneralSettingScreen.routeName: (context) =>
                 const GeneralSettingScreen(),
             AppearanceSettingScreen.routeName: (context) =>
                 const AppearanceSettingScreen(),
             ExtensionSettingScreen.routeName: (context) =>
                 const ExtensionSettingScreen(),
-            PrivacySettingScreen.routeName: (context) =>
-                const PrivacySettingScreen(),
             PinVerifyScreen.routeName: (context) => PinVerifyScreen(
                   onSuccess:
                       ModalRoute.of(context)!.settings.arguments as Function(),

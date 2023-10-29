@@ -46,50 +46,47 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
-                const SizedBox(height: 10),
-                ItemBuilder.buildEntryItem(
-                  title: "默认外部浏览器",
-                  bottomRadius: true,
-                  topRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
-                  title: S.current.ttsSetting,
-                  topRadius: true,
-                ),
+                    context: context, title: S.current.ttsSetting),
                 ItemBuilder.buildRadioItem(
+                  context: context,
                   title: S.current.ttsEnable,
                   value: true,
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
+                  context: context,
                   title: S.current.ttsEngine,
                   tip: "默认引擎",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
+                  context: context,
                   title: S.current.ttsSpeed,
                   tip: "1.0x",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
+                  context: context,
                   title: S.current.ttsSystemSetting,
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
+                  context: context,
                   title: S.current.ttsSpot,
                   value: true,
                   description: S.current.ttsSpotTip,
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
+                  context: context,
                   title: S.current.ttsAutoHaveRead,
                   value: true,
                   description: S.current.ttsAutoHaveReadTip,
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(
+                  context: context,
                   title: S.current.ttsWakeLock,
                   value: true,
                   description: S.current.ttsWakeLockTip,
@@ -98,6 +95,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
+                  context: context,
                   title: S.current.checkUpdates,
                   topRadius: true,
                   bottomRadius: true,
@@ -110,6 +108,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
+                  context: context,
                   title: S.current.clearCache,
                   topRadius: true,
                   bottomRadius: true,

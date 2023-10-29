@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../Models/nav_data.dart';
+import '../Models/nav_entry.dart';
 import '../Utils/hive_util.dart';
 
 enum ActiveTheme {
@@ -10,6 +10,17 @@ enum ActiveTheme {
 }
 
 class GlobalProvider with ChangeNotifier {
+  Widget? _singlePage;
+
+  Widget? get singlePage => _singlePage;
+
+  set singlePage(Widget? value) {
+    if (value != _singlePage) {
+      _singlePage = value;
+      notifyListeners();
+    }
+  }
+
   bool _showNavigationBar = HiveUtil.showNavigationBar();
 
   bool get showNavigationBar => _showNavigationBar;
@@ -22,15 +33,15 @@ class GlobalProvider with ChangeNotifier {
     }
   }
 
-  List<NavData> _navData = HiveUtil.getNavData();
+  List<NavEntry> _navEntries = HiveUtil.getNavEntries();
 
-  List<NavData> get navData => _navData;
+  List<NavEntry> get navEntries => _navEntries;
 
-  set navData(List<NavData> value) {
-    if (value != _navData) {
-      _navData = value;
+  set navEntries(List<NavEntry> value) {
+    if (value != _navEntries) {
+      _navEntries = value;
       notifyListeners();
-      HiveUtil.setNavData(value);
+      HiveUtil.setNavEntries(value);
     }
   }
 

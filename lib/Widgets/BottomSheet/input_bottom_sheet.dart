@@ -42,9 +42,9 @@ class InputBottomSheetState extends State<InputBottomSheet> {
       child: Container(
         height: 100,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: const BoxDecoration(
-          color: AppTheme.background,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).canvasColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,7 +55,7 @@ class InputBottomSheetState extends State<InputBottomSheet> {
                 controller: controller,
                 maxLines: widget.maxLines,
                 minLines: widget.minLines,
-                cursorColor: AppTheme.themeColor,
+                cursorColor: Theme.of(context).primaryColor,
                 cursorHeight: 22,
                 cursorRadius: const Radius.circular(3),
                 decoration: InputDecoration(
@@ -75,7 +75,7 @@ class InputBottomSheetState extends State<InputBottomSheet> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: AppTheme.themeColor,
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../Utils/theme.dart';
-
 class BottomSheetBuilder {
   static void showListBottomSheet(
     BuildContext context,
     WidgetBuilder builder, {
-    Color? backgroundColor = AppTheme.background,
+    Color? backgroundColor,
     ShapeBorder shape = const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
   }) {
+    // backgroundColor ??= Theme.of(context).scaffoldBackgroundColor;
     showModalBottomSheet(
       context: context,
       backgroundColor: backgroundColor,

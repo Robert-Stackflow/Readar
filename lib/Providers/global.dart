@@ -17,14 +17,16 @@ import 'items_provider.dart';
 abstract class Global {
   static bool _initialized = false;
   static GlobalProvider globalProvider = GlobalProvider();
-  static FeedsProvider sourcesProvider = FeedsProvider();
+  static FeedsProvider feedsProvider = FeedsProvider();
   static ItemsProvider itemsProvider = ItemsProvider();
-  static FeedContentProvider feedsProvider = FeedContentProvider();
+  static FeedContentProvider feedContentProvider = FeedContentProvider();
   static GroupsProvider groupsProvider = GroupsProvider();
   static SyncProvider syncProvider = SyncProvider();
   static ServiceHandler? serviceHandler;
   static late Database db;
   static late Jaguar server;
+  static const String address = "127.0.0.1";
+  static const int port = 4567;
 
   static void init() {
     assert(!_initialized);
@@ -59,11 +61,11 @@ abstract class Global {
             .millisecondsSinceEpoch,
       ],
     );
-    server = Jaguar(address: "127.0.0.1", port: 4567);
+    server = Jaguar(address: Global.address, port: Global.port);
     server.addRoute(serveFlutterAssets());
     await server.serve();
-    await sourcesProvider.init();
-    await feedsProvider.all.init();
+    await feedsProvider.init();
+    await feedContentProvider.all.init();
     if (globalProvider.syncOnStart) await syncProvider.syncWithService();
   }
 

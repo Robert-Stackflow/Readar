@@ -10,15 +10,16 @@ import '../../Models/feed.dart';
 import '../../Models/rss_item.dart';
 import '../../Providers/feed_content_provider.dart';
 import '../../Providers/global.dart';
+import '../../Screens/Content/article_detail_screen.dart';
 import 'dismissible_background.dart';
 import 'favicon.dart';
 
 class ArticleItem extends StatefulWidget {
   final RSSItem item;
-  final Feed source;
+  final Feed feed;
   final Function openActionSheet;
 
-  const ArticleItem(this.item, this.source, this.openActionSheet, {super.key});
+  const ArticleItem(this.item, this.feed, this.openActionSheet, {super.key});
 
   @override
   ArticleItemState createState() => ArticleItemState();
@@ -34,19 +35,19 @@ class ArticleItemState extends State<ArticleItem> {
     if (!widget.item.hasRead) {
       Global.itemsProvider.updateItem(widget.item.id, read: true);
     }
-    if (widget.source.openTarget == SourceOpenTarget.external) {
+    if (widget.feed.openTarget == SourceOpenTarget.external) {
       launch(widget.item.link, forceSafariVC: false, forceWebView: false);
     } else {
       var isSource = Navigator.of(context).canPop();
-      // if (ArticlePage.state.currentWidget != null) {
-      //   ArticlePage.state.currentState.loadNewItem(
-      //     widget.item.id,
-      //     isSource: isSource,
-      //   );
-      // } else {
-      Navigator.of(context)
-          .pushNamed("/article", arguments: Tuple2(widget.item.id, isSource));
-      // }
+      if (ArticleDetailScreen.state.currentWidget != null) {
+        ArticleDetailScreen.state.currentState!.loadNewItem(
+          widget.item.id,
+          isSource: isSource,
+        );
+      } else {
+        Navigator.of(context).pushNamed("/article/detail",
+            arguments: Tuple2(widget.item.id, isSource));
+      }
     }
   }
 
@@ -62,7 +63,7 @@ class ArticleItemState extends State<ArticleItem> {
   static const _unreadIndicator = Padding(
     padding: EdgeInsets.symmetric(horizontal: 4),
     child: Icon(
-      CupertinoIcons.circle_fill,
+      Icons.circle_rounded,
       size: 8,
       color: Colors.amber,
     ),
@@ -70,7 +71,7 @@ class ArticleItemState extends State<ArticleItem> {
   static const _starredIndicator = Padding(
     padding: EdgeInsets.symmetric(horizontal: 4),
     child: Icon(
-      CupertinoIcons.star_fill,
+      Icons.star_rounded,
       size: 9,
       color: CupertinoColors.activeBlue,
     ),
@@ -84,14 +85,14 @@ class ArticleItemState extends State<ArticleItem> {
             : Icons.radio_button_unchecked;
       case ItemSwipeOption.toggleStar:
         return widget.item.starred
-            ? CupertinoIcons.star
-            : CupertinoIcons.star_fill;
+            ? Icons.star_outline_rounded
+            : Icons.star_rounded;
       case ItemSwipeOption.share:
-        return CupertinoIcons.share;
+        return Icons.share;
       case ItemSwipeOption.openMenu:
-        return CupertinoIcons.ellipsis;
+        return Icons.more_horiz_rounded;
       case ItemSwipeOption.openExternal:
-        return CupertinoIcons.square_arrow_right;
+        return Icons.open_in_browser_rounded;
     }
   }
 
@@ -124,9 +125,9 @@ class ArticleItemState extends State<ArticleItem> {
   Future<bool> _onDismiss(DismissDirection direction) async {
     HapticFeedback.mediumImpact();
     if (direction == DismissDirection.startToEnd) {
-      _performSwipeAction(Global.feedsProvider.swipeR);
+      _performSwipeAction(Global.feedContentProvider.swipeR);
     } else {
-      _performSwipeAction(Global.feedsProvider.swipeL);
+      _performSwipeAction(Global.feedContentProvider.swipeL);
     }
     return false;
   }
@@ -144,7 +145,7 @@ class ArticleItemState extends State<ArticleItem> {
     final _titleStyle = TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,
-      color: Global.feedsProvider.dimRead && widget.item.hasRead
+      color: Global.feedContentProvider.dimRead && widget.item.hasRead
           ? CupertinoColors.secondaryLabel.resolveFrom(context)
           : CupertinoColors.label.resolveFrom(context),
     );
@@ -159,12 +160,12 @@ class ArticleItemState extends State<ArticleItem> {
         children: [
           Expanded(
               child: Text(
-            widget.source.name,
+            widget.feed.name,
             style: _descStyle,
             overflow: TextOverflow.ellipsis,
           )),
           Row(children: [
-            if (!Global.feedsProvider.dimRead && !widget.item.hasRead)
+            if (!Global.feedContentProvider.dimRead && !widget.item.hasRead)
               _unreadIndicator,
             if (widget.item.starred) _starredIndicator,
             TimeText(widget.item.date, style: _descStyle),
@@ -180,7 +181,8 @@ class ArticleItemState extends State<ArticleItem> {
           widget.item.title,
           style: _titleStyle,
         ),
-        if (Global.feedsProvider.showSnippet && widget.item.snippet.length > 0)
+        if (Global.feedContentProvider.showSnippet &&
+            widget.item.snippet.isNotEmpty)
           Text(
             widget.item.snippet,
             style: _snippetStyle,
@@ -190,85 +192,89 @@ class ArticleItemState extends State<ArticleItem> {
       ],
     ));
     final body = GestureDetector(
-        onTapDown: (_) {
-          setState(() {
-            pressed = true;
-          });
-        },
-        onTapUp: (_) {
-          setState(() {
-            pressed = false;
-          });
-        },
-        onTapCancel: () {
-          setState(() {
-            pressed = false;
-          });
-        },
-        onLongPress: _openActionSheet,
-        onTap: _openArticle,
-        child: Container(
-            color: pressed
-                ? CupertinoColors.systemGrey4.resolveFrom(context)
-                : CupertinoColors.systemBackground.resolveFrom(context),
-            child: Column(children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 20, 8, 0),
-                      child: Favicon(widget.source),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          infoLine,
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              itemTexts,
-                              if (Global.feedsProvider.showThumb &&
-                                  widget.item.thumb != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 4),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4),
-                                    child: CachedNetworkImage(
-                                      imageUrl: widget.item.thumb ?? "",
-                                      width: 64,
-                                      height: 64,
-                                      fit: BoxFit.cover,
-                                      placeholder: _imagePlaceholderBuilder,
-                                    ),
+      onTapDown: (_) {
+        setState(() {
+          pressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          pressed = false;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          pressed = false;
+        });
+      },
+      onLongPress: _openActionSheet,
+      onTap: _openArticle,
+      child: Container(
+        color: pressed
+            ? CupertinoColors.systemGrey4.resolveFrom(context)
+            : CupertinoColors.systemBackground.resolveFrom(context),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 8, 0),
+                    child: Favicon(widget.feed),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        infoLine,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            itemTexts,
+                            if (Global.feedContentProvider.showThumb &&
+                                widget.item.thumb != null)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 4),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: CachedNetworkImage(
+                                    imageUrl: widget.item.thumb ?? "",
+                                    width: 64,
+                                    height: 64,
+                                    fit: BoxFit.cover,
+                                    placeholder: _imagePlaceholderBuilder,
                                   ),
                                 ),
-                            ],
-                          ),
-                        ],
-                      ),
+                              ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
-                color: CupertinoColors.systemBackground.resolveFrom(context),
-                padding: const EdgeInsets.only(left: 16),
-                child: Divider(
-                    color: CupertinoColors.systemGrey4.resolveFrom(context),
-                    height: 1),
-              ),
-            ])));
+            ),
+            Container(
+              color: CupertinoColors.systemBackground.resolveFrom(context),
+              padding: const EdgeInsets.only(left: 16),
+              child: Divider(
+                  color: CupertinoColors.systemGrey4.resolveFrom(context),
+                  height: 1),
+            ),
+          ],
+        ),
+      ),
+    );
     return Dismissible(
       key: Key("D-${widget.item.id}"),
       background: DismissibleBackground(
-        _getDismissIcon(Global.feedsProvider.swipeR) ?? Icons.add,
+        _getDismissIcon(Global.feedContentProvider.swipeR) ?? Icons.add,
         true,
       ),
       secondaryBackground: DismissibleBackground(
-        _getDismissIcon(Global.feedsProvider.swipeL) ?? Icons.add,
+        _getDismissIcon(Global.feedContentProvider.swipeL) ?? Icons.add,
         false,
       ),
       dismissThresholds: _dismissThresholds,

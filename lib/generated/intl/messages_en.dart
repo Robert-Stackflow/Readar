@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("About"),
+        "allEntriesHidddenTip": MessageLookupByLibrary.simpleMessage(
+            "All entries have been moved to the sidebar, and the navigation bar will no longer be displayed."),
         "appName": MessageLookupByLibrary.simpleMessage("Cloud Reader"),
         "apprearanceSetting":
             MessageLookupByLibrary.simpleMessage("Apprearance"),
@@ -31,10 +33,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Header Image Display Mode"),
         "articleDetailMetaSetting":
             MessageLookupByLibrary.simpleMessage("Meta Setting"),
-        "articleDetailRedrawHyperLink":
-            MessageLookupByLibrary.simpleMessage("Redraw Hyperlink"),
-        "articleDetailRedrawHyperLinkTip": MessageLookupByLibrary.simpleMessage(
-            "After closing, the hyperlink will no longer be redrawn in card style."),
         "articleDetailSetting":
             MessageLookupByLibrary.simpleMessage("Article Detail Setting"),
         "articleDetailShowRelated":
@@ -60,8 +58,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearCacheSuccess":
             MessageLookupByLibrary.simpleMessage("Clear cache successfully"),
         "contact": MessageLookupByLibrary.simpleMessage("Contact Us"),
-        "contentCenter": MessageLookupByLibrary.simpleMessage("Content Center"),
+        "content": MessageLookupByLibrary.simpleMessage("Content"),
         "contributor": MessageLookupByLibrary.simpleMessage("Contributor"),
+        "darkTheme": MessageLookupByLibrary.simpleMessage("Dark Theme"),
+        "dragTip": MessageLookupByLibrary.simpleMessage(
+            "Long press and drag an item here to move it to the end of the list."),
         "experimentSetting": MessageLookupByLibrary.simpleMessage("Experiment"),
         "explore": MessageLookupByLibrary.simpleMessage("Explore"),
         "extensionSetting": MessageLookupByLibrary.simpleMessage("Extension"),
@@ -73,24 +74,30 @@ class MessageLookup extends MessageLookupByLibrary {
         "highlights": MessageLookupByLibrary.simpleMessage("Highlights"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "license": MessageLookupByLibrary.simpleMessage("License"),
+        "lightTheme": MessageLookupByLibrary.simpleMessage("Light Theme"),
+        "navigationBarEntries": MessageLookupByLibrary.simpleMessage(
+            "Entries displayed in navigation bar"),
         "officialWebsite": MessageLookupByLibrary.simpleMessage("Website"),
         "operationSetting": MessageLookupByLibrary.simpleMessage("Operation"),
         "participateInTranslation":
             MessageLookupByLibrary.simpleMessage("Participate In Translation"),
+        "primaryColor": MessageLookupByLibrary.simpleMessage("Primary Color"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
         "privacySetting": MessageLookupByLibrary.simpleMessage("Privacy"),
         "rate": MessageLookupByLibrary.simpleMessage("Rate Us"),
         "readLater": MessageLookupByLibrary.simpleMessage("Read Later"),
-        "readLaterNav": MessageLookupByLibrary.simpleMessage("Read Later Nav"),
+        "selectTheme": MessageLookupByLibrary.simpleMessage("Select Theme"),
+        "serviceSetting": MessageLookupByLibrary.simpleMessage("Service"),
         "setting": MessageLookupByLibrary.simpleMessage("Setting"),
-        "showNavBar":
+        "showNavigationBar":
             MessageLookupByLibrary.simpleMessage("Show Navigation Bar"),
+        "sidebarEntries": MessageLookupByLibrary.simpleMessage(
+            "Entries displayed in sidebar"),
         "star": MessageLookupByLibrary.simpleMessage("Star"),
-        "starNav": MessageLookupByLibrary.simpleMessage("Star Nav"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
         "telegramGroup": MessageLookupByLibrary.simpleMessage("Telegram Group"),
-        "themeColor": MessageLookupByLibrary.simpleMessage("Theme Color"),
         "themeMode": MessageLookupByLibrary.simpleMessage("Theme Mode"),
+        "themeSetting": MessageLookupByLibrary.simpleMessage("Theme Setting"),
         "tts": MessageLookupByLibrary.simpleMessage("TTS"),
         "ttsAutoHaveRead":
             MessageLookupByLibrary.simpleMessage("Automatically mark as read"),

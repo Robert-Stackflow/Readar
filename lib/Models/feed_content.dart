@@ -83,7 +83,7 @@ class FeedContent {
     iids = items.map((i) => i.id).toList();
     loading = false;
     initialized = true;
-    Global.feedsProvider.broadcast();
+    Global.feedContentProvider.broadcast();
   }
 
   Future<void> loadMore() async {
@@ -109,7 +109,7 @@ class FeedContent {
     Global.itemsProvider.loadItems(items);
     iids.addAll(items.map((i) => i.id));
     loading = false;
-    Global.feedsProvider.broadcast();
+    Global.feedContentProvider.broadcast();
   }
 
   Future<void> setFilter(FilterType filter) async {

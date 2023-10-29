@@ -23,8 +23,8 @@ class SyncProvider with ChangeNotifier {
     if (syncing || Global.serviceHandler == null) return;
     syncing = true;
     notifyListeners();
-    var sids = Global.sourcesProvider.getSources().map((s) => s.id).toList();
-    await Global.sourcesProvider.removeSources(sids);
+    var sids = Global.feedsProvider.getSources().map((s) => s.id).toList();
+    await Global.feedsProvider.removeSources(sids);
     Global.serviceHandler?.remove();
     hasService = false;
     syncing = false;
@@ -50,7 +50,7 @@ class SyncProvider with ChangeNotifier {
     try {
       await Global.serviceHandler?.reauthenticate();
       IPrint.debug("authed");
-      await Global.sourcesProvider.updateSources();
+      await Global.feedsProvider.updateSources();
       IPrint.debug("updated");
       await Global.itemsProvider.syncItems();
       IPrint.debug("synced");

@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("关于"),
+        "allEntriesHidddenTip":
+            MessageLookupByLibrary.simpleMessage("所有入口均移至侧边栏，导航栏将不再显示"),
         "appName": MessageLookupByLibrary.simpleMessage("Cloud Reader"),
         "apprearanceSetting": MessageLookupByLibrary.simpleMessage("外观"),
         "article": MessageLookupByLibrary.simpleMessage("文章"),
@@ -30,10 +32,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("头图显示方式"),
         "articleDetailMetaSetting":
             MessageLookupByLibrary.simpleMessage("Meta设置"),
-        "articleDetailRedrawHyperLink":
-            MessageLookupByLibrary.simpleMessage("重绘超链接"),
-        "articleDetailRedrawHyperLinkTip":
-            MessageLookupByLibrary.simpleMessage("关闭后将不再重绘超链接为卡片样式"),
         "articleDetailSetting": MessageLookupByLibrary.simpleMessage("文章详情页设置"),
         "articleDetailShowRelated":
             MessageLookupByLibrary.simpleMessage("显示相关文章"),
@@ -53,8 +51,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearCache": MessageLookupByLibrary.simpleMessage("清除缓存"),
         "clearCacheSuccess": MessageLookupByLibrary.simpleMessage("清除缓存成功"),
         "contact": MessageLookupByLibrary.simpleMessage("联系我们"),
-        "contentCenter": MessageLookupByLibrary.simpleMessage("内容中心"),
+        "content": MessageLookupByLibrary.simpleMessage("内容"),
         "contributor": MessageLookupByLibrary.simpleMessage("贡献者"),
+        "darkTheme": MessageLookupByLibrary.simpleMessage("深色主题"),
+        "dragTip": MessageLookupByLibrary.simpleMessage("长按项目拖动到此处，将其移至列表末尾"),
         "experimentSetting": MessageLookupByLibrary.simpleMessage("实验室"),
         "explore": MessageLookupByLibrary.simpleMessage("探索"),
         "extensionSetting": MessageLookupByLibrary.simpleMessage("插件"),
@@ -66,23 +66,28 @@ class MessageLookup extends MessageLookupByLibrary {
         "highlights": MessageLookupByLibrary.simpleMessage("集锦"),
         "language": MessageLookupByLibrary.simpleMessage("语言"),
         "license": MessageLookupByLibrary.simpleMessage("开源许可证"),
+        "lightTheme": MessageLookupByLibrary.simpleMessage("浅色主题"),
+        "navigationBarEntries":
+            MessageLookupByLibrary.simpleMessage("显示在导航栏的入口"),
         "officialWebsite": MessageLookupByLibrary.simpleMessage("官方网站"),
         "operationSetting": MessageLookupByLibrary.simpleMessage("操作"),
         "participateInTranslation":
             MessageLookupByLibrary.simpleMessage("参与翻译"),
+        "primaryColor": MessageLookupByLibrary.simpleMessage("主色调"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("隐私政策"),
         "privacySetting": MessageLookupByLibrary.simpleMessage("隐私"),
         "rate": MessageLookupByLibrary.simpleMessage("评个分吧"),
         "readLater": MessageLookupByLibrary.simpleMessage("稍后读"),
-        "readLaterNav": MessageLookupByLibrary.simpleMessage("稍后阅读入口"),
+        "selectTheme": MessageLookupByLibrary.simpleMessage("选择主题"),
+        "serviceSetting": MessageLookupByLibrary.simpleMessage("服务"),
         "setting": MessageLookupByLibrary.simpleMessage("设置"),
-        "showNavBar": MessageLookupByLibrary.simpleMessage("显示导航栏"),
+        "showNavigationBar": MessageLookupByLibrary.simpleMessage("显示导航栏"),
+        "sidebarEntries": MessageLookupByLibrary.simpleMessage("显示在侧边栏的入口"),
         "star": MessageLookupByLibrary.simpleMessage("星标"),
-        "starNav": MessageLookupByLibrary.simpleMessage("星标入口"),
         "statistics": MessageLookupByLibrary.simpleMessage("统计"),
         "telegramGroup": MessageLookupByLibrary.simpleMessage("Telegram频道"),
-        "themeColor": MessageLookupByLibrary.simpleMessage("主题颜色"),
         "themeMode": MessageLookupByLibrary.simpleMessage("主题模式"),
+        "themeSetting": MessageLookupByLibrary.simpleMessage("主题设置"),
         "tts": MessageLookupByLibrary.simpleMessage("TTS"),
         "ttsAutoHaveRead": MessageLookupByLibrary.simpleMessage("自动标记为已读"),
         "ttsAutoHaveReadTip":
