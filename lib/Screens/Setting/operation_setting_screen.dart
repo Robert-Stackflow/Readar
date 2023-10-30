@@ -20,7 +20,7 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(
+        appBar: ItemBuilder.buildSimpleAppBar(
             title: S.current.operationSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -30,6 +30,7 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
               children: [
+                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
                     context: context, title: "文章列表快捷操作"),
                 ItemBuilder.buildEntryItem(

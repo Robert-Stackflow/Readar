@@ -1,4 +1,3 @@
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
 
 class InputBottomSheet extends StatefulWidget {
@@ -80,9 +79,7 @@ class InputBottomSheetState extends State<InputBottomSheet> {
                 ),
                 child: Text(
                   widget.buttonText,
-                  style: const TextStyle(
-                    color: AppTheme.white,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
             ),

@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../Resources/colors.dart';
-import '../Resources/styles.dart';
+import 'colors.dart';
+import 'styles.dart';
 
 class AppTheme {
   AppTheme._();
-
-  static const Color gradientColor = Color(0xFFB2C18A);
-
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color background = Color(0xFFF5F5F5);
-
-  static const Color nearlyBlue = Color(0xFF00B6F0);
-
-  static const Color darkerText = Color(0xFF17262A);
-  static const Color spacer = Color(0xFFF2F2F2);
 
   bool isDarkMode(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark;
@@ -26,6 +16,8 @@ class AppTheme {
       primaryColor: isDarkMode ? MyColors.dark_app_main : MyColors.app_main,
       hintColor: isDarkMode ? MyColors.dark_app_main : MyColors.app_main,
       indicatorColor: isDarkMode ? MyColors.dark_app_main : MyColors.app_main,
+      shadowColor:
+          isDarkMode ? MyColors.dark_shadow_color : MyColors.shadow_color,
       scaffoldBackgroundColor:
           isDarkMode ? MyColors.dark_bg_color : MyColors.bg_color,
       canvasColor:
@@ -35,26 +27,28 @@ class AppTheme {
         selectionHandleColor: MyColors.app_main,
       ),
       textTheme: TextTheme(
-        titleSmall: isDarkMode ? MyStyles.titleDark : MyStyles.title,
-        bodySmall: isDarkMode ? MyStyles.captionDark : MyStyles.caption,
+        titleSmall: isDarkMode ? MyStyles.captionDark : MyStyles.caption,
+        titleMedium: isDarkMode ? MyStyles.titleDark : MyStyles.title,
         bodyLarge: isDarkMode ? MyStyles.textDark : MyStyles.text,
-        titleMedium: isDarkMode ? MyStyles.textDarkGray12 : MyStyles.textGray12,
       ),
       inputDecorationTheme: InputDecorationTheme(
         hintStyle: isDarkMode ? MyStyles.textHint14 : MyStyles.textDarkGray14,
       ),
       appBarTheme: AppBarTheme(
         elevation: 0.0,
-        color: isDarkMode ? MyColors.dark_bg_color : Colors.white,
+        backgroundColor: isDarkMode ? MyColors.dark_appbar : MyColors.appbar,
       ),
+      errorColor: isDarkMode ? MyColors.dark_red : Colors.red,
       iconTheme: IconThemeData(
         size: 25,
-        color: isDarkMode ? MyColors.dark_text : MyColors.text,
+        color: isDarkMode ? MyColors.dark_icon_color : MyColors.icon_color,
       ),
+      dividerColor: isDarkMode ? MyColors.dark_line : MyColors.line,
       dividerTheme: DividerThemeData(
-          color: isDarkMode ? MyColors.dark_line : MyColors.line,
-          space: 0.6,
-          thickness: 0.6),
+        color: isDarkMode ? MyColors.dark_line : MyColors.line,
+        space: 0.6,
+        thickness: 0.6,
+      ),
     );
   }
 

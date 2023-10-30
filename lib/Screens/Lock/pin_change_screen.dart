@@ -1,7 +1,6 @@
 // import 'package:local_auth_android/types/auth_messages_android.dart';
 import 'package:cloudreader/Utils/iprint.dart';
 import 'package:cloudreader/Utils/itoast.dart';
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_notifier.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_unlock_indicator.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_unlock_view.dart';
@@ -105,11 +104,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
             children: [
               Text(
                 _notifier.gestureText,
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: AppTheme.darkerText,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 30),
               GestureUnlockIndicator(
@@ -117,7 +112,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
                 size: 30,
                 roundSpace: 4,
                 defaultColor: Colors.grey.withOpacity(0.5),
-                selectedColor: AppTheme.gradientColor,
+                selectedColor: Theme.of(context).primaryColor.withOpacity(0.6),
               ),
               Expanded(
                 child: GestureUnlockView(
@@ -127,7 +122,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
                   roundSpace: 40,
                   defaultColor: Colors.grey.withOpacity(0.5),
                   selectedColor: Theme.of(context).primaryColor,
-                  failedColor: Colors.redAccent,
+                  failedColor: Theme.of(context).colorScheme.error,
                   disableColor: Colors.grey,
                   solidRadiusRatio: 0.3,
                   lineWidth: 2,
@@ -144,11 +139,9 @@ class PinChangeScreenState extends State<PinChangeScreen> {
                       onTap: () {
                         IToast.showTop(context, text: "无法找回密码，请尝试重新安装软件");
                       },
-                      child: const Text(
+                      child: Text(
                         "忘记密码",
-                        style: TextStyle(
-                          color: AppTheme.nearlyBlue,
-                        ),
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ),
                     Visibility(
@@ -158,20 +151,16 @@ class PinChangeScreenState extends State<PinChangeScreen> {
                           const SizedBox(width: 8),
                           Text(
                             "|",
-                            style: TextStyle(
-                              color: Colors.grey.withOpacity(0.3),
-                            ),
+                            style: Theme.of(context).textTheme.titleSmall,
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
                             onTap: () {
                               auth();
                             },
-                            child: const Text(
+                            child: Text(
                               "指纹识别",
-                              style: TextStyle(
-                                color: AppTheme.nearlyBlue,
-                              ),
+                              style: Theme.of(context).textTheme.titleSmall,
                             ),
                           ),
                         ],

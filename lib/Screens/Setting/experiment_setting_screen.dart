@@ -6,7 +6,6 @@ import 'package:local_auth/local_auth.dart';
 import '../../Models/auto_lock.dart';
 import '../../Utils/hive_util.dart';
 import '../../Utils/itoast.dart';
-import '../../Widgets/BottomSheet/list_bottom_sheet.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 import '../Lock/pin_change_screen.dart';
@@ -47,7 +46,7 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(
+        appBar: ItemBuilder.buildSimpleAppBar(
             title: S.current.experimentSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -58,6 +57,7 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
+                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "AI摘要"),
                 ItemBuilder.buildRadioItem(
                   context: context,
@@ -276,7 +276,9 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
           .then((value) {
         setState(() {
           _hasGuesturePasswd =
-              HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!.isNotEmpty;
+              HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
+                  HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!
+                      .isNotEmpty;
         });
       });
     });
@@ -290,21 +292,21 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
   }
 
   onChangeAutoLockTimeTapped() {
-    showModalBottomSheet(
-      backgroundColor: Colors.white.withOpacity(0),
-      context: context,
-      builder: (context) => ListBottomSheet(
-        currentIndex: _autoLockTimeOption,
-        title: "选择自动锁定时机",
-        labels: AutoLock.optionLabels,
-        onChanged: (int index) {
-          setState(() {
-            _autoLockTimeOption = index;
-            HiveUtil.put(key: HiveUtil.autoLockTimeKey, value: index);
-          });
-        },
-      ),
-    );
+    // showModalBottomSheet(
+    //   backgroundColor: Colors.white.withOpacity(0),
+    //   context: context,
+    //   builder: (context) => ListBottomSheet(
+    //     currentIndex: _autoLockTimeOption,
+    //     title: "选择自动锁定时机",
+    //     labels: AutoLock.optionLabels,
+    //     onChanged: (int index) {
+    //       setState(() {
+    //         _autoLockTimeOption = index;
+    //         HiveUtil.put(key: HiveUtil.autoLockTimeKey, value: index);
+    //       });
+    //     },
+    //   ),
+    // );
   }
 
   onSafeModeTapped() {

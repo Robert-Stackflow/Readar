@@ -1,6 +1,9 @@
 import 'package:cloudreader/Screens/Navigation/article_screen.dart';
+import 'package:cloudreader/Screens/Navigation/explore_screen.dart';
 import 'package:cloudreader/Screens/Navigation/feed_screen.dart';
+import 'package:cloudreader/Screens/Navigation/highlights_screen.dart';
 import 'package:cloudreader/Screens/Navigation/star_screen.dart';
+import 'package:cloudreader/Screens/Navigation/statistics_screen.dart';
 import 'package:cloudreader/Screens/Navigation/tts_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -88,9 +91,9 @@ class NavEntry {
     "feed": const FeedScreen(),
     "star": const StarScreen(),
     "readLater": const ReadLaterScreen(),
-    "highlights": const StarScreen(),
-    "explore": const StarScreen(),
-    "statistics": const StarScreen(),
+    "highlights": const HighlightsScreen(),
+    "explore": const ExploreScreen(),
+    "statistics": const StatisticsScreen(),
     "tts": const TTSScreen(),
   };
 

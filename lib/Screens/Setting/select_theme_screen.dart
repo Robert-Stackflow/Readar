@@ -20,7 +20,7 @@ class _SelectThemeScreenState extends State<SelectThemeScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(
+        appBar: ItemBuilder.buildSimpleAppBar(
             title: S.current.selectTheme, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -30,6 +30,7 @@ class _SelectThemeScreenState extends State<SelectThemeScreen>
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
               children: [
+                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
                     context: context, title: S.current.lightTheme),
                 ItemBuilder.buildContainerItem(

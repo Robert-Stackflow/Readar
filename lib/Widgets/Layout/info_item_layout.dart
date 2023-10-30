@@ -1,4 +1,3 @@
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
 
 const Duration _kExpand = Duration(milliseconds: 200);
@@ -86,11 +85,7 @@ class InfoItemLayoutState extends State<InfoItemLayout>
                 Expanded(
                   child: Text(
                     widget.title ?? "",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.darkerText,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
                 Transform.rotate(
@@ -118,11 +113,7 @@ class InfoItemLayoutState extends State<InfoItemLayout>
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: SelectableText(
         widget.content ?? "",
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w300,
-          color: AppTheme.darkerText.withOpacity(0.8),
-        ),
+        style: Theme.of(context).textTheme.titleSmall,
       ),
     );
   }

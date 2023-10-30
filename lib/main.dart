@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:cloudreader/Api/service_handler.dart';
 import 'package:cloudreader/Providers/global_provider.dart';
+import 'package:cloudreader/Resources/theme.dart';
 import 'package:cloudreader/Screens/Content/article_detail_screen.dart';
 import 'package:cloudreader/Screens/Lock/pin_change_screen.dart';
+import 'package:cloudreader/Screens/Navigation/explore_screen.dart';
+import 'package:cloudreader/Screens/Navigation/highlights_screen.dart';
 import 'package:cloudreader/Screens/Navigation/read_later_screen.dart';
 import 'package:cloudreader/Screens/Navigation/star_screen.dart';
+import 'package:cloudreader/Screens/Navigation/statistics_screen.dart';
 import 'package:cloudreader/Screens/Navigation/tts_screen.dart';
 import 'package:cloudreader/Screens/Setting/appearance_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
@@ -15,7 +19,6 @@ import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Utils/hive_util.dart';
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -120,6 +123,9 @@ class MyApp extends StatelessWidget {
             ArticleScreen.routeName: (context) =>
                 ArticleScreen(ScrollTopNotifier()),
             StarScreen.routeName: (context) => const StarScreen(),
+            StatisticsScreen.routeName: (context) => const StatisticsScreen(),
+            HighlightsScreen.routeName: (context) => const HighlightsScreen(),
+            ExploreScreen.routeName: (context) => const ExploreScreen(),
             PinChangeScreen.routeName: (context) => const PinChangeScreen(),
             ReadLaterScreen.routeName: (context) => const ReadLaterScreen(),
             NavSettingScreen.routeName: (context) => const NavSettingScreen(),

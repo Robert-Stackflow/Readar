@@ -20,7 +20,7 @@ class _ServiceSettingScreenState extends State<ServiceSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(
+        appBar: ItemBuilder.buildSimpleAppBar(
             title: S.current.serviceSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -31,6 +31,7 @@ class _ServiceSettingScreenState extends State<ServiceSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
+                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
                     context: context, title: "以下自建类型服务可用于同步订阅源"),
                 ItemBuilder.buildEntryItem(

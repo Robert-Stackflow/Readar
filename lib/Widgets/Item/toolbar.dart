@@ -4,8 +4,8 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 /// Display a persistent bottom iOS styled toolbar for Cupertino theme
 ///
@@ -56,9 +56,10 @@ class CupertinoToolbar extends StatelessWidget {
     return Column(children: <Widget>[
       Expanded(child: body),
       Container(
-          decoration: const BoxDecoration(
-              border:
-                  Border(top: BorderSide(color: AppTheme.spacer, width: 0.0))),
+          decoration: BoxDecoration(
+              border: Border(
+                  top: BorderSide(
+                      color: Theme.of(context).dividerColor, width: 0.0))),
           child: SafeArea(
               top: false,
               child: SizedBox(

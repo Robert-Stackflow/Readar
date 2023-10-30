@@ -20,6 +20,8 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh_CN';
 
+  static String m0(maxShown) => "导航栏最多显示${maxShown}个入口";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("关于"),
@@ -69,6 +71,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "lightTheme": MessageLookupByLibrary.simpleMessage("浅色主题"),
         "navigationBarEntries":
             MessageLookupByLibrary.simpleMessage("显示在导航栏的入口"),
+        "navigationBarMaxEntriesTip": m0,
+        "navigationBarPreview": MessageLookupByLibrary.simpleMessage("导航栏预览"),
         "officialWebsite": MessageLookupByLibrary.simpleMessage("官方网站"),
         "operationSetting": MessageLookupByLibrary.simpleMessage("操作"),
         "participateInTranslation":

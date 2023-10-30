@@ -20,7 +20,7 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(
+        appBar: ItemBuilder.buildSimpleAppBar(
             title: S.current.extensionSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -31,6 +31,7 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
+                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
                     context: context, title: "以下服务可用于直接保存文章"),
                 ItemBuilder.buildRadioItem(

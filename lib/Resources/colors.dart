@@ -1,29 +1,39 @@
 import 'package:flutter/material.dart';
 
 class MyColors {
-  static const Color app_main = Color(0xFF9FC0AF);
-  static const Color dark_app_main = Color(0xFF9FC0AF);
+  static const Color app_main = Color(0xFF2196F3);
+  static const Color dark_app_main = Color(0xFF2196F3);
+
+  static const Color appbar = bg_color;
+  static const Color dark_appbar = dark_bg_color;
 
   static const Color bg_color = Color(0xFFF5F5F5);
-  static const Color dark_bg_color = Color(0xFF18191A);
+  static const Color dark_bg_color = Color(0xFF0D0D0D);
+
+  static const Color icon_color = Color(0xFF333333);
+  static const Color dark_icon_color = Color(0xFFB8B8B8);
+
+  static const Color shadow_color = Color(0xFF666666);
+  static const Color dark_shadow_color = Color(0xFFFFFFFF);
 
   static const Color material_bg = Color(0xFFFFFFFF);
-  static const Color dark_material_bg = Color(0xFF303233);
+  static const Color dark_material_bg = Color(0xFF1F1F1F);
 
   static const Color text = Color(0xFF333333);
   static const Color dark_text = Color(0xFFB8B8B8);
 
   static const Color text_gray = Color(0xFF999999);
+  static const Color text_gray_c = Color(0xFFcccccc);
   static const Color dark_text_gray = Color(0xFF666666);
 
-  static const Color text_gray_c = Color(0xFFcccccc);
+  static const Color button_text = Color(0xFFF2F2F2);
   static const Color dark_button_text = Color(0xFFF2F2F2);
 
   static const Color bg_gray = Color(0xFFF6F6F6);
   static const Color dark_bg_gray = Color(0xFF1F1F1F);
 
-  static const Color line = Color(0xFFEEEEEE);
-  static const Color dark_line = Color(0xFF3A3C3D);
+  static const Color line = Color(0xFF757575);
+  static const Color dark_line = Color(0xFF9E9E9E);
 
   static const Color red = Color(0xFFFF4759);
   static const Color dark_red = Color(0xFFE03E4E);

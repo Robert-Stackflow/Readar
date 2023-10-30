@@ -1,7 +1,6 @@
 // import 'package:local_auth_android/types/auth_messages_android.dart';
 import 'package:cloudreader/Utils/iprint.dart';
 import 'package:cloudreader/Utils/itoast.dart';
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_notifier.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_unlock_view.dart';
 import 'package:flutter/material.dart';
@@ -97,11 +96,7 @@ class PinVerifyScreenState extends State<PinVerifyScreen> {
               children: [
                 Text(
                   _notifier.gestureText,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: AppTheme.darkerText,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 30),
                 Expanded(
@@ -127,11 +122,9 @@ class PinVerifyScreenState extends State<PinVerifyScreen> {
                       onTap: () {
                         IToast.showTop(context, text: "无法找回密码，请尝试重新安装软件");
                       },
-                      child: const Text(
+                      child: Text(
                         "忘记密码",
-                        style: TextStyle(
-                          color: AppTheme.nearlyBlue,
-                        ),
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ),
                     Visibility(
@@ -141,20 +134,16 @@ class PinVerifyScreenState extends State<PinVerifyScreen> {
                           const SizedBox(width: 8),
                           Text(
                             "|",
-                            style: TextStyle(
-                              color: Colors.grey.withOpacity(0.3),
-                            ),
+                            style: Theme.of(context).textTheme.titleSmall,
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
                             onTap: () {
                               auth();
                             },
-                            child: const Text(
+                            child: Text(
                               "指纹识别",
-                              style: TextStyle(
-                                color: AppTheme.nearlyBlue,
-                              ),
+                              style: Theme.of(context).textTheme.titleSmall,
                             ),
                           ),
                         ],

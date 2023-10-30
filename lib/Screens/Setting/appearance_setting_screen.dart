@@ -50,7 +50,7 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
       return Container(
         color: Colors.transparent,
         child: Scaffold(
-          appBar: ItemBuilder.buildAppBar(
+          appBar: ItemBuilder.buildSimpleAppBar(
               title: S.current.apprearanceSetting, context: context),
           body: Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -61,6 +61,7 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
                 children: [
+                  const SizedBox(height: 10),
                   ItemBuilder.buildEntryItem(
                     context: context,
                     title: S.current.language,

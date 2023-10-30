@@ -35,7 +35,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(
+        appBar: ItemBuilder.buildSimpleAppBar(
             title: S.current.generalSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -46,6 +46,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
+                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
                     context: context, title: S.current.ttsSetting),
                 ItemBuilder.buildRadioItem(

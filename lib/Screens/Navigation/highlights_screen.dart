@@ -5,16 +5,17 @@ import 'package:flutter/services.dart';
 
 import '../../Widgets/Item/item_builder.dart';
 
-class FeedScreen extends StatefulWidget {
-  const FeedScreen({super.key});
+class HighlightsScreen extends StatefulWidget {
+  const HighlightsScreen({super.key});
 
-  static const String routeName = "/nav/subscription";
+  static const String routeName = "/nav/highlights";
 
   @override
-  State<FeedScreen> createState() => _FeedScreenState();
+  State<HighlightsScreen> createState() => _HighlightsScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
+class _HighlightsScreenState extends State<HighlightsScreen>
+    with TickerProviderStateMixin {
   @override
   void initState() {
     if (Platform.isAndroid) {
@@ -58,13 +59,6 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
         }
       },
       actions: [
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon:
-              Icon(Icons.add_link_rounded, color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
         IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,

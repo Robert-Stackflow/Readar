@@ -39,7 +39,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(
+        appBar: ItemBuilder.buildSimpleAppBar(
             leading: Icons.close_rounded, context: context),
         body: ScrollConfiguration(
           behavior: NoShadowScrollBehavior(),
@@ -74,6 +74,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
                     children: [
+                      const SizedBox(height: 10),
                       ItemBuilder.buildEntryItem(
                         context: context,
                         title: S.current.contributor,

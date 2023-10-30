@@ -500,6 +500,26 @@ class S {
     );
   }
 
+  /// `Navigation Bar Preview`
+  String get navigationBarPreview {
+    return Intl.message(
+      'Navigation Bar Preview',
+      name: 'navigationBarPreview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The navigation bar can display at most {maxShown} entries.`
+  String navigationBarMaxEntriesTip(Object maxShown) {
+    return Intl.message(
+      'The navigation bar can display at most $maxShown entries.',
+      name: 'navigationBarMaxEntriesTip',
+      desc: '',
+      args: [maxShown],
+    );
+  }
+
   /// `All entries have been moved to the sidebar, and the navigation bar will no longer be displayed.`
   String get allEntriesHidddenTip {
     return Intl.message(

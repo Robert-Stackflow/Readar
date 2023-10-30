@@ -12,10 +12,10 @@ import 'package:cloudreader/Utils/uri_util.dart';
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import '../Providers/global.dart';
 import '../Utils/hive_util.dart';
+import '../Widgets/Custom/salomon_bottom_bar.dart';
 import '../Widgets/Item/item_builder.dart';
 import '../generated/l10n.dart';
 import 'Lock/pin_verify_screen.dart';
@@ -109,11 +109,18 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     initData();
     return _showNavigationBar
         ? Scaffold(
-            backgroundColor: Colors.transparent,
             bottomNavigationBar: SalomonBottomBar(
               margin: const EdgeInsets.all(10),
               items: _navigationBarItemList,
               currentIndex: _selectedIndex,
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Theme.of(context).shadowColor.withAlpha(70),
+                  offset: const Offset(0, 14),
+                  blurRadius: 24,
+                  spreadRadius: 0,
+                ),
+              ],
               backgroundColor: Theme.of(context).canvasColor,
               selectedItemColor: Theme.of(context).primaryColor,
               onTap: onBottomNavigationBarItemTap,

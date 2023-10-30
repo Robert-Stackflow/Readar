@@ -1,4 +1,3 @@
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
 
 const Duration _kExpand = Duration(milliseconds: 200);
@@ -6,7 +5,7 @@ const Duration _kExpand = Duration(milliseconds: 200);
 class ExpansionLayout extends StatefulWidget {
   const ExpansionLayout({
     super.key,
-    this.backgroundColor = AppTheme.background,
+    required this.backgroundColor,
     required this.onExpansionChanged,
     this.children = const <Widget>[],
     this.title,
@@ -66,7 +65,7 @@ class ExpansionLayoutState extends State<ExpansionLayout>
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: AppTheme.white,
+        color: Theme.of(context).canvasColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -84,11 +83,7 @@ class ExpansionLayoutState extends State<ExpansionLayout>
                 Expanded(
                   child: Text(
                     widget.title ?? "",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.darkerText,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
                 Transform.rotate(

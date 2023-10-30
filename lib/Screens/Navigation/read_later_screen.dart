@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../Widgets/Item/item_builder.dart';
+
 class ReadLaterScreen extends StatefulWidget {
   const ReadLaterScreen({super.key});
 
@@ -44,28 +46,18 @@ class _ReadLaterScreenState extends State<ReadLaterScreen>
   }
 
   AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      elevation: 0,
+    return ItemBuilder.buildAppBar(
+      context: context,
       leading: _isNavigationBarEntry()
-          ? IconButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              icon:
-                  Icon(Icons.menu_rounded, color: IconTheme.of(context).color),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            )
-          : IconButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              icon: Icon(Icons.arrow_back_rounded,
-                  color: IconTheme.of(context).color),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+          ? Icons.menu_rounded
+          : Icons.arrow_back_rounded,
+      onLeadingTap: () {
+        if (_isNavigationBarEntry()) {
+          Scaffold.of(context).openDrawer();
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
       actions: [
         IconButton(
           splashColor: Colors.transparent,

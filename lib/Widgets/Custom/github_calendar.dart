@@ -1,8 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/widgets.dart';
-
-import '../../Utils/theme.dart';
+import 'package:flutter/material.dart';
 
 class GithubCalendar extends StatelessWidget {
   const GithubCalendar({
@@ -189,7 +187,7 @@ class SquareWall extends StatelessWidget {
             decoration: BoxDecoration(
               border: index == days - 1
                   ? Border.all(
-                      color: AppTheme.gradientColor,
+                      color: Theme.of(context).primaryColor,
                       width: 1,
                       style: BorderStyle.solid)
                   : Border.all(style: BorderStyle.none),

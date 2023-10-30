@@ -42,7 +42,7 @@ class TimeTextState extends State<TimeText> {
       var timer = _timer;
       if (timer != null) timer.cancel();
       timer = Timer.periodic(duration, (_) {
-        setState(() {});
+        if (mounted) setState(() {});
         updateTimer();
       });
     }

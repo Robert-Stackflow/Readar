@@ -1,18 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../Utils/theme.dart';
-
 class ItemBuilder {
-  static AppBar buildAppBar({
+  static AppBar buildSimpleAppBar({
     String title = "",
     IconData leading = Icons.arrow_back_rounded,
-    IconData? trailing,
-    Function()? onTrailingTap,
+    List<Widget>? actions,
     required BuildContext context,
   }) {
     return AppBar(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       elevation: 0,
       leadingWidth: 30,
       leading: Container(
@@ -27,18 +24,34 @@ class ItemBuilder {
         ),
       ),
       title: title.isNotEmpty
-          ? Text(title, style: Theme.of(context).textTheme.titleSmall)
+          ? Text(title, style: Theme.of(context).textTheme.titleMedium)
           : Container(),
-      actions: <Widget>[
-        trailing != null
-            ? IconButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                icon: Icon(trailing, color: IconTheme.of(context).color),
-                onPressed: onTrailingTap,
-              )
-            : Container(),
-      ],
+      actions: actions,
+    );
+  }
+
+  static AppBar buildAppBar({
+    Widget? title,
+    IconData leading = Icons.arrow_back_rounded,
+    Function()? onLeadingTap,
+    List<Widget>? actions,
+    required BuildContext context,
+  }) {
+    return AppBar(
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      elevation: 0,
+      leadingWidth: 30,
+      leading: Container(
+        margin: const EdgeInsets.only(left: 5),
+        child: IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          icon: Icon(leading, color: IconTheme.of(context).color),
+          onPressed: onLeadingTap,
+        ),
+      ),
+      title: title,
+      actions: actions,
     );
   }
 
@@ -67,7 +80,7 @@ class ItemBuilder {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: Colors.grey,
+              color: Theme.of(context).dividerColor,
               width: 0.05,
               style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
             ),
@@ -93,7 +106,8 @@ class ItemBuilder {
             children: [
               Visibility(
                 visible: showLeading,
-                child: Icon(leading, size: 20, color: AppTheme.darkerText),
+                child:
+                    Icon(leading, size: 20, color: IconTheme.of(context).color),
               ),
               const SizedBox(width: 5),
               Expanded(
@@ -102,11 +116,11 @@ class ItemBuilder {
                   children: [
                     Text(
                       title,
-                      style: AppTheme.itemTitle,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     description.isNotEmpty
                         ? Text(description,
-                            style: Theme.of(context).textTheme.bodySmall)
+                            style: Theme.of(context).textTheme.titleSmall)
                         : Container(),
                   ],
                 ),
@@ -152,7 +166,7 @@ class ItemBuilder {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: Colors.grey,
+              color: Theme.of(context).dividerColor,
               width: 0.05,
               style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
             ),
@@ -190,24 +204,26 @@ class ItemBuilder {
                     Text(
                       title,
                       style: isCaption
-                          ? Theme.of(context).textTheme.bodySmall
-                          : AppTheme.itemTitle,
+                          ? Theme.of(context).textTheme.titleSmall
+                          : Theme.of(context).textTheme.titleMedium,
                     ),
                     description.isNotEmpty
                         ? Text(description,
-                            style: Theme.of(context).textTheme.bodySmall)
+                            style: Theme.of(context).textTheme.titleSmall)
                         : Container(),
                   ],
                 ),
               ),
               Text(
                 tip,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(width: 5),
               Visibility(
                 visible: showTrailing,
-                child: Icon(trailing, size: 20, color: Colors.grey),
+                child: Icon(trailing,
+                    size: 20,
+                    color: Theme.of(context).textTheme.titleSmall?.color),
               ),
             ],
           ),
@@ -262,12 +278,12 @@ class ItemBuilder {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: Colors.grey,
+              color: Theme.of(context).dividerColor,
               width: 0.05,
               style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
             ),
             top: BorderSide(
-              color: Colors.grey,
+              color: Theme.of(context).dividerColor,
               width: 0.05,
               style: topRadius ? BorderStyle.none : BorderStyle.solid,
             ),

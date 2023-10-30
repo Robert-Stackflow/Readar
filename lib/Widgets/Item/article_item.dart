@@ -210,9 +210,13 @@ class ArticleItemState extends State<ArticleItem> {
       onLongPress: _openActionSheet,
       onTap: _openArticle,
       child: Container(
-        color: pressed
-            ? CupertinoColors.systemGrey4.resolveFrom(context)
-            : CupertinoColors.systemBackground.resolveFrom(context),
+        margin: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          color: pressed
+              ? CupertinoColors.systemGrey4.resolveFrom(context)
+              : CupertinoColors.systemBackground.resolveFrom(context),
+        ),
         child: Column(
           children: [
             Padding(
@@ -256,13 +260,13 @@ class ArticleItemState extends State<ArticleItem> {
                 ],
               ),
             ),
-            Container(
-              color: CupertinoColors.systemBackground.resolveFrom(context),
-              padding: const EdgeInsets.only(left: 16),
-              child: Divider(
-                  color: CupertinoColors.systemGrey4.resolveFrom(context),
-                  height: 1),
-            ),
+            // Container(
+            //   color: CupertinoColors.systemBackground.resolveFrom(context),
+            //   padding: const EdgeInsets.only(left: 16),
+            //   child: Divider(
+            //       color: CupertinoColors.systemGrey4.resolveFrom(context),
+            //       height: 1),
+            // ),
           ],
         ),
       ),

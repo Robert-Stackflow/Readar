@@ -1,72 +1,66 @@
-import 'package:cloudreader/Utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../Resources/gaps.dart';
+
 class IToast {
-  static FToast showTop(BuildContext context, {required String text}) {
+  static FToast show(
+    BuildContext context, {
+    required String text,
+    Icon? icon,
+    int seconds = 2,
+    ToastGravity gravity = ToastGravity.TOP,
+  }) {
     FToast toast = FToast().init(context);
     toast.showToast(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25.0),
-          color: Theme.of(context).canvasColor,
-          boxShadow: <BoxShadow>[
+          borderRadius: BorderRadius.circular(25),
+          color: Theme.of(context).canvasColor.withAlpha(200),
+          boxShadow: [
             BoxShadow(
-              color: Theme.of(context).primaryColor.withOpacity(0.2),
-              offset: const Offset(1.0, 1.0),
-              blurRadius: 4.0,
-            ),
+              color: Theme.of(context).shadowColor.withAlpha(25),
+              offset: const Offset(0, 4),
+              blurRadius: 10,
+              spreadRadius: 0,
+            )
           ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            icon ?? MyGaps.empty,
+            // Expanded(
+            //   child:
+            // ),
             Text(
               text,
-              style:
-                  const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ],
         ),
       ),
-      gravity: ToastGravity.TOP,
-      toastDuration: const Duration(seconds: 2),
+      gravity: gravity,
+      toastDuration: Duration(seconds: seconds),
     );
     return toast;
   }
 
-  static FToast showBottom(BuildContext context, {required String text}) {
-    FToast toast = FToast().init(context);
-    toast.showToast(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25.0),
-          color: AppTheme.white,
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                offset: const Offset(1.0, 1.0),
-                blurRadius: 4.0),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              text,
-              style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: AppTheme.darkerText),
-            ),
-          ],
-        ),
-      ),
-      gravity: ToastGravity.BOTTOM,
-      toastDuration: const Duration(seconds: 2),
-    );
-    return toast;
+  static FToast showTop(
+    BuildContext context, {
+    required String text,
+    Icon? icon,
+  }) {
+    return show(context, text: text, icon: icon);
+  }
+
+  static FToast showBottom(
+    BuildContext context, {
+    required String text,
+    Icon? icon,
+  }) {
+    return show(context, text: text, icon: icon, gravity: ToastGravity.BOTTOM);
   }
 }

@@ -48,19 +48,19 @@ class MyStyles {
     fontWeight: FontWeight.w400,
     fontSize: 13,
     letterSpacing: 0.1,
-    color: Colors.grey,
+    color: MyColors.dark_text_gray,
   );
 
   static const TextStyle caption = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 13,
     letterSpacing: 0.1,
-    color: Colors.grey,
+    color: MyColors.text_gray,
   );
 
   static const TextStyle titleDark = TextStyle(
     fontWeight: FontWeight.w400,
-    fontSize: 13,
+    fontSize: 16,
     letterSpacing: 0.1,
     color: MyColors.dark_text,
   );

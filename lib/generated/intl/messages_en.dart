@@ -20,6 +20,9 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(maxShown) =>
+      "The navigation bar can display at most ${maxShown} entries.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("About"),
@@ -77,6 +80,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "lightTheme": MessageLookupByLibrary.simpleMessage("Light Theme"),
         "navigationBarEntries": MessageLookupByLibrary.simpleMessage(
             "Entries displayed in navigation bar"),
+        "navigationBarMaxEntriesTip": m0,
+        "navigationBarPreview":
+            MessageLookupByLibrary.simpleMessage("Navigation Bar Preview"),
         "officialWebsite": MessageLookupByLibrary.simpleMessage("Website"),
         "operationSetting": MessageLookupByLibrary.simpleMessage("Operation"),
         "participateInTranslation":

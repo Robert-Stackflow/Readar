@@ -1,4 +1,4 @@
-import 'package:cloudreader/Utils/theme.dart';
+import 'package:cloudreader/Resources/theme.dart';
 import 'package:cloudreader/Widgets/Item/item_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';

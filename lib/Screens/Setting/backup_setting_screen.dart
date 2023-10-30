@@ -20,7 +20,7 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildAppBar(
+        appBar: ItemBuilder.buildSimpleAppBar(
             title: S.current.backupSetting, context: context),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -30,6 +30,7 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
               children: [
+                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
                     context: context, title: "本地备份与恢复"),
                 ItemBuilder.buildEntryItem(

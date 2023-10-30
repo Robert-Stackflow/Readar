@@ -45,6 +45,8 @@
   "showNavigationBar": "Show Navigation Bar",
   "navigationBarEntries": "Entries displayed in navigation bar",
   "sidebarEntries": "Entries displayed in sidebar",
+  "navigationBarPreview": "Navigation Bar Preview",
+  "navigationBarMaxEntriesTip": "The navigation bar can display at most {maxShown} entries.",
   "allEntriesHidddenTip": "All entries have been moved to the sidebar, and the navigation bar will no longer be displayed.",
   "dragTip": "Long press and drag an item here to move it to the end of the list.",
   "articleDetailSetting": "Article Detail Setting",
