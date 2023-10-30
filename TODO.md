@@ -1,24 +1,8 @@
-# RSS阅读器
-
-### 源解析
-
--  从URL添加（设置URL、名称、图标、分组、排序、是否缓存）
--  导入OMPL文件
--  第三方服务
-   -  Fever API
-      -  TT-RSS Fever plugin
-      -  FreshRSS
-      -  Miniflux
-
-   -  Google Reader API
-      -  Bazqux Reader
-      -  The Old Reader
-
-   -  Inoreader
-   -  Feedbin
+## 页面设计
 
 
-### 导航：文章
+
+### 文章列表
 
 - 顶部栏
   - 抽屉按钮
@@ -55,7 +39,7 @@
 
 
 
-### 导航：订阅
+### 订阅源列表
 
 - 顶部栏
   - 抽屉按钮
@@ -72,7 +56,7 @@
   -  过滤器、通知器、缓存策略
   -  分组管理
 
-### 内容详情页
+### 文章详情
 
 -  顶部栏
    -  返回
@@ -107,6 +91,25 @@
    -  上下滑动知乎式布局
 
 -  相关文章
+
+## 功能设计
+
+### 源解析
+
+-  从URL添加（设置URL、名称、图标、分组、排序、是否缓存）
+-  导入OMPL文件
+-  第三方服务
+   -  Fever API
+      -  TT-RSS Fever plugin
+      -  FreshRSS
+      -  Miniflux
+
+   -  Google Reader API
+      -  Bazqux Reader
+      -  The Old Reader
+
+   -  Inoreader
+   -  Feedbin
 
 ### 设置
 
@@ -180,3 +183,41 @@
 - Hot Links：被订阅源多次引用的链接
 - Calm Feeds：更新频率较低的订阅源的文章
 - Linked List：内含多个链接的文章
+
+## 数据库设计
+
+### 订阅源服务相关
+
+|       字段       |  数据库类型  | 代码类型 | 是否必需 |                 备注                 |
+| :--------------: | :----------: | :------: | :------: | :----------------------------------: |
+|     endpoint     | VARCHAR(255) |  String  |    是    |               服务网址               |
+|       type       |     int      |   int    |    是    |               服务类型               |
+|     username     | VARCHAR(255) |  String  |    否    |                用户名                |
+|     password     | VARCHAR(255) |  String  |    否    |                 密码                 |
+|      api_id      | VARCHAR(255) |  String  |    否    |                API ID                |
+|     api_key      | VARCHAR(255) |  String  |    否    |               API KEY                |
+|   fetch_limit    |   INTEGER    |   int    |    是    |               抓取上限               |
+| last_sync_status |              |   bool   |    是    | 上次同步状态（尚未同步、成功、失败） |
+|      params      |     TEXT     |  String  |    否    |               其他参数               |
+
+### 云同步服务相关
+
+|   字段   |  数据库类型  | 代码类型 | 是否必需 |   备注   |
+| :------: | :----------: | :------: | :------: | :------: |
+| endpoint | VARCHAR(255) |  String  |    是    | 服务网址 |
+|   type   |     int      |   int    |    是    | 服务类型 |
+| username | VARCHAR(255) |  String  |    否    |  用户名  |
+| password | VARCHAR(255) |  String  |    否    |   密码   |
+|  api_id  | VARCHAR(255) |  String  |    否    |  API ID  |
+| api_key  | VARCHAR(255) |  String  |    否    | API KEY  |
+
+### 笔记服务相关
+
+|   字段   |  数据库类型  | 代码类型 | 是否必需 |   备注   |
+| :------: | :----------: | :------: | :------: | :------: |
+| endpoint | VARCHAR(255) |  String  |    是    | 服务网址 |
+|   type   |     int      |   int    |    是    | 服务类型 |
+| username | VARCHAR(255) |  String  |    否    |  用户名  |
+| password | VARCHAR(255) |  String  |    否    |   密码   |
+|  api_id  | VARCHAR(255) |  String  |    否    |  API ID  |
+| api_key  | VARCHAR(255) |  String  |    否    | API KEY  |
