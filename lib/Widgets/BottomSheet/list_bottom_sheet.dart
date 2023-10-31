@@ -1,4 +1,3 @@
-import 'package:cloudreader/Resources/theme.dart';
 import 'package:cloudreader/Widgets/Item/item_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
@@ -36,8 +35,18 @@ class TileList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
+          width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          child: Text(title, style: AppTheme.title),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).dividerColor.withOpacity(0.2),
+                width: 1,
+                style: BorderStyle.solid,
+              ),
+            ),
+          ),
+          child: Text(title, style: Theme.of(context).textTheme.titleLarge),
         ),
         ...children,
       ],

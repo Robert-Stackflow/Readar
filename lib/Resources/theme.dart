@@ -29,6 +29,7 @@ class AppTheme {
       textTheme: TextTheme(
         titleSmall: isDarkMode ? MyStyles.captionDark : MyStyles.caption,
         titleMedium: isDarkMode ? MyStyles.titleDark : MyStyles.title,
+        titleLarge: isDarkMode ? MyStyles.titleLargeDark : MyStyles.titleLarge,
         bodyLarge: isDarkMode ? MyStyles.textDark : MyStyles.text,
       ),
       inputDecorationTheme: InputDecorationTheme(

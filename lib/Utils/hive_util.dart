@@ -72,15 +72,6 @@ class HiveUtil {
     return false;
   }
 
-  static ActiveTheme getTheme() {
-    return ActiveTheme
-        .values[HiveUtil.getInt(key: HiveUtil.themeModeKey, defaultValue: 0)];
-  }
-
-  static void setTheme(ActiveTheme theme) {
-    HiveUtil.put(key: HiveUtil.themeModeKey, value: theme.index);
-  }
-
   static Locale? stringToLocale(String? localeString) {
     if (localeString == null || localeString.isEmpty) {
       return null;
@@ -103,6 +94,14 @@ class HiveUtil {
     } else {
       HiveUtil.put(key: HiveUtil.localeKey, value: locale.toString());
     }
+  }
+
+  static ActiveThemeMode getThemeMode() {
+    return ActiveThemeMode.values[HiveUtil.getInt(key: HiveUtil.themeModeKey)];
+  }
+
+  static void setThemeMode(ActiveThemeMode themeMode) {
+    HiveUtil.put(key: HiveUtil.themeModeKey, value: themeMode.index);
   }
 
   static bool showNavigationBar() =>

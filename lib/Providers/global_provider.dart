@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:tuple/tuple.dart';
 
 import '../Models/nav_entry.dart';
 import '../Utils/hive_util.dart';
+import '../generated/l10n.dart';
 
-enum ActiveTheme {
+enum ActiveThemeMode {
   system,
   light,
   dark,
@@ -57,34 +59,44 @@ class GlobalProvider with ChangeNotifier {
     }
   }
 
-  String? _homeRoute;
+  ActiveThemeMode _themeMode = HiveUtil.getThemeMode();
 
-  String? get homeRoute => _homeRoute;
+  ActiveThemeMode get themeMode => _themeMode;
 
-  set homeRoute(String? value) {
-    if (value != _homeRoute) {
-      _homeRoute = value;
+  set themeMode(ActiveThemeMode value) {
+    if (value != _themeMode) {
+      _themeMode = value;
       notifyListeners();
+      HiveUtil.setThemeMode(value);
     }
   }
 
-  ActiveTheme _theme = HiveUtil.getTheme();
-
-  ActiveTheme get theme => _theme;
-
-  set theme(ActiveTheme newTheme) {
-    if (newTheme != _theme) {
-      _theme = newTheme;
-      notifyListeners();
-      HiveUtil.setTheme(theme);
+  static String getThemeModeLabel(ActiveThemeMode themeMode) {
+    switch (themeMode) {
+      case ActiveThemeMode.system:
+        return S.current.followSystem;
+      case ActiveThemeMode.dark:
+        return S.current.darkTheme;
+      case ActiveThemeMode.light:
+        return S.current.lightTheme;
     }
+  }
+
+  static List<Tuple2<String, ActiveThemeMode>> getSupportedThemeMode() {
+    return [
+      Tuple2(S.current.followSystem, ActiveThemeMode.system),
+      Tuple2(S.current.lightTheme, ActiveThemeMode.light),
+      Tuple2(S.current.darkTheme, ActiveThemeMode.dark),
+    ];
   }
 
   Brightness? getBrightness() {
-    if (_theme == ActiveTheme.system) {
+    if (_themeMode == ActiveThemeMode.system) {
       return null;
     } else {
-      return _theme == ActiveTheme.light ? Brightness.light : Brightness.dark;
+      return _themeMode == ActiveThemeMode.light
+          ? Brightness.light
+          : Brightness.dark;
     }
   }
 

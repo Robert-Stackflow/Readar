@@ -45,29 +45,43 @@ class MyStyles {
       textBaseline: TextBaseline.alphabetic);
 
   static const TextStyle captionDark = TextStyle(
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.normal,
     fontSize: 13,
     letterSpacing: 0.1,
     color: MyColors.dark_text_gray,
   );
 
   static const TextStyle caption = TextStyle(
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.normal,
     fontSize: 13,
     letterSpacing: 0.1,
     color: MyColors.text_gray,
   );
 
   static const TextStyle titleDark = TextStyle(
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.normal,
     fontSize: 16,
     letterSpacing: 0.1,
     color: MyColors.dark_text,
   );
 
   static const TextStyle title = TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.normal,
     fontSize: 16,
+    letterSpacing: 0.1,
+    color: MyColors.text,
+  );
+
+  static const TextStyle titleLargeDark = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 17,
+    letterSpacing: 0.18,
+    color: MyColors.dark_text,
+  );
+
+  static const TextStyle titleLarge = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 17,
     letterSpacing: 0.18,
     color: MyColors.text,
   );

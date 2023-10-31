@@ -85,8 +85,16 @@ class MyApp extends StatelessWidget {
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
           title: 'Cloud Reader',
-          theme: AppTheme.getTheme(isDarkMode: false),
-          darkTheme: AppTheme.getTheme(isDarkMode: true),
+          theme: AppTheme.getTheme(
+            isDarkMode: (Global.globalProvider.getBrightness() != null
+                ? Global.globalProvider.getBrightness() == Brightness.dark
+                : false),
+          ),
+          darkTheme: AppTheme.getTheme(
+            isDarkMode: (Global.globalProvider.getBrightness() != null
+                ? Global.globalProvider.getBrightness() == Brightness.dark
+                : true),
+          ),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             S.delegate,

@@ -142,7 +142,8 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         context: context,
                         title: S.current.contact,
                         onTap: () {
-                          UriUtil.launchEmailUri("2014027378@qq.com");
+                          UriUtil.launchEmailUri("2014027378@qq.com",
+                              subject: "反馈");
                         },
                         showLeading: true,
                         leading: Icons.contact_support_outlined,

@@ -390,6 +390,16 @@ class S {
     );
   }
 
+  /// `Choose Theme Mode`
+  String get chooseThemeMode {
+    return Intl.message(
+      'Choose Theme Mode',
+      name: 'chooseThemeMode',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Follow System`
   String get followSystem {
     return Intl.message(

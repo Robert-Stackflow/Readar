@@ -3,7 +3,7 @@ import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Utils/locale_util.dart';
 import 'package:cloudreader/Widgets/BottomSheet/bottom_sheet_builder.dart';
-import 'package:cloudreader/Widgets/BottomSheet/tile_list.dart';
+import 'package:cloudreader/Widgets/BottomSheet/list_bottom_sheet.dart';
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:cloudreader/Widgets/Item/item_builder.dart';
 import 'package:flutter/material.dart';
@@ -99,8 +99,23 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                   ItemBuilder.buildEntryItem(
                     context: context,
                     title: S.current.themeMode,
-                    tip: S.current.followSystem,
-                    onTap: () {},
+                    tip: GlobalProvider.getThemeModeLabel(
+                        globalProvider.themeMode),
+                    onTap: () {
+                      BottomSheetBuilder.showListBottomSheet(
+                        context,
+                        (context) => TileList.fromOptions(
+                          GlobalProvider.getSupportedThemeMode(),
+                          globalProvider.themeMode,
+                          (item2) {
+                            globalProvider.themeMode = item2;
+                            Navigator.pop(context);
+                          },
+                          context: context,
+                          title: S.current.chooseThemeMode,
+                        ),
+                      );
+                    },
                   ),
                   ItemBuilder.buildEntryItem(
                     context: context,

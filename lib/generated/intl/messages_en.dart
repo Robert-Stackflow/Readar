@@ -57,6 +57,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Last checked:"),
         "chooseLanguage":
             MessageLookupByLibrary.simpleMessage("Choose Language"),
+        "chooseThemeMode":
+            MessageLookupByLibrary.simpleMessage("Choose Theme Mode"),
         "clearCache": MessageLookupByLibrary.simpleMessage("Clear Cache"),
         "clearCacheSuccess":
             MessageLookupByLibrary.simpleMessage("Clear cache successfully"),
