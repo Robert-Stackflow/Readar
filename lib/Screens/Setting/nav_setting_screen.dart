@@ -137,14 +137,14 @@ class _NavSettingScreenState extends State<NavSettingScreen>
           context: context,
         ),
         body: Container(
-          margin: const EdgeInsets.only(left: 10, top: 10, right: 10),
+          margin: const EdgeInsets.only(left: 10, right: 10),
           child: ScrollConfiguration(
             behavior: NoShadowScrollBehavior(),
             child: CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
                   child: Container(
-                    margin: const EdgeInsets.only(bottom: 10),
+                    margin: const EdgeInsets.only(top: 10, bottom: 10),
                     child: ItemBuilder.buildRadioItem(
                       context: context,
                       title: S.current.showNavigationBar,

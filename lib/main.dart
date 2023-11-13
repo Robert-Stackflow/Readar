@@ -32,6 +32,7 @@ import 'Screens/Lock/pin_verify_screen.dart';
 import 'Screens/Navigation/article_screen.dart';
 import 'Screens/Navigation/feed_screen.dart';
 import 'Screens/Setting/about_setting_screen.dart';
+import 'Screens/Setting/backup_service_setting_screen.dart';
 import 'Screens/Setting/general_setting_screen.dart';
 import 'Screens/Setting/service_setting_screen.dart';
 import 'Screens/main_screen.dart';
@@ -148,6 +149,8 @@ class MyApp extends StatelessWidget {
                 const OperationSettingScreen(),
             BackupSettingScreen.routeName: (context) =>
                 const BackupSettingScreen(),
+            BackupServiceSettingScreen.routeName: (context) =>
+                const BackupServiceSettingScreen(),
             ServiceSettingScreen.routeName: (context) =>
                 const ServiceSettingScreen(),
             GeneralSettingScreen.routeName: (context) =>

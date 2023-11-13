@@ -29,6 +29,8 @@ class AppTheme {
       textTheme: TextTheme(
         titleSmall: isDarkMode ? MyStyles.captionDark : MyStyles.caption,
         titleMedium: isDarkMode ? MyStyles.titleDark : MyStyles.title,
+        bodySmall: isDarkMode ? MyStyles.bodySmallDark : MyStyles.bodySmall,
+        bodyMedium: isDarkMode ? MyStyles.bodyMediumDark : MyStyles.bodyMedium,
         titleLarge: isDarkMode ? MyStyles.titleLargeDark : MyStyles.titleLarge,
         bodyLarge: isDarkMode ? MyStyles.textDark : MyStyles.text,
       ),
@@ -44,12 +46,7 @@ class AppTheme {
         size: 25,
         color: isDarkMode ? MyColors.dark_icon_color : MyColors.icon_color,
       ),
-      dividerColor: isDarkMode ? MyColors.dark_line : MyColors.line,
-      dividerTheme: DividerThemeData(
-        color: isDarkMode ? MyColors.dark_line : MyColors.line,
-        space: 0.6,
-        thickness: 0.6,
-      ),
+      dividerColor: isDarkMode ? MyColors.dark_divider : MyColors.divider,
     );
   }
 

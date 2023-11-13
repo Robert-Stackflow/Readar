@@ -66,8 +66,13 @@ dev_dependencies:
   build_runner: ^2.4.6
   flutter_lints: ^3.0.0
   json_serializable: ^6.7.1
-  flare_splash_screen: ^4.0.0
+  flutter_native_splash: ^2.3.5
 
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: "assets/logo.png"
+  ardroid: true
+  ios: true
 
 flutter_intl:
   enabled: true

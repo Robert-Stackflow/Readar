@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
+import 'backup_service_setting_screen.dart';
 
 class BackupSettingScreen extends StatefulWidget {
   const BackupSettingScreen({super.key});
@@ -55,46 +56,7 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: "以下服务可用于备份数据，并将文章保存为PDF"),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: false,
-                  title: "Dropbox",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: false,
-                  title: "Google Drive",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: false,
-                  title: "OneDrive",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: false,
-                  title: "坚果云",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "其他WebDAV服务",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "查看如何使用备份服务",
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: "云端备份与恢复"),
+                ItemBuilder.buildCaptionItem(context: context, title: "云端备份设置"),
                 ItemBuilder.buildRadioItem(
                   context: context,
                   title: "启用云端备份",
@@ -103,23 +65,22 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "选择云端",
-                  onTap: () {},
+                  title: "选择备份服务",
+                  description: "已选择：Dropbox",
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(BackupServiceSettingScreen.routeName);
+                  },
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "立即备份到云服务",
-                  // description: "备份软件配置、订阅源、星标、稍后再读、阅读历史、剪切板到云服务",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "从云服务恢复备份",
+                  title: "选择备份内容",
+                  description: "已选择：软件配置、订阅源、星标、稍后再读、阅读历史、集锦",
                   onTap: () {},
                   bottomRadius: true,
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(context: context, title: "自动备份"),
+                ItemBuilder.buildCaptionItem(context: context, title: "自动备份设置"),
                 ItemBuilder.buildRadioItem(
                   context: context,
                   title: "启用自动备份",
@@ -129,13 +90,36 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "自动备份时机",
-                  description: "选择何种操作后自动备份到云服务(软件配置更改、订阅源更改等)",
+                  description: "已选择：软件配置更改后、订阅源更改后、插件设置更改后",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  title: "自动备份时覆盖已有备份",
+                  value: false,
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "自动备份份数阈值",
-                  description: "自动备份时，备份数超过该阈值后新备份将自动覆盖旧备份",
+                  tip: "20份",
+                  description: "已有备份份数超过该阈值后，新备份将自动覆盖旧备份",
+                  bottomRadius: true,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 10),
+                ItemBuilder.buildCaptionItem(
+                    context: context, title: "手动备份与恢复"),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "立即备份到云端",
+                  description: "上次备份时间：2023-11-11 20:10:09",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "从云端拉取备份",
+                  description: "上次拉取时间：2023-11-11 20:10:09",
                   bottomRadius: true,
                   onTap: () {},
                 ),

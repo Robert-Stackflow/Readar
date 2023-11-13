@@ -33,7 +33,7 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
               children: [
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
-                    context: context, title: "以下服务可用于直接保存文章"),
+                    context: context, title: "下列插件可直接保存文章"),
                 ItemBuilder.buildRadioItem(
                   context: context,
                   value: false,
@@ -104,6 +104,39 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                   context: context,
                   value: false,
                   title: "flomo",
+                  bottomRadius: true,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 10),
+                ItemBuilder.buildCaptionItem(
+                    context: context, title: "下列插件可将文章保存为PDF/EUPB/MOBI格式"),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  value: false,
+                  title: "Dropbox",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  value: false,
+                  title: "Google Drive",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  value: false,
+                  title: "OneDrive",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  value: false,
+                  title: "坚果云",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "其他WebDAV服务",
                   bottomRadius: true,
                   onTap: () {},
                 ),

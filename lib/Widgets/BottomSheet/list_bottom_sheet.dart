@@ -40,7 +40,7 @@ class TileList extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: Theme.of(context).dividerColor.withOpacity(0.2),
+                color: Theme.of(context).dividerColor,
                 width: 1,
                 style: BorderStyle.solid,
               ),

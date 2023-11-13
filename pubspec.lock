@@ -417,30 +417,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.64.0"
-  flare_flutter:
-    dependency: transitive
-    description:
-      name: flare_flutter
-      sha256: "99d63c60f00fac81249ce6410ee015d7b125c63d8278a30da81edf3317a1f6a0"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "3.0.2"
-  flare_loading:
-    dependency: transitive
-    description:
-      name: flare_loading
-      sha256: "574edb5bccd66112bb86f946a3de564ee3bbd780b93f7f61b328cfe3b9c40171"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "3.0.0"
-  flare_splash_screen:
-    dependency: "direct dev"
-    description:
-      name: flare_splash_screen
-      sha256: "406e62fc92bd85c5e326bbe12a9d3ca07e84ed8b062b7f2bc7d1cb0de7593a97"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.0.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -467,6 +443,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_native_splash:
+    dependency: "direct dev"
+    description:
+      name: flutter_native_splash
+      sha256: d93394f22f73e810bda59e11ebe83329c5511d6460b6b7509c4e1f3c92d6d625
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.3.5"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -605,6 +589,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  image:
+    dependency: transitive
+    description:
+      name: image
+      sha256: "028f61960d56f26414eb616b48b04eb37d700cbe477b7fb09bf1d7ce57fd9271"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.1.3"
   intl:
     dependency: transitive
     description:
@@ -909,6 +901,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.2.3"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      sha256: cb3798bef7fc021ac45b308f4b51208a152792445cce0448c9a4ba5879dd8750
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "5.4.0"
   platform:
     dependency: transitive
     description:
@@ -1370,6 +1370,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.3"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      sha256: "5bc72e1e45e941d825fd7468b9b4cc3b9327942649aeb6fc5cdbf135f0a86e84"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "6.3.0"
   yaml:
     dependency: transitive
     description:

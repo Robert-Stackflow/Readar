@@ -171,7 +171,7 @@ class _ArticleScreenState extends State<ArticleScreen>
             return Tuple2(item, source);
           },
           builder: (context, tuple, child) =>
-              ArticleItem(tuple.item1, tuple.item2, () {}),
+              ArticleItem(tuple.item1, tuple.item2, (_) {}),
         );
       },
     );

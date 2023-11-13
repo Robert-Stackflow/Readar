@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../Resources/gaps.dart';
-
 class IToast {
   static FToast show(
     BuildContext context, {
@@ -17,7 +15,7 @@ class IToast {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
-          color: Theme.of(context).canvasColor.withAlpha(200),
+          color: Theme.of(context).canvasColor.withAlpha(240),
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).shadowColor.withAlpha(25),
@@ -27,19 +25,10 @@ class IToast {
             )
           ],
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            icon ?? MyGaps.empty,
-            // Expanded(
-            //   child:
-            // ),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ],
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
       ),
       gravity: gravity,

@@ -86,6 +86,34 @@ class MyStyles {
     color: MyColors.text,
   );
 
+  static const TextStyle bodySmallDark = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 13,
+    letterSpacing: 0.1,
+    color: MyColors.dark_text,
+  );
+
+  static const TextStyle bodySmall = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 13,
+    letterSpacing: 0.1,
+    color: MyColors.text,
+  );
+
+  static const TextStyle bodyMediumDark = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    letterSpacing: 0.1,
+    color: MyColors.dark_text,
+  );
+
+  static const TextStyle bodyMedium = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    letterSpacing: 0.1,
+    color: MyColors.text,
+  );
+
   static const TextStyle textGray12 = TextStyle(
       fontSize: MyDimens.font_sp12,
       color: MyColors.text_gray,

@@ -90,14 +90,6 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                       context: context, title: S.current.themeSetting),
                   ItemBuilder.buildEntryItem(
                     context: context,
-                    title: S.current.selectTheme,
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(SelectThemeScreen.routeName);
-                    },
-                  ),
-                  ItemBuilder.buildEntryItem(
-                    context: context,
                     title: S.current.themeMode,
                     tip: GlobalProvider.getThemeModeLabel(
                         globalProvider.themeMode),
@@ -115,6 +107,14 @@ class _AppearanceSettingScreenState extends State<AppearanceSettingScreen>
                           title: S.current.chooseThemeMode,
                         ),
                       );
+                    },
+                  ),
+                  ItemBuilder.buildEntryItem(
+                    context: context,
+                    title: S.current.selectTheme,
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed(SelectThemeScreen.routeName);
                     },
                   ),
                   ItemBuilder.buildEntryItem(

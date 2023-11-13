@@ -81,14 +81,14 @@ class ItemBuilder {
           border: Border(
             bottom: BorderSide(
               color: Theme.of(context).dividerColor,
-              width: 0.05,
+              width: 0.3,
               style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
             ),
           ),
         ),
         child: Ink(
           padding: EdgeInsets.symmetric(
-              vertical: description.isNotEmpty ? 15 : 8, horizontal: 10),
+              vertical: description.isNotEmpty ? 16 : 10, horizontal: 10),
           decoration: BoxDecoration(
             color: Theme.of(context).canvasColor,
             shape: BoxShape.rectangle,
@@ -153,6 +153,7 @@ class ItemBuilder {
     String tip = "",
     String description = "",
     Function()? onTap,
+    double padding = 18,
     IconData trailing = Icons.keyboard_arrow_right_rounded,
   }) {
     return InkWell(
@@ -167,14 +168,13 @@ class ItemBuilder {
           border: Border(
             bottom: BorderSide(
               color: Theme.of(context).dividerColor,
-              width: 0.05,
+              width: 0.3,
               style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
             ),
           ),
         ),
         child: Ink(
-          padding: EdgeInsets.symmetric(
-              vertical: isCaption ? 12 : 15, horizontal: 10),
+          padding: EdgeInsets.symmetric(vertical: padding, horizontal: 10),
           decoration: BoxDecoration(
             color: Theme.of(context).canvasColor,
             shape: BoxShape.rectangle,
@@ -214,6 +214,7 @@ class ItemBuilder {
                   ],
                 ),
               ),
+              const SizedBox(width: 50),
               Text(
                 tip,
                 style: Theme.of(context).textTheme.titleSmall,
@@ -254,6 +255,7 @@ class ItemBuilder {
       onTap: null,
       leading: leading,
       trailing: trailing,
+      padding: 15,
       isCaption: true,
     );
   }

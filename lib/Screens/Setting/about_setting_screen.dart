@@ -80,27 +80,36 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         title: S.current.contributor,
                         topRadius: true,
                         showLeading: true,
-                        onTap: () {},
+                        onTap: () {
+                          UriUtil.launchUrlUri(
+                              "https://rssreader.cloudchewie.com/contributor");
+                        },
                         leading: Icons.supervised_user_circle_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
                         context: context,
                         title: S.current.changeLog,
                         showLeading: true,
-                        onTap: () {},
+                        onTap: () {
+                          UriUtil.launchUrlUri(
+                              "https://rssreader.cloudchewie.com/changeLog");
+                        },
                         leading: Icons.merge_type_outlined,
                       ),
-                      ItemBuilder.buildEntryItem(
-                        context: context,
-                        title: S.current.participateInTranslation,
-                        onTap: () {},
-                        showLeading: true,
-                        leading: Icons.translate_rounded,
-                      ),
+                      // ItemBuilder.buildEntryItem(
+                      //   context: context,
+                      //   title: S.current.participateInTranslation,
+                      //   onTap: () {},
+                      //   showLeading: true,
+                      //   leading: Icons.translate_rounded,
+                      // ),
                       ItemBuilder.buildEntryItem(
                         context: context,
                         title: S.current.bugReport,
-                        onTap: () {},
+                        onTap: () {
+                          UriUtil.launchUrlUri(
+                              "https://github.com/Robert-Stackflow/CloudReader/issues");
+                        },
                         showLeading: true,
                         leading: Icons.bug_report_outlined,
                       ),
@@ -108,7 +117,10 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         context: context,
                         title: S.current.license,
                         showLeading: true,
-                        onTap: () {},
+                        onTap: () {
+                          UriUtil.launchUrlUri(
+                              "https://rssreader.cloudchewie.com/license");
+                        },
                         leading: Icons.local_library_outlined,
                       ),
                       ItemBuilder.buildEntryItem(
@@ -127,22 +139,25 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         context: context,
                         title: S.current.privacyPolicy,
                         showLeading: true,
-                        onTap: () {},
+                        onTap: () {
+                          UriUtil.launchUrlUri(
+                              "https://rssreader.cloudchewie.com/privacyPolicy");
+                        },
                         topRadius: true,
                         leading: Icons.group_outlined,
                       ),
-                      ItemBuilder.buildEntryItem(
-                        context: context,
-                        title: S.current.rate,
-                        showLeading: true,
-                        onTap: () {},
-                        leading: Icons.rate_review_outlined,
-                      ),
+                      // ItemBuilder.buildEntryItem(
+                      //   context: context,
+                      //   title: S.current.rate,
+                      //   showLeading: true,
+                      //   onTap: () {},
+                      //   leading: Icons.rate_review_outlined,
+                      // ),
                       ItemBuilder.buildEntryItem(
                         context: context,
                         title: S.current.contact,
                         onTap: () {
-                          UriUtil.launchEmailUri("2014027378@qq.com",
+                          UriUtil.launchEmailUri(context, "2014027378@qq.com",
                               subject: "反馈");
                         },
                         showLeading: true,

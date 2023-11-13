@@ -8,6 +8,7 @@ import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/general_setting_screen.dart';
+import 'package:cloudreader/Utils/itoast.dart';
 import 'package:cloudreader/Utils/uri_util.dart';
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
@@ -63,21 +64,28 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     _pageList = [];
     _navigationBarItemList = [];
     setState(() {
-      for (NavEntry item in NavEntry.getNavigationBarEntries()) {
-        _navigationBarItemList.add(SalomonBottomBarItem(
-            icon: Icon(NavEntry.getIcon(item.id)),
-            title: Text(NavEntry.getLabel(item.id))));
-        _pageList.add(NavEntry.getPage(item.id));
-      }
-    });
-    setState(() {
       _showNavigationBar = Global.globalProvider.showNavigationBar &&
           NavEntry.getNavigationBarEntries().isNotEmpty;
-      if (!Global.globalProvider.showNavigationBar && mounted) {
-        Global.globalProvider.singlePage =
-            NavEntry.getPage(Global.globalProvider.navEntries[0].id);
+      if (_showNavigationBar) {
+        for (NavEntry item in NavEntry.getNavigationBarEntries()) {
+          _navigationBarItemList.add(SalomonBottomBarItem(
+              icon: Icon(NavEntry.getIcon(item.id)),
+              title: Text(NavEntry.getLabel(item.id))));
+          _pageList.add(NavEntry.getPage(item.id));
+        }
+      } else {
+        for (NavEntry item in NavEntry.getNavs()) {
+          _pageList.add(NavEntry.getPage(item.id));
+        }
       }
     });
+    // setState(() {
+    //
+    //
+    //   if (!Global.globalProvider.showNavigationBar && mounted) {
+    //     singlePage = NavEntry.getPage(Global.globalProvider.navEntries[0].id);
+    //   }
+    // });
   }
 
   void onBottomNavigationBarItemTap(int index) {
@@ -134,7 +142,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           )
         : Scaffold(
             backgroundColor: Colors.transparent,
-            body: Global.globalProvider.singlePage,
+            body: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: _pageList,
+            ),
             drawer: _drawer(),
           );
   }
@@ -188,6 +200,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         context: context,
         title: NavEntry.getLabel(entry.id),
         showLeading: true,
+        padding: 15,
         bottomRadius: sideBarEntries.last == entry,
         onTap: () {
           if (_showNavigationBar) {
@@ -201,9 +214,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           } else {
             setState(() {
               if (mounted) {
-                Global.globalProvider.singlePage = NavEntry.getPage(entry.id);
+                IToast.showTop(context, text: entry.id);
+                _pageController.jumpToPage(sideBarEntries.indexOf(entry));
               }
             });
+            Navigator.of(context).pop();
           }
         },
         leading: NavEntry.getIcon(entry.id),
@@ -222,6 +237,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         onTap: () {
           Navigator.pushNamed(context, GeneralSettingScreen.routeName);
         },
+        padding: 15,
         leading: Icons.settings_outlined,
       ),
       ItemBuilder.buildEntryItem(
@@ -231,6 +247,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         onTap: () {
           Navigator.pushNamed(context, AppearanceSettingScreen.routeName);
         },
+        padding: 15,
         leading: Icons.color_lens_outlined,
       ),
       ItemBuilder.buildEntryItem(
@@ -240,6 +257,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         onTap: () {
           Navigator.pushNamed(context, ServiceSettingScreen.routeName);
         },
+        padding: 15,
         leading: Icons.business_center_outlined,
       ),
       ItemBuilder.buildEntryItem(
@@ -249,6 +267,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         onTap: () {
           Navigator.pushNamed(context, BackupSettingScreen.routeName);
         },
+        padding: 15,
         leading: Icons.backup_outlined,
       ),
       ItemBuilder.buildEntryItem(
@@ -258,6 +277,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         onTap: () {
           Navigator.pushNamed(context, OperationSettingScreen.routeName);
         },
+        padding: 15,
         leading: Icons.touch_app_outlined,
       ),
       ItemBuilder.buildEntryItem(
@@ -267,6 +287,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         onTap: () {
           Navigator.pushNamed(context, ExtensionSettingScreen.routeName);
         },
+        padding: 15,
         leading: Icons.extension_outlined,
       ),
       ItemBuilder.buildEntryItem(
@@ -276,6 +297,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         onTap: () {
           Navigator.pushNamed(context, ExperimentSettingScreen.routeName);
         },
+        padding: 15,
         bottomRadius: true,
         leading: Icons.outlined_flag_rounded,
       ),
@@ -314,6 +336,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         UriUtil.launchUrlUri(
                             "https://rssreader.cloudchewie.com/help");
                       },
+                      padding: 15,
                       leading: Icons.help_outline_rounded,
                     ),
                     ItemBuilder.buildEntryItem(
@@ -325,6 +348,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         Navigator.pushNamed(
                             context, AboutSettingScreen.routeName);
                       },
+                      padding: 15,
                       leading: Icons.info_outline_rounded,
                     ),
                   ],

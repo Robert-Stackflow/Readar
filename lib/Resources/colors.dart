@@ -7,8 +7,8 @@ class MyColors {
   static const Color appbar = bg_color;
   static const Color dark_appbar = dark_bg_color;
 
-  static const Color bg_color = Color(0xFFF5F5F5);
-  static const Color dark_bg_color = Color(0xFF0D0D0D);
+  static const Color bg_color = Color(0xFFF7F8F9);
+  static const Color dark_bg_color = Color(0xFF121212);
 
   static const Color icon_color = Color(0xFF333333);
   static const Color dark_icon_color = Color(0xFFB8B8B8);
@@ -17,7 +17,7 @@ class MyColors {
   static const Color dark_shadow_color = Color(0xFFFFFFFF);
 
   static const Color material_bg = Color(0xFFFFFFFF);
-  static const Color dark_material_bg = Color(0xFF1F1F1F);
+  static const Color dark_material_bg = Color(0xFF1E1E1E);
 
   static const Color text = Color(0xFF333333);
   static const Color dark_text = Color(0xFFB8B8B8);
@@ -32,8 +32,8 @@ class MyColors {
   static const Color bg_gray = Color(0xFFF6F6F6);
   static const Color dark_bg_gray = Color(0xFF1F1F1F);
 
-  static const Color line = Color(0xFF757575);
-  static const Color dark_line = Color(0xFF9E9E9E);
+  static const Color divider = Color(0xFFF5F6F7);
+  static const Color dark_divider = Color(0xFF393939);
 
   static const Color red = Color(0xFFFF4759);
   static const Color dark_red = Color(0xFFE03E4E);

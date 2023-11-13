@@ -12,17 +12,6 @@ enum ActiveThemeMode {
 }
 
 class GlobalProvider with ChangeNotifier {
-  Widget? _singlePage;
-
-  Widget? get singlePage => _singlePage;
-
-  set singlePage(Widget? value) {
-    if (value != _singlePage) {
-      _singlePage = value;
-      notifyListeners();
-    }
-  }
-
   bool _showNavigationBar = HiveUtil.showNavigationBar();
 
   bool get showNavigationBar => _showNavigationBar;

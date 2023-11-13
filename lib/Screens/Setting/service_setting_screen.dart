@@ -33,36 +33,7 @@ class _ServiceSettingScreenState extends State<ServiceSettingScreen>
               children: [
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
-                    context: context, title: "以下自建类型服务可用于同步订阅源"),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "Fever API",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "FreshRSS API",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "Google Reader API",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "Miniflux",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "Nextcloud News API",
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: "以下第三方服务可用于同步订阅源"),
+                    context: context, title: "第三方RSS服务"),
                 ItemBuilder.buildRadioItem(
                   context: context,
                   value: false,
@@ -107,10 +78,39 @@ class _ServiceSettingScreenState extends State<ServiceSettingScreen>
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
+                ItemBuilder.buildCaptionItem(
+                    context: context, title: "自建RSS服务"),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "建议新的服务",
-                  description: "向我们建议你希望支持的订阅源服务",
+                  title: "Fever API",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "FreshRSS API",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "Google Reader API",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "Miniflux",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "Nextcloud News API",
+                  bottomRadius: true,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 10),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "建议新的RSS服务",
+                  description: "向我们建议你希望支持的RSS服务",
                   topRadius: true,
                   bottomRadius: true,
                   onTap: () {},
