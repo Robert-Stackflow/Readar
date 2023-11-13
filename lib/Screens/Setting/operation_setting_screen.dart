@@ -52,13 +52,7 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
                   context: context,
                   title: "向右长滑动",
                   onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: "滚动时自动标记已读",
                   bottomRadius: true,
-                  value: false,
-                  onTap: () {},
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(

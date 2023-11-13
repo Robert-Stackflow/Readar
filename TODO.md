@@ -1,7 +1,5 @@
 ## 页面设计
 
-
-
 ### 文章列表
 
 - 顶部栏
@@ -184,40 +182,92 @@
 - Calm Feeds：更新频率较低的订阅源的文章
 - Linked List：内含多个链接的文章
 
+## 内容设计
+
+- 内容库
+  - 已保存
+  - 阅读历史
+- 探索
+  - Hot Links
+  - Calm Feeds
+  - Linked List
+  - 统计
+
 ## 数据库设计
 
-### 订阅源服务相关
+### 订阅源服务
 
 |       字段       |  数据库类型  | 代码类型 | 是否必需 |                 备注                 |
 | :--------------: | :----------: | :------: | :------: | :----------------------------------: |
+|        id        |   INTEGER    |   int    |    是    |               自增主键               |
 |     endpoint     | VARCHAR(255) |  String  |    是    |               服务网址               |
-|       type       |     int      |   int    |    是    |               服务类型               |
+|       type       |   INTEGER    |   int    |    是    |   服务类型（第三方各个、自建各个）   |
 |     username     | VARCHAR(255) |  String  |    否    |                用户名                |
 |     password     | VARCHAR(255) |  String  |    否    |                 密码                 |
 |      api_id      | VARCHAR(255) |  String  |    否    |                API ID                |
 |     api_key      | VARCHAR(255) |  String  |    否    |               API KEY                |
 |   fetch_limit    |   INTEGER    |   int    |    是    |               抓取上限               |
-| last_sync_status |              |   bool   |    是    | 上次同步状态（尚未同步、成功、失败） |
+| last_sync_status |   INTEGER    |   int    |    否    | 上次同步状态（尚未同步、成功、失败） |
+|  last_sync_time  |     LONG     |   long   |    否    |             上次同步时间             |
 |      params      |     TEXT     |  String  |    否    |               其他参数               |
 
-### 云同步服务相关
+### 云同步服务
+
+|       字段       |  数据库类型  | 代码类型 | 是否必需 |           备注           |
+| :--------------: | :----------: | :------: | :------: | :----------------------: |
+|        id        |   INTEGER    |   int    |    是    |         自增主键         |
+|     endpoint     | VARCHAR(255) |  String  |    是    |         服务网址         |
+|       type       |     int      |   int    |    是    | 服务类型（各云同步服务） |
+|     username     | VARCHAR(255) |  String  |    否    |          用户名          |
+|     password     | VARCHAR(255) |  String  |    否    |           密码           |
+|      api_id      | VARCHAR(255) |  String  |    否    |          API ID          |
+|     api_key      | VARCHAR(255) |  String  |    否    |         API KEY          |
+| last_push_status |   INTEGER    |   int    |    否    |       上次备份状态       |
+|  last_push_time  |     LONG     |   long   |    否    |       上次备份时间       |
+| last_pull_status |   INTEGER    |   int    |    否    |       上次拉取状态       |
+|  last_pull_time  |     LONG     |   long   |    否    |       上次拉取时间       |
+|      params      |     TEXT     |  String  |    否    |         其他参数         |
+
+### 笔记服务
 
 |   字段   |  数据库类型  | 代码类型 | 是否必需 |   备注   |
 | :------: | :----------: | :------: | :------: | :------: |
+|    id    |   INTEGER    |   int    |    是    | 自增主键 |
+|   name   | VARCHAR(255) |  String  |    是    | 服务名称 |
 | endpoint | VARCHAR(255) |  String  |    是    | 服务网址 |
-|   type   |     int      |   int    |    是    | 服务类型 |
 | username | VARCHAR(255) |  String  |    否    |  用户名  |
 | password | VARCHAR(255) |  String  |    否    |   密码   |
 |  api_id  | VARCHAR(255) |  String  |    否    |  API ID  |
 | api_key  | VARCHAR(255) |  String  |    否    | API KEY  |
 
-### 笔记服务相关
+### 订阅源
 
-|   字段   |  数据库类型  | 代码类型 | 是否必需 |   备注   |
-| :------: | :----------: | :------: | :------: | :------: |
-| endpoint | VARCHAR(255) |  String  |    是    | 服务网址 |
-|   type   |     int      |   int    |    是    | 服务类型 |
-| username | VARCHAR(255) |  String  |    否    |  用户名  |
-| password | VARCHAR(255) |  String  |    否    |   密码   |
-|  api_id  | VARCHAR(255) |  String  |    否    |  API ID  |
-| api_key  | VARCHAR(255) |  String  |    否    | API KEY  |
+|           字段            | 数据库类型 | 代码类型 | 是否必需 |                  备注                  |
+| :-----------------------: | :--------: | :------: | :------: | :------------------------------------: |
+|            id             |  INTEGER   |   int    |    是    |                自增主键                |
+|        service_id         |  INTEGER   |   int    |    是    |            所属订阅源服务ID            |
+|            sid            |    TEXT    |   int    |    是    |                订阅源ID                |
+|            url            |    TEXT    |  String  |    否    |               订阅源地址               |
+|         icon_url          |    TEXT    |  String  |    否    |             订阅源图标地址             |
+|           name            |    TEXT    |  String  |    否    |               订阅源名称               |
+|         open_type         |  INTEGER   |  String  |    否    |  文章抓取方式(RSS、全文、内置、外部)   |
+|         view_type         |  INTEGER   |   int    |    是    |              文章列表视图              |
+|         mobilizer         |  INTEGER   |   int    |    是    |               文章解析器               |
+|      auto_pull_time       |  INTEGER   |   int    |    是    |          拉取频率（0不更新）           |
+| remove_duplicate_articles |  INTEGER   |   int    |    是    |              移除重复文章              |
+|     scroll_auto_read      |  INTEGER   |   int    |    是    | 滚动时自动已读（跟随全局设置、是、否） |
+|        latest_time        |    LONG    |   long   |    否    |              最新文章时间              |
+|     last_pull_status      |  INTEGER   |   int    |    否    |            上次拉取文章状态            |
+|      last_pull_time       |    LONG    |   long   |    否    |              上次拉取时间              |
+|          params           |    TEXT    |  String  |    否    |   其他参数（可以根据全局设置的参数）   |
+
+### 文章
+
+## Github API
+
+### 获取最新版本
+
+https://api.github.com/repos/Robert-Stackflow/CloudOTP/releases/latest
+
+### 获取更新日志
+

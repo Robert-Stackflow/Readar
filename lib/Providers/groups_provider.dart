@@ -17,7 +17,7 @@ class GroupsProvider with ChangeNotifier {
   void updateUncategorized({force = false}) {
     if (uncategorized != null || force) {
       final sids = Set<String>.from(
-          Global.feedsProvider.getSources().map<String>((s) => s.id));
+          Global.feedsProvider.getSources().map<String>((s) => s.sid));
       for (var group in _groups.values) {
         for (var sid in group) {
           sids.remove(sid);

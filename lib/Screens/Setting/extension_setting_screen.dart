@@ -143,8 +143,8 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "建议新的服务",
-                  description: "向我们建议你希望支持的笔记服务",
+                  title: "建议新的插件",
+                  description: "向我们建议你希望支持的笔记服务插件",
                   topRadius: true,
                   bottomRadius: true,
                   onTap: () {},

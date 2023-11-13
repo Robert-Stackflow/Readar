@@ -1,11 +1,16 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:provider/provider.dart';
 
-import '../../Models/auto_lock.dart';
+import '../../Providers/global.dart';
+import '../../Providers/global_provider.dart';
 import '../../Utils/hive_util.dart';
 import '../../Utils/itoast.dart';
+import '../../Widgets/BottomSheet/bottom_sheet_builder.dart';
+import '../../Widgets/BottomSheet/list_bottom_sheet.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 import '../Lock/pin_change_screen.dart';
@@ -29,7 +34,6 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
       HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
           HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!.isNotEmpty;
   bool _autoLock = HiveUtil.getBool(key: HiveUtil.autoLockKey);
-  int _autoLockTimeOption = HiveUtil.getInt(key: HiveUtil.autoLockTimeKey);
   bool _enableSafeMode =
       HiveUtil.getBool(key: HiveUtil.enableSafeModeKey, defaultValue: false);
   bool _enableBiometric = HiveUtil.getBool(key: HiveUtil.enableBiometricKey);
@@ -57,6 +61,57 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
+                const SizedBox(height: 10),
+                ItemBuilder.buildCaptionItem(
+                    context: context, title: S.current.ttsSetting),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  title: S.current.ttsEnable,
+                  value: true,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: S.current.ttsEngine,
+                  tip: "默认引擎",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: S.current.ttsSpeed,
+                  tip: "1.0x",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: S.current.ttsSystemSetting,
+                  onTap: () {
+                    AppSettings.openAppSettings(
+                        type: AppSettingsType.tts, asAnotherTask: true);
+                  },
+                ),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  title: S.current.ttsSpot,
+                  value: true,
+                  description: S.current.ttsSpotTip,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  title: S.current.ttsAutoHaveRead,
+                  value: true,
+                  description: S.current.ttsAutoHaveReadTip,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  title: S.current.ttsWakeLock,
+                  value: true,
+                  description: S.current.ttsWakeLockTip,
+                  bottomRadius: true,
+                  onTap: () {},
+                ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "AI摘要"),
                 ItemBuilder.buildRadioItem(
@@ -160,11 +215,30 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
                 Visibility(
                   visible:
                       _enableGuesturePasswd && _hasGuesturePasswd && _autoLock,
-                  child: ItemBuilder.buildEntryItem(
-                    context: context,
-                    title: "自动锁定时机",
-                    tip: AutoLock.optionLabels[_autoLockTimeOption],
-                    onTap: onChangeAutoLockTimeTapped,
+                  child: Selector<GlobalProvider, int>(
+                    selector: (context, globalProvider) =>
+                        globalProvider.autoLockTime,
+                    builder: (context, autoLockTime, child) =>
+                        ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: "自动锁定时机",
+                      tip: GlobalProvider.getAutoLockOptionLabel(autoLockTime),
+                      onTap: () {
+                        BottomSheetBuilder.showListBottomSheet(
+                          context,
+                          (context) => TileList.fromOptions(
+                            GlobalProvider.getAutoLockOptions(),
+                            autoLockTime,
+                            (item2) {
+                              Global.globalProvider.autoLockTime = item2;
+                              Navigator.pop(context);
+                            },
+                            context: context,
+                            title: "选择自动锁定时机",
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 ItemBuilder.buildRadioItem(
@@ -211,7 +285,6 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
             builder: (context) => PinVerifyScreen(
               onSuccess: () {
                 IToast.showTop(context, text: "手势密码关闭成功");
-                HiveUtil.delete(key: HiveUtil.guesturePasswdKey);
                 setState(() {
                   _enableGuesturePasswd = !_enableGuesturePasswd;
                   HiveUtil.put(
@@ -289,24 +362,6 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
       _autoLock = !_autoLock;
       HiveUtil.put(key: HiveUtil.autoLockKey, value: _autoLock);
     });
-  }
-
-  onChangeAutoLockTimeTapped() {
-    // showModalBottomSheet(
-    //   backgroundColor: Colors.white.withOpacity(0),
-    //   context: context,
-    //   builder: (context) => ListBottomSheet(
-    //     currentIndex: _autoLockTimeOption,
-    //     title: "选择自动锁定时机",
-    //     labels: AutoLock.optionLabels,
-    //     onChanged: (int index) {
-    //       setState(() {
-    //         _autoLockTimeOption = index;
-    //         HiveUtil.put(key: HiveUtil.autoLockTimeKey, value: index);
-    //       });
-    //     },
-    //   ),
-    // );
   }
 
   onSafeModeTapped() {

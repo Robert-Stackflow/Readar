@@ -7,6 +7,7 @@ import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../Models/feed.dart';
+import '../../Models/feed_setting.dart';
 import '../../Models/rss_item.dart';
 import '../../Providers/feed_content_provider.dart';
 import '../../Providers/global.dart';
@@ -35,7 +36,7 @@ class ArticleItemState extends State<ArticleItem> {
     if (!widget.item.hasRead) {
       Global.itemsProvider.updateItem(widget.item.id, read: true);
     }
-    if (widget.feed.openTarget == SourceOpenTarget.external) {
+    if (widget.feed.feedSetting?.crawlType == CrawlType.external) {
       launch(widget.item.link, forceSafariVC: false, forceWebView: false);
     } else {
       var isSource = Navigator.of(context).canPop();

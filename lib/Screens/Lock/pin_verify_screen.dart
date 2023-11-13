@@ -1,12 +1,11 @@
-// import 'package:local_auth_android/types/auth_messages_android.dart';
 import 'package:cloudreader/Utils/iprint.dart';
-import 'package:cloudreader/Utils/itoast.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_notifier.dart';
 import 'package:cloudreader/Widgets/Unlock/gesture_unlock_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
 
 import '../../Utils/hive_util.dart';
 
@@ -21,16 +20,16 @@ class PinVerifyScreen extends StatefulWidget {
   PinVerifyScreenState createState() => PinVerifyScreenState();
 }
 
-// AndroidAuthMessages andStrings = const AndroidAuthMessages(
-//   cancelButton: '取消',
-//   goToSettingsButton: '去设置',
-//   biometricNotRecognized: '指纹识别失败',
-//   goToSettingsDescription: '请设置指纹.',
-//   biometricHint: '',
-//   biometricSuccess: '指纹识别成功',
-//   signInTitle: '指纹验证',
-//   deviceCredentialsRequiredTitle: '请先录入指纹!',
-// );
+AndroidAuthMessages andStrings = const AndroidAuthMessages(
+  cancelButton: '取消',
+  goToSettingsButton: '去设置',
+  biometricNotRecognized: '指纹识别失败',
+  goToSettingsDescription: '请设置指纹',
+  biometricHint: '',
+  biometricSuccess: '指纹识别成功',
+  signInTitle: '指纹验证',
+  deviceCredentialsRequiredTitle: '请先录入指纹!',
+);
 
 class PinVerifyScreenState extends State<PinVerifyScreen> {
   final String? _password = HiveUtil.getString(key: HiveUtil.guesturePasswdKey);
@@ -54,7 +53,7 @@ class PinVerifyScreenState extends State<PinVerifyScreen> {
       await localAuth
           .authenticate(
               localizedReason: '进行指纹验证以使用APP',
-              // authMessages: [andStrings, andStrings, andStrings],
+              authMessages: [andStrings, andStrings, andStrings],
               options: const AuthenticationOptions(
                   biometricOnly: true,
                   useErrorDialogs: false,
@@ -115,41 +114,17 @@ class PinVerifyScreenState extends State<PinVerifyScreen> {
                     onCompleted: _gestureComplete,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        IToast.showTop(context, text: "无法找回密码，请尝试重新安装软件");
-                      },
-                      child: Text(
-                        "忘记密码",
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
+                Visibility(
+                  visible: _isUseBiometric,
+                  child: GestureDetector(
+                    onTap: () {
+                      auth();
+                    },
+                    child: Text(
+                      "指纹识别",
+                      style: Theme.of(context).textTheme.titleSmall,
                     ),
-                    Visibility(
-                      visible: _isUseBiometric,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          Text(
-                            "|",
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () {
-                              auth();
-                            },
-                            child: Text(
-                              "指纹识别",
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),

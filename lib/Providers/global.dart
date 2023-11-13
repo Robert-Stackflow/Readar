@@ -1,4 +1,5 @@
 import 'package:cloudreader/Api/service_handler.dart';
+import 'package:cloudreader/Database/database_manager.dart';
 import 'package:cloudreader/Providers/feeds_provider.dart';
 import 'package:cloudreader/Providers/sync_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +8,6 @@ import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../Api/google_reader_request.dart';
-import '../Utils/db.dart';
 import '../Utils/store.dart';
 import 'feed_content_provider.dart';
 import 'global_provider.dart';
@@ -23,13 +23,13 @@ abstract class Global {
   static GroupsProvider groupsProvider = GroupsProvider();
   static SyncProvider syncProvider = SyncProvider();
   static ServiceHandler? serviceHandler;
+  static List<ServiceHandler?>? serviceHandlers;
   static late Database db;
   static late Jaguar server;
   static const String address = "127.0.0.1";
   static const int port = 4567;
 
   static void init() {
-    assert(!_initialized);
     _initialized = true;
     var serviceType =
         SyncService.values[Store.sp.getInt(StoreKeys.SYNC_SERVICE) ?? 0];
@@ -51,7 +51,7 @@ abstract class Global {
   }
 
   static Future<void> initDatabase() async {
-    db = (await DatabaseHelper.getDatabase())!;
+    db = await DatabaseManager.getDataBase();
     await db.delete(
       "items",
       where: "date < ? AND starred = 0",

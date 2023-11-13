@@ -32,22 +32,31 @@ class MessageLookup extends MessageLookupByLibrary {
         "apprearanceSetting":
             MessageLookupByLibrary.simpleMessage("Apprearance"),
         "article": MessageLookupByLibrary.simpleMessage("Articles"),
-        "articleDetailHeaderImageDisplayMode":
-            MessageLookupByLibrary.simpleMessage("Header Image Display Mode"),
-        "articleDetailMetaSetting":
-            MessageLookupByLibrary.simpleMessage("Meta Setting"),
-        "articleDetailSetting":
-            MessageLookupByLibrary.simpleMessage("Article Detail Setting"),
-        "articleDetailShowRelated":
-            MessageLookupByLibrary.simpleMessage("Show Related Articles"),
-        "articleDetailVideoDisplayMode":
-            MessageLookupByLibrary.simpleMessage("Video Display Mode"),
-        "articleDetailViewOption":
-            MessageLookupByLibrary.simpleMessage("View Option"),
+        "articleDetailHeaderImageViewType":
+            MessageLookupByLibrary.simpleMessage("Header image option"),
+        "articleDetailLayoutType":
+            MessageLookupByLibrary.simpleMessage("Article detail layout"),
+        "articleDetailShowImageAlt":
+            MessageLookupByLibrary.simpleMessage("Show image title"),
+        "articleDetailShowRelatedArticles":
+            MessageLookupByLibrary.simpleMessage("Show related articles"),
+        "articleDetailVideoViewType":
+            MessageLookupByLibrary.simpleMessage("Video option"),
+        "articleListLayoutType":
+            MessageLookupByLibrary.simpleMessage("Article list layout"),
+        "autoReadWhenScrolling": MessageLookupByLibrary.simpleMessage(
+            "Automatically mark as read when scrolling"),
         "backupSetting": MessageLookupByLibrary.simpleMessage("Backup"),
         "bottomNavigationBarSetting":
             MessageLookupByLibrary.simpleMessage("Navigation Bar Setting"),
         "bugReport": MessageLookupByLibrary.simpleMessage("Bug Report"),
+        "cacheImageWhenPull":
+            MessageLookupByLibrary.simpleMessage("Cache images when pulling"),
+        "cacheWebPageWhenPull":
+            MessageLookupByLibrary.simpleMessage("Cache articles when pulling"),
+        "cacheWebPageWhenReading":
+            MessageLookupByLibrary.simpleMessage("Cache articles when reading"),
+        "calmFeeds": MessageLookupByLibrary.simpleMessage("Calm Feeds"),
         "changeLog": MessageLookupByLibrary.simpleMessage("Change Log"),
         "checkUpdates":
             MessageLookupByLibrary.simpleMessage("Check for Updates"),
@@ -65,6 +74,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "contact": MessageLookupByLibrary.simpleMessage("Contact Us"),
         "content": MessageLookupByLibrary.simpleMessage("Content"),
         "contributor": MessageLookupByLibrary.simpleMessage("Contributor"),
+        "crawlType":
+            MessageLookupByLibrary.simpleMessage("Article open option"),
         "darkTheme": MessageLookupByLibrary.simpleMessage("Dark Theme"),
         "dragTip": MessageLookupByLibrary.simpleMessage(
             "Long press and drag an item here to move it to the end of the list."),
@@ -75,11 +86,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "followSystem": MessageLookupByLibrary.simpleMessage("Follow System"),
         "generalSetting": MessageLookupByLibrary.simpleMessage("General"),
         "githubRepo": MessageLookupByLibrary.simpleMessage("Github Repo"),
+        "globalSetting": MessageLookupByLibrary.simpleMessage("Global"),
         "help": MessageLookupByLibrary.simpleMessage("Help"),
         "highlights": MessageLookupByLibrary.simpleMessage("Highlights"),
+        "history": MessageLookupByLibrary.simpleMessage("History"),
+        "hotLinks": MessageLookupByLibrary.simpleMessage("Hot Links"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
+        "library": MessageLookupByLibrary.simpleMessage("Library"),
         "license": MessageLookupByLibrary.simpleMessage("License"),
         "lightTheme": MessageLookupByLibrary.simpleMessage("Light Theme"),
+        "linkedList": MessageLookupByLibrary.simpleMessage("Linked List"),
+        "mobilizerType": MessageLookupByLibrary.simpleMessage("Mobilizer"),
         "navigationBarEntries": MessageLookupByLibrary.simpleMessage(
             "Entries displayed in navigation bar"),
         "navigationBarMaxEntriesTip": m0,
@@ -92,8 +109,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "primaryColor": MessageLookupByLibrary.simpleMessage("Primary Color"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
         "privacySetting": MessageLookupByLibrary.simpleMessage("Privacy"),
+        "pullWhenStartUp":
+            MessageLookupByLibrary.simpleMessage("Pull articles when starting"),
         "rate": MessageLookupByLibrary.simpleMessage("Rate Us"),
         "readLater": MessageLookupByLibrary.simpleMessage("Read Later"),
+        "removeDuplicateArticles":
+            MessageLookupByLibrary.simpleMessage("Remove duplicate articles"),
+        "saved": MessageLookupByLibrary.simpleMessage("Saved"),
         "selectTheme": MessageLookupByLibrary.simpleMessage("Select Theme"),
         "serviceSetting": MessageLookupByLibrary.simpleMessage("Service"),
         "setting": MessageLookupByLibrary.simpleMessage("Setting"),

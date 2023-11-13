@@ -1,3 +1,4 @@
+import 'package:cloudreader/Resources/gaps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -69,72 +70,76 @@ class ItemBuilder {
     Function(bool?)? onChanged,
     required BuildContext context,
   }) {
-    return InkWell(
-      borderRadius: BorderRadius.vertical(
+    return Ink(
+      decoration: BoxDecoration(
+        color: Theme.of(context).canvasColor,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.vertical(
           top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
-          bottom: bottomRadius
-              ? Radius.circular(radius)
-              : const Radius.circular(0)),
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).dividerColor,
-              width: 0.3,
-              style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
-            ),
-          ),
+          bottom:
+              bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
         ),
-        child: Ink(
-          padding: EdgeInsets.symmetric(
-              vertical: description.isNotEmpty ? 16 : 10, horizontal: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).canvasColor,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.vertical(
-              top: topRadius
-                  ? Radius.circular(radius)
-                  : const Radius.circular(0),
-              bottom: bottomRadius
-                  ? Radius.circular(radius)
-                  : const Radius.circular(0),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Visibility(
-                visible: showLeading,
-                child:
-                    Icon(leading, size: 20, color: IconTheme.of(context).color),
-              ),
-              const SizedBox(width: 5),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium,
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.vertical(
+            top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
+            bottom: bottomRadius
+                ? Radius.circular(radius)
+                : const Radius.circular(0)),
+        onTap: onTap,
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                  vertical: description.isNotEmpty ? 16 : 10, horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Visibility(
+                    visible: showLeading,
+                    child: Icon(leading,
+                        size: 20, color: IconTheme.of(context).color),
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        description.isNotEmpty
+                            ? Text(description,
+                                style: Theme.of(context).textTheme.titleSmall)
+                            : Container(),
+                      ],
                     ),
-                    description.isNotEmpty
-                        ? Text(description,
-                            style: Theme.of(context).textTheme.titleSmall)
-                        : Container(),
-                  ],
+                  ),
+                  Transform.scale(
+                    scale: 0.9,
+                    child: CupertinoSwitch(
+                      value: value,
+                      activeColor: Theme.of(context).primaryColor,
+                      onChanged: onChanged,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 0.5,
+                    style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
+                  ),
                 ),
               ),
-              Transform.scale(
-                scale: 0.9,
-                child: CupertinoSwitch(
-                  value: value,
-                  activeColor: Theme.of(context).primaryColor,
-                  onChanged: onChanged,
-                ),
-              ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
@@ -148,6 +153,7 @@ class ItemBuilder {
     bool showLeading = false,
     bool showTrailing = true,
     bool isCaption = false,
+    Color? backgroundColor,
     IconData leading = Icons.home_filled,
     required String title,
     String tip = "",
@@ -156,78 +162,82 @@ class ItemBuilder {
     double padding = 18,
     IconData trailing = Icons.keyboard_arrow_right_rounded,
   }) {
-    return InkWell(
-      borderRadius: BorderRadius.vertical(
-        top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
-        bottom:
-            bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
-      ),
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).dividerColor,
-              width: 0.3,
-              style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
-            ),
-          ),
+    return Ink(
+      decoration: BoxDecoration(
+        color: backgroundColor ?? Theme.of(context).canvasColor,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.vertical(
+          top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
+          bottom:
+              bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
         ),
-        child: Ink(
-          padding: EdgeInsets.symmetric(vertical: padding, horizontal: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).canvasColor,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.vertical(
-              top: topRadius
-                  ? Radius.circular(radius)
-                  : const Radius.circular(0),
-              bottom: bottomRadius
-                  ? Radius.circular(radius)
-                  : const Radius.circular(0),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Visibility(
-                visible: showLeading,
-                child: Icon(leading, size: 20),
-              ),
-              showLeading
-                  ? const SizedBox(width: 10)
-                  : const SizedBox(width: 5),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: isCaption
-                          ? Theme.of(context).textTheme.titleSmall
-                          : Theme.of(context).textTheme.titleMedium,
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.vertical(
+          top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
+          bottom:
+              bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: padding, horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Visibility(
+                    visible: showLeading,
+                    child: Icon(leading, size: 20),
+                  ),
+                  showLeading
+                      ? const SizedBox(width: 10)
+                      : const SizedBox(width: 5),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: isCaption
+                              ? Theme.of(context).textTheme.titleSmall
+                              : Theme.of(context).textTheme.titleMedium,
+                        ),
+                        description.isNotEmpty
+                            ? Text(description,
+                                style: Theme.of(context).textTheme.titleSmall)
+                            : Container(),
+                      ],
                     ),
-                    description.isNotEmpty
-                        ? Text(description,
-                            style: Theme.of(context).textTheme.titleSmall)
-                        : Container(),
-                  ],
+                  ),
+                  isCaption ? MyGaps.empty : const SizedBox(width: 50),
+                  Text(
+                    tip,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(width: 5),
+                  Visibility(
+                    visible: showTrailing,
+                    child: Icon(trailing,
+                        size: 20,
+                        color: Theme.of(context).textTheme.titleSmall?.color),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: isCaption ? 0 : 10),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 0.5,
+                    style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
+                  ),
                 ),
               ),
-              const SizedBox(width: 50),
-              Text(
-                tip,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(width: 5),
-              Visibility(
-                visible: showTrailing,
-                child: Icon(trailing,
-                    size: 20,
-                    color: Theme.of(context).textTheme.titleSmall?.color),
-              ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

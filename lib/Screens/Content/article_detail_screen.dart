@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../Models/feed.dart';
+import '../../Models/feed_setting.dart';
 import '../../Models/rss_item.dart';
 import '../../Providers/feeds_provider.dart';
 import '../../Providers/global.dart';
@@ -39,7 +40,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
   int requestId = 0;
   ArticleLoadState loaded = ArticleLoadState.loading;
   bool navigated = false;
-  SourceOpenTarget? _target;
+  CrawlType? _target;
   late String iid;
   late bool isSourceFeed;
 
@@ -113,8 +114,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
     setState(() {
       loaded = ArticleLoadState.success;
     });
-    if (_target == SourceOpenTarget.local ||
-        _target == SourceOpenTarget.fullContent) {
+    if (_target == CrawlType.rss || _target == CrawlType.full) {
       navigated = true;
     }
   }
@@ -123,9 +123,9 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
     if (loaded == ArticleLoadState.success) navigated = true;
   }
 
-  void _setOpenTarget(Feed source, {SourceOpenTarget? target}) {
+  void _setOpenTarget(Feed source, {CrawlType? target}) {
     setState(() {
-      _target = target ?? (source.openTarget ?? SourceOpenTarget.webpage);
+      _target = target ?? (source.feedSetting?.crawlType ?? CrawlType.web);
     });
   }
 
@@ -136,14 +136,15 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
       navigated = false;
     });
     switch (_target) {
-      case SourceOpenTarget.local:
+      case CrawlType.unspecified:
+      case CrawlType.rss:
         _loadHtml(item, source);
         break;
-      case SourceOpenTarget.fullContent:
+      case CrawlType.full:
         _loadHtml(item, source, loadFull: true);
         break;
-      case SourceOpenTarget.webpage:
-      case SourceOpenTarget.external:
+      case CrawlType.web:
+      case CrawlType.external:
         _controller.loadUrl(item.link);
         break;
       case null:
@@ -183,7 +184,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
       builder: (context, tuple, child) {
         var item = tuple.item1;
         var source = tuple.item2;
-        _target ??= source.openTarget;
+        _target ??= source.feedSetting?.crawlType;
         final body = SafeArea(
           bottom: false,
           child: IndexedStack(
@@ -228,7 +229,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
             middle: CupertinoSlidingSegmentedControl(
               children: viewOptions,
               onValueChanged: (v) {
-                _setOpenTarget(source, target: SourceOpenTarget.values[v ?? 0]);
+                _setOpenTarget(source, target: CrawlType.values[v ?? 0]);
               },
               groupValue: _target?.index,
             ),

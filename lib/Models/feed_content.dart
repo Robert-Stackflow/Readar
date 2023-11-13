@@ -76,7 +76,7 @@ class FeedContent {
       where: predicates.item1,
       whereArgs: predicates.item2,
     ))
-        .map((m) => RSSItem.fromMap(m))
+        .map((m) => RSSItem.fromJson(m))
         .toList();
     allLoaded = items.length < loadLimit;
     Global.itemsProvider.loadItems(items);
@@ -101,7 +101,7 @@ class FeedContent {
       where: predicates.item1,
       whereArgs: predicates.item2,
     ))
-        .map((m) => RSSItem.fromMap(m))
+        .map((m) => RSSItem.fromJson(m))
         .toList();
     if (items.length < loadLimit) {
       allLoaded = true;

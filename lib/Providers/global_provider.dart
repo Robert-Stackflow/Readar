@@ -64,10 +64,10 @@ class GlobalProvider with ChangeNotifier {
     switch (themeMode) {
       case ActiveThemeMode.system:
         return S.current.followSystem;
-      case ActiveThemeMode.dark:
-        return S.current.darkTheme;
       case ActiveThemeMode.light:
         return S.current.lightTheme;
+      case ActiveThemeMode.dark:
+        return S.current.darkTheme;
     }
   }
 
@@ -76,6 +76,34 @@ class GlobalProvider with ChangeNotifier {
       Tuple2(S.current.followSystem, ActiveThemeMode.system),
       Tuple2(S.current.lightTheme, ActiveThemeMode.light),
       Tuple2(S.current.darkTheme, ActiveThemeMode.dark),
+    ];
+  }
+
+  int _autoLockTime = HiveUtil.getInt(key: HiveUtil.autoLockTimeKey);
+
+  int get autoLockTime => _autoLockTime;
+
+  set autoLockTime(int value) {
+    if (value != _autoLockTime) {
+      _autoLockTime = value;
+      notifyListeners();
+      HiveUtil.put(key: HiveUtil.autoLockTimeKey, value: value);
+    }
+  }
+
+  static String getAutoLockOptionLabel(int time) {
+    if (time == 0)
+      return "立即锁定";
+    else
+      return "处于后台$time分钟后锁定";
+  }
+
+  static List<Tuple2<String, int>> getAutoLockOptions() {
+    return [
+      Tuple2("立即锁定", 0),
+      Tuple2("处于后台1分钟后锁定", 1),
+      Tuple2("处于后台5分钟后锁定", 5),
+      Tuple2("处于后台10分钟后锁定", 10),
     ];
   }
 

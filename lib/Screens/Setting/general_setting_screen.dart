@@ -1,11 +1,20 @@
+import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Utils/cache_util.dart';
 import 'package:cloudreader/Utils/itoast.dart';
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
+import '../../Providers/global.dart';
+import '../../Providers/global_provider.dart';
+import '../../Utils/locale_util.dart';
+import '../../Widgets/BottomSheet/bottom_sheet_builder.dart';
+import '../../Widgets/BottomSheet/list_bottom_sheet.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
+import 'nav_setting_screen.dart';
 
 class GeneralSettingScreen extends StatefulWidget {
   const GeneralSettingScreen({super.key});
@@ -19,15 +28,33 @@ class GeneralSettingScreen extends StatefulWidget {
 class _GeneralSettingScreenState extends State<GeneralSettingScreen>
     with TickerProviderStateMixin {
   String _cacheSize = "";
+  List<Tuple2<String, Locale?>> _supportedLocaleTuples = [];
 
   @override
   void initState() {
     super.initState();
+    filterLocale();
+    getCacheSize();
+  }
+
+  void getCacheSize() {
     CacheUtil.loadCache().then((value) {
       setState(() {
         _cacheSize = value;
       });
     });
+  }
+
+  void filterLocale() {
+    _supportedLocaleTuples = [];
+    List<Locale> locales = S.delegate.supportedLocales;
+    _supportedLocaleTuples.add(Tuple2(S.current.followSystem, null));
+    for (Locale locale in locales) {
+      dynamic tuple = LocaleUtil.getTuple(locale);
+      if (tuple != null) {
+        _supportedLocaleTuples.add(tuple);
+      }
+    }
   }
 
   @override
@@ -46,53 +73,81 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
+                Selector<GlobalProvider, Locale?>(
+                  selector: (context, globalProvider) => globalProvider.locale,
+                  shouldRebuild: (pre, next) =>
+                      pre?.toLanguageTag() != next?.toLanguageTag(),
+                  builder: (context, locale, child) =>
+                      ItemBuilder.buildEntryItem(
+                    context: context,
+                    title: S.current.language,
+                    tip: LocaleUtil.getLabel(locale)!,
+                    topRadius: true,
+                    bottomRadius: true,
+                    onTap: () {
+                      filterLocale();
+                      BottomSheetBuilder.showListBottomSheet(
+                        context,
+                        (context) => TileList.fromOptions(
+                          _supportedLocaleTuples,
+                          locale,
+                          (item2) {
+                            Global.globalProvider.locale = item2;
+                            Navigator.pop(context);
+                          },
+                          context: context,
+                          title: S.current.chooseLanguage,
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
-                    context: context, title: S.current.ttsSetting),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: S.current.ttsEnable,
-                  value: true,
-                  onTap: () {},
+                    context: context, title: S.current.themeSetting),
+                Selector<GlobalProvider, ActiveThemeMode>(
+                  selector: (context, globalProvider) =>
+                      globalProvider.themeMode,
+                  builder: (context, themeMode, child) =>
+                      ItemBuilder.buildEntryItem(
+                    context: context,
+                    title: S.current.themeMode,
+                    tip: GlobalProvider.getThemeModeLabel(themeMode),
+                    onTap: () {
+                      BottomSheetBuilder.showListBottomSheet(
+                        context,
+                        (context) => TileList.fromOptions(
+                          GlobalProvider.getSupportedThemeMode(),
+                          themeMode,
+                          (item2) {
+                            Global.globalProvider.themeMode = item2;
+                            Navigator.pop(context);
+                          },
+                          context: context,
+                          title: S.current.chooseThemeMode,
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: S.current.ttsEngine,
-                  tip: "默认引擎",
-                  onTap: () {},
+                  title: S.current.selectTheme,
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(SelectThemeScreen.routeName);
+                  },
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: S.current.ttsSpeed,
-                  tip: "1.0x",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: S.current.ttsSystemSetting,
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: S.current.ttsSpot,
-                  value: true,
-                  description: S.current.ttsSpotTip,
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: S.current.ttsAutoHaveRead,
-                  value: true,
-                  description: S.current.ttsAutoHaveReadTip,
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: S.current.ttsWakeLock,
-                  value: true,
-                  description: S.current.ttsWakeLockTip,
+                  title: S.current.bottomNavigationBarSetting,
                   bottomRadius: true,
-                  onTap: () {},
+                  onTap: () {
+                    setState(() {
+                      Navigator.of(context)
+                          .pushNamed(NavSettingScreen.routeName);
+                    });
+                  },
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(

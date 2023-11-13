@@ -105,7 +105,7 @@ class ItemsProvider with ChangeNotifier {
       _items[item.id] = item;
       batch.insert(
         "items",
-        item.toMap(),
+        item.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }

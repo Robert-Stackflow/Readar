@@ -36,12 +36,12 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                     context: context, title: "本地备份与恢复"),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "导出配置为JSON文件",
+                  title: "导出配置为zip文件",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "从JSON文件导入配置",
+                  title: "从zip文件导入配置",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(

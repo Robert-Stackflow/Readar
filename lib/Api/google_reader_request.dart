@@ -208,7 +208,8 @@ class GReaderServiceHandler extends ServiceHandler {
       }
     }
     final sources = subscriptions.map<Feed>((s) {
-      return Feed(s["id"], s["url"] ?? s["htmlUrl"], s["title"]);
+      return Feed(s["id"], s["url"] ?? s["htmlUrl"], s["title"],
+          id: 0, serviceId: 0);
     }).toList();
     return Tuple2(sources, groupsMap);
   }
@@ -339,7 +340,7 @@ class GReaderServiceHandler extends ServiceHandler {
       if (refs.isNotEmpty) _editTag(refs.join("&i="), _READ_TAG);
     } else {
       if (sids.isEmpty) {
-        sids = Set.from(Global.feedsProvider.getSources().map((s) => s.id));
+        sids = Set.from(Global.feedsProvider.getSources().map((s) => s.sid));
       }
       for (var sid in sids) {
         final body = {"s": sid};

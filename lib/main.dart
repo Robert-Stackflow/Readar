@@ -6,15 +6,13 @@ import 'package:cloudreader/Resources/theme.dart';
 import 'package:cloudreader/Screens/Content/article_detail_screen.dart';
 import 'package:cloudreader/Screens/Lock/pin_change_screen.dart';
 import 'package:cloudreader/Screens/Navigation/explore_screen.dart';
-import 'package:cloudreader/Screens/Navigation/highlights_screen.dart';
 import 'package:cloudreader/Screens/Navigation/read_later_screen.dart';
 import 'package:cloudreader/Screens/Navigation/star_screen.dart';
-import 'package:cloudreader/Screens/Navigation/statistics_screen.dart';
 import 'package:cloudreader/Screens/Navigation/tts_screen.dart';
-import 'package:cloudreader/Screens/Setting/appearance_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
+import 'package:cloudreader/Screens/Setting/global_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
@@ -31,6 +29,7 @@ import 'Providers/global.dart';
 import 'Screens/Lock/pin_verify_screen.dart';
 import 'Screens/Navigation/article_screen.dart';
 import 'Screens/Navigation/feed_screen.dart';
+import 'Screens/Navigation/library_screen.dart';
 import 'Screens/Setting/about_setting_screen.dart';
 import 'Screens/Setting/backup_service_setting_screen.dart';
 import 'Screens/Setting/general_setting_screen.dart';
@@ -87,13 +86,13 @@ class MyApp extends StatelessWidget {
         builder: (context, globalProvider, child) => MaterialApp(
           title: 'Cloud Reader',
           theme: AppTheme.getTheme(
-            isDarkMode: (Global.globalProvider.getBrightness() != null
-                ? Global.globalProvider.getBrightness() == Brightness.dark
+            isDarkMode: (globalProvider.getBrightness() != null
+                ? globalProvider.getBrightness() == Brightness.dark
                 : false),
           ),
           darkTheme: AppTheme.getTheme(
-            isDarkMode: (Global.globalProvider.getBrightness() != null
-                ? Global.globalProvider.getBrightness() == Brightness.dark
+            isDarkMode: (globalProvider.getBrightness() != null
+                ? globalProvider.getBrightness() == Brightness.dark
                 : true),
           ),
           debugShowCheckedModeBanner: false,
@@ -132,8 +131,7 @@ class MyApp extends StatelessWidget {
             ArticleScreen.routeName: (context) =>
                 ArticleScreen(ScrollTopNotifier()),
             StarScreen.routeName: (context) => const StarScreen(),
-            StatisticsScreen.routeName: (context) => const StatisticsScreen(),
-            HighlightsScreen.routeName: (context) => const HighlightsScreen(),
+            LibraryScreen.routeName: (context) => const LibraryScreen(),
             ExploreScreen.routeName: (context) => const ExploreScreen(),
             PinChangeScreen.routeName: (context) => const PinChangeScreen(),
             ReadLaterScreen.routeName: (context) => const ReadLaterScreen(),
@@ -155,8 +153,8 @@ class MyApp extends StatelessWidget {
                 const ServiceSettingScreen(),
             GeneralSettingScreen.routeName: (context) =>
                 const GeneralSettingScreen(),
-            AppearanceSettingScreen.routeName: (context) =>
-                const AppearanceSettingScreen(),
+            GlobalSettingScreen.routeName: (context) =>
+                const GlobalSettingScreen(),
             ExtensionSettingScreen.routeName: (context) =>
                 const ExtensionSettingScreen(),
             PinVerifyScreen.routeName: (context) => PinVerifyScreen(

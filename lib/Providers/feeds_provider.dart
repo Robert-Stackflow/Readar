@@ -30,8 +30,8 @@ class FeedsProvider with ChangeNotifier {
   Future<void> init() async {
     final maps = await Global.db.query("sources");
     for (var map in maps) {
-      var source = Feed.fromMap(map);
-      _sources[source.id] = source;
+      var source = Feed.fromJson(map);
+      _sources[source.sid] = source;
     }
     notifyListeners();
     await updateUnreadCounts();
@@ -42,17 +42,17 @@ class FeedsProvider with ChangeNotifier {
         "SELECT source, COUNT(iid) FROM items WHERE hasRead=0 GROUP BY source;");
     for (var source in _sources.values) {
       var cloned = source.clone();
-      _sources[source.id] = cloned;
-      cloned.unreadCount = 0;
+      _sources[source.sid] = cloned;
+      // cloned.unreadCount = 0;
     }
     for (var row in rows) {
-      _sources[row["source"]]!.unreadCount = row["COUNT(iid)"] as int?;
+      // _sources[row["source"]]!.unreadCount = row["COUNT(iid)"] as int?;
     }
     notifyListeners();
   }
 
   void updateUnreadCount(String sid, int diff) {
-    _sources[sid]!.unreadCount = _sources[sid]!.unreadCount! + diff;
+    // _sources[sid]!.unreadCount = _sources[sid]!.unreadCount! + diff;
     notifyListeners();
   }
 
@@ -60,12 +60,12 @@ class FeedsProvider with ChangeNotifier {
     Set<String> changed = {};
     for (var item in items) {
       var source = _sources[item.source]!;
-      if (!item.hasRead) source.unreadCount = source.unreadCount! + 1;
-      if (item.date.compareTo(source.latest!) > 0 ||
-          source.lastTitle!.isEmpty) {
-        source.latest = item.date;
-        source.lastTitle = item.title;
-        changed.add(source.id);
+      // if (!item.hasRead) source.unreadCount = source.unreadCount! + 1;
+      if (item.date.compareTo(source.latestArticleTime!) > 0 ||
+          source.latestArticleTitle!.isEmpty) {
+        source.latestArticleTime = item.date;
+        source.latestArticleTitle = item.title;
+        changed.add(source.sid);
       }
     }
     notifyListeners();
@@ -76,11 +76,11 @@ class FeedsProvider with ChangeNotifier {
         batch.update(
           "sources",
           {
-            "latest": source.latest!.millisecondsSinceEpoch,
-            "lastTitle": source.lastTitle!,
+            "latest": source.latestArticleTime!.millisecondsSinceEpoch,
+            "lastTitle": source.latestArticleTitle!,
           },
           where: "sid = ?",
-          whereArgs: [source.id],
+          whereArgs: [source.sid],
         );
       }
       await batch.commit();
@@ -88,12 +88,12 @@ class FeedsProvider with ChangeNotifier {
   }
 
   Future<void> put(Feed source, {force = false}) async {
-    if (_deleted.containsKey(source.id) && !force) return;
-    _sources[source.id] = source;
+    if (_deleted.containsKey(source.sid) && !force) return;
+    _sources[source.sid] = source;
     notifyListeners();
     await Global.db.insert(
       "sources",
-      source.toMap(),
+      source.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -101,11 +101,11 @@ class FeedsProvider with ChangeNotifier {
   Future<void> putAll(Iterable<Feed> sources, {force = false}) async {
     Batch batch = Global.db.batch();
     for (var source in sources) {
-      if (_deleted.containsKey(source.id) && !force) continue;
-      _sources[source.id] = source;
+      if (_deleted.containsKey(source.sid) && !force) continue;
+      _sources[source.sid] = source;
       batch.insert(
         "sources",
-        source.toMap(),
+        source.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
@@ -120,8 +120,8 @@ class FeedsProvider with ChangeNotifier {
     var curr = Set<String>.from(_sources.keys);
     List<Feed> newSources = [];
     for (var source in sources) {
-      if (curr.contains(source.id)) {
-        curr.remove(source.id);
+      if (curr.contains(source.sid)) {
+        curr.remove(source.sid);
       } else {
         newSources.add(source);
       }

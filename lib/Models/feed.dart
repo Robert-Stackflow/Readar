@@ -1,77 +1,78 @@
-enum SourceOpenTarget { local, fullContent, webpage, external }
+import 'package:json_annotation/json_annotation.dart';
+
+import 'feed_setting.dart';
+
+part 'feed.g.dart';
 
 ///
 /// Feed class, including ID, link, icon, name and other elements
 ///
+@JsonSerializable()
 class Feed {
-  String id;
+  int id;
+  int serviceId;
+  String sid;
   String url;
   String? iconUrl;
   String name;
-  SourceOpenTarget? openTarget;
-  int? unreadCount;
-  DateTime? latest;
-  String? lastTitle;
+  FeedSetting? feedSetting;
+  SyncStatus? lastPullStatus;
+  DateTime? lastPullTime;
+  DateTime? latestArticleTime;
+  String? latestArticleTitle;
+  String? params;
 
   Feed(
-    this.id,
+    this.sid,
     this.url,
     this.name, {
+    required this.id,
+    required this.serviceId,
+    this.feedSetting,
+    this.lastPullTime,
+    this.lastPullStatus,
     this.iconUrl,
-    this.openTarget,
-    this.unreadCount,
-    this.latest,
-    this.lastTitle,
+    this.latestArticleTime,
+    this.latestArticleTitle,
+    this.params,
   }) {
-    openTarget = SourceOpenTarget.local;
-    latest = DateTime.now();
-    unreadCount = 0;
-    lastTitle = "";
+    latestArticleTime = DateTime.now();
+    latestArticleTitle = "";
   }
 
   Feed._privateConstructor(
     this.id,
+    this.serviceId,
+    this.sid,
     this.url,
     this.iconUrl,
     this.name,
-    this.openTarget,
-    this.unreadCount,
-    this.latest,
-    this.lastTitle,
+    this.latestArticleTime,
+    this.latestArticleTitle,
+    this.lastPullStatus,
+    this.lastPullTime,
+    this.feedSetting,
+    this.params,
   );
 
   Feed clone() {
     return Feed._privateConstructor(
       id,
+      serviceId,
+      sid,
       url,
       iconUrl,
       name,
-      openTarget,
-      unreadCount,
-      latest,
-      lastTitle,
+      latestArticleTime,
+      latestArticleTitle,
+      lastPullStatus,
+      lastPullTime,
+      feedSetting,
+      params,
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      "sid": id,
-      "url": url,
-      "iconUrl": iconUrl,
-      "name": name,
-      "openTarget": openTarget?.index,
-      "latest": latest?.millisecondsSinceEpoch,
-      "lastTitle": lastTitle,
-    };
-  }
+  Map<String, dynamic> toJson() => _$FeedToJson(this);
 
-  Feed.fromMap(Map<String, dynamic> map)
-      : id = map["sid"],
-        url = map["url"],
-        iconUrl = map["iconUrl"],
-        name = map["name"],
-        openTarget = SourceOpenTarget.values[map["openTarget"]],
-        latest = DateTime.fromMillisecondsSinceEpoch(map["latest"]),
-        lastTitle = map["lastTitle"],
-        unreadCount = 0;
+  factory Feed.fromJson(Map<String, dynamic> json) => _$FeedFromJson(json);
 }

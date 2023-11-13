@@ -1,14 +1,12 @@
 import 'package:cloudreader/Screens/Navigation/article_screen.dart';
 import 'package:cloudreader/Screens/Navigation/explore_screen.dart';
 import 'package:cloudreader/Screens/Navigation/feed_screen.dart';
-import 'package:cloudreader/Screens/Navigation/highlights_screen.dart';
 import 'package:cloudreader/Screens/Navigation/star_screen.dart';
-import 'package:cloudreader/Screens/Navigation/statistics_screen.dart';
-import 'package:cloudreader/Screens/Navigation/tts_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../Providers/global.dart';
+import '../Screens/Navigation/library_screen.dart';
 import '../Screens/Navigation/read_later_screen.dart';
 import '../generated/l10n.dart';
 
@@ -54,23 +52,13 @@ class NavEntry {
       visible: true,
     ),
     NavEntry(
-      id: "highlights",
+      id: "explore",
       index: 4,
       visible: false,
     ),
     NavEntry(
-      id: "explore",
+      id: "library",
       index: 5,
-      visible: false,
-    ),
-    NavEntry(
-      id: "statistics",
-      index: 6,
-      visible: false,
-    ),
-    NavEntry(
-      id: "tts",
-      index: 7,
       visible: false,
     ),
   ];
@@ -80,10 +68,8 @@ class NavEntry {
     "feed": Icons.rss_feed_rounded,
     "star": Icons.bookmark_outline_rounded,
     "readLater": Icons.checklist_rounded,
-    "highlights": Icons.lightbulb_outline_rounded,
     "explore": Icons.explore_outlined,
-    "statistics": Icons.show_chart_rounded,
-    "tts": Icons.headset_outlined,
+    "library": Icons.library_books_outlined,
   };
 
   static Map<String, Widget> idToPageMap = {
@@ -91,10 +77,8 @@ class NavEntry {
     "feed": const FeedScreen(),
     "star": const StarScreen(),
     "readLater": const ReadLaterScreen(),
-    "highlights": const HighlightsScreen(),
     "explore": const ExploreScreen(),
-    "statistics": const StatisticsScreen(),
-    "tts": const TTSScreen(),
+    "library": const LibraryScreen(),
   };
 
   static int compare(NavEntry a, NavEntry b) {
@@ -107,10 +91,8 @@ class NavEntry {
       "feed": S.current.feed,
       "star": S.current.star,
       "readLater": S.current.readLater,
-      "highlights": S.current.highlights,
       "explore": S.current.explore,
-      "statistics": S.current.statistics,
-      "tts": S.current.tts,
+      "library": S.current.library,
     };
     return idToLabelMap[id] ?? "";
   }

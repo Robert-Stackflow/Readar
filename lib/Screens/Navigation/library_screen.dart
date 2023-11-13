@@ -5,16 +5,16 @@ import 'package:flutter/services.dart';
 
 import '../../Widgets/Item/item_builder.dart';
 
-class HighlightsScreen extends StatefulWidget {
-  const HighlightsScreen({super.key});
+class LibraryScreen extends StatefulWidget {
+  const LibraryScreen({super.key});
 
-  static const String routeName = "/nav/highlights";
+  static const String routeName = "/nav/library";
 
   @override
-  State<HighlightsScreen> createState() => _HighlightsScreenState();
+  State<LibraryScreen> createState() => _LibraryScreenState();
 }
 
-class _HighlightsScreenState extends State<HighlightsScreen>
+class _LibraryScreenState extends State<LibraryScreen>
     with TickerProviderStateMixin {
   @override
   void initState() {

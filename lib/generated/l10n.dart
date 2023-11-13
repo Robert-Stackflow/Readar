@@ -120,6 +120,66 @@ class S {
     );
   }
 
+  /// `Library`
+  String get library {
+    return Intl.message(
+      'Library',
+      name: 'library',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saved`
+  String get saved {
+    return Intl.message(
+      'Saved',
+      name: 'saved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `History`
+  String get history {
+    return Intl.message(
+      'History',
+      name: 'history',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hot Links`
+  String get hotLinks {
+    return Intl.message(
+      'Hot Links',
+      name: 'hotLinks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Calm Feeds`
+  String get calmFeeds {
+    return Intl.message(
+      'Calm Feeds',
+      name: 'calmFeeds',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Linked List`
+  String get linkedList {
+    return Intl.message(
+      'Linked List',
+      name: 'linkedList',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Explore`
   String get explore {
     return Intl.message(
@@ -165,6 +225,16 @@ class S {
     return Intl.message(
       'General',
       name: 'generalSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Global`
+  String get globalSetting {
+    return Intl.message(
+      'Global',
+      name: 'globalSetting',
       desc: '',
       args: [],
     );
@@ -550,61 +620,141 @@ class S {
     );
   }
 
-  /// `Article Detail Setting`
-  String get articleDetailSetting {
+  /// `Article open option`
+  String get crawlType {
     return Intl.message(
-      'Article Detail Setting',
-      name: 'articleDetailSetting',
+      'Article open option',
+      name: 'crawlType',
       desc: '',
       args: [],
     );
   }
 
-  /// `View Option`
-  String get articleDetailViewOption {
+  /// `Article list layout`
+  String get articleListLayoutType {
     return Intl.message(
-      'View Option',
-      name: 'articleDetailViewOption',
+      'Article list layout',
+      name: 'articleListLayoutType',
       desc: '',
       args: [],
     );
   }
 
-  /// `Header Image Display Mode`
-  String get articleDetailHeaderImageDisplayMode {
+  /// `Article detail layout`
+  String get articleDetailLayoutType {
     return Intl.message(
-      'Header Image Display Mode',
-      name: 'articleDetailHeaderImageDisplayMode',
+      'Article detail layout',
+      name: 'articleDetailLayoutType',
       desc: '',
       args: [],
     );
   }
 
-  /// `Video Display Mode`
-  String get articleDetailVideoDisplayMode {
+  /// `Header image option`
+  String get articleDetailHeaderImageViewType {
     return Intl.message(
-      'Video Display Mode',
-      name: 'articleDetailVideoDisplayMode',
+      'Header image option',
+      name: 'articleDetailHeaderImageViewType',
       desc: '',
       args: [],
     );
   }
 
-  /// `Meta Setting`
-  String get articleDetailMetaSetting {
+  /// `Video option`
+  String get articleDetailVideoViewType {
     return Intl.message(
-      'Meta Setting',
-      name: 'articleDetailMetaSetting',
+      'Video option',
+      name: 'articleDetailVideoViewType',
       desc: '',
       args: [],
     );
   }
 
-  /// `Show Related Articles`
-  String get articleDetailShowRelated {
+  /// `Show related articles`
+  String get articleDetailShowRelatedArticles {
     return Intl.message(
-      'Show Related Articles',
-      name: 'articleDetailShowRelated',
+      'Show related articles',
+      name: 'articleDetailShowRelatedArticles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show image title`
+  String get articleDetailShowImageAlt {
+    return Intl.message(
+      'Show image title',
+      name: 'articleDetailShowImageAlt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove duplicate articles`
+  String get removeDuplicateArticles {
+    return Intl.message(
+      'Remove duplicate articles',
+      name: 'removeDuplicateArticles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mobilizer`
+  String get mobilizerType {
+    return Intl.message(
+      'Mobilizer',
+      name: 'mobilizerType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pull articles when starting`
+  String get pullWhenStartUp {
+    return Intl.message(
+      'Pull articles when starting',
+      name: 'pullWhenStartUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatically mark as read when scrolling`
+  String get autoReadWhenScrolling {
+    return Intl.message(
+      'Automatically mark as read when scrolling',
+      name: 'autoReadWhenScrolling',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cache images when pulling`
+  String get cacheImageWhenPull {
+    return Intl.message(
+      'Cache images when pulling',
+      name: 'cacheImageWhenPull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cache articles when pulling`
+  String get cacheWebPageWhenPull {
+    return Intl.message(
+      'Cache articles when pulling',
+      name: 'cacheWebPageWhenPull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cache articles when reading`
+  String get cacheWebPageWhenReading {
+    return Intl.message(
+      'Cache articles when reading',
+      name: 'cacheWebPageWhenReading',
       desc: '',
       args: [],
     );

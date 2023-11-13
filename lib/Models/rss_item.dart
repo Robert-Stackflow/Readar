@@ -1,6 +1,11 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'rss_item.g.dart';
+
 ///
 /// RSS item class, including title, original link, release date, article content, snippets and other elements
 ///
+@JsonSerializable()
 class RSSItem {
   String id;
   String source;
@@ -44,32 +49,8 @@ class RSSItem {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      "iid": id,
-      "source": source,
-      "title": title,
-      "link": link,
-      "date": date.millisecondsSinceEpoch,
-      "content": content,
-      "snippet": snippet,
-      "hasRead": hasRead ? 1 : 0,
-      "starred": starred ? 1 : 0,
-      "creator": creator,
-      "thumb": thumb,
-    };
-  }
+  Map<String, dynamic> toJson() => _$RSSItemToJson(this);
 
-  RSSItem.fromMap(Map<String, dynamic> map)
-      : id = map["iid"],
-        source = map["source"],
-        title = map["title"],
-        link = map["link"],
-        date = DateTime.fromMillisecondsSinceEpoch(map["date"]),
-        content = map["content"],
-        snippet = map["snippet"],
-        hasRead = map["hasRead"] != 0,
-        starred = map["starred"] != 0,
-        creator = map["creator"],
-        thumb = map["thumb"];
+  factory RSSItem.fromJson(Map<String, dynamic> json) =>
+      _$RSSItemFromJson(json);
 }

@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:cloudreader/Models/auto_lock.dart';
 import 'package:cloudreader/Models/nav_entry.dart';
 import 'package:cloudreader/Screens/Setting/about_setting_screen.dart';
-import 'package:cloudreader/Screens/Setting/appearance_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
@@ -20,6 +18,7 @@ import '../Widgets/Custom/salomon_bottom_bar.dart';
 import '../Widgets/Item/item_builder.dart';
 import '../generated/l10n.dart';
 import 'Lock/pin_verify_screen.dart';
+import 'Setting/global_setting_screen.dart';
 import 'Setting/operation_setting_screen.dart';
 import 'Setting/service_setting_screen.dart';
 
@@ -159,11 +158,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   void setTimer() {
     _timer = Timer(
-        Duration(
-            minutes: AutoLock
-                .autoLockOptions[HiveUtil.getInt(key: HiveUtil.autoLockTimeKey)]
-                .minutes),
-        goPinVerify);
+        Duration(minutes: Global.globalProvider.autoLockTime), goPinVerify);
   }
 
   @override
@@ -243,12 +238,12 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       ItemBuilder.buildEntryItem(
         context: context,
         showLeading: true,
-        title: S.current.apprearanceSetting,
+        title: S.current.globalSetting,
         onTap: () {
-          Navigator.pushNamed(context, AppearanceSettingScreen.routeName);
+          Navigator.pushNamed(context, GlobalSettingScreen.routeName);
         },
         padding: 15,
-        leading: Icons.color_lens_outlined,
+        leading: Icons.settings_applications_outlined,
       ),
       ItemBuilder.buildEntryItem(
         context: context,
