@@ -261,6 +261,26 @@
 |      last_pull_time       |    LONG    |   long   |    否    |              上次拉取时间              |
 |          params           |    TEXT    |  String  |    否    |   其他参数（可以根据全局设置的参数）   |
 
+### 文章项
+
+|   字段   | 数据库类型 | 代码类型 | 是否必需 |                备注                |
+| :------: | :--------: | :------: | :------: | :--------------------------------: |
+|    id    |    Text    |  String  |    是    |             字符串主键             |
+|  feedId  |  INTEGER   |   int    |    是    |            所属订阅源ID            |
+|  source  |    TEXT    |   int    |    是    |              订阅源ID              |
+|  title   |    TEXT    |  String  |    是    |                标题                |
+|   url    |    TEXT    |  String  |    是    |              文章地址              |
+|   date   |  INTEGER   |   int    |    是    |            文章发布时间            |
+| content  |    TEXT    |  String  |    是    |            RSS文章内容             |
+| snippet  |    TEXT    |  String  |    是    |              缩略片段              |
+| creator  |    TEXT    |  String  |    否    |                作者                |
+|  thumb   |    TEXT    |  String  |    否    |            移除重复文章            |
+| hasRead  |  INTEGER   |   int    |    否    |              是否已读              |
+| starred  |  INTEGER   |   int    |    否    |              是否标星              |
+| readTime |  INTEGER   |   int    |    否    |              阅读时间              |
+| starTime |  INTEGER   |   int    |    否    |              星标时间              |
+|  params  |    TEXT    |  String  |    否    | 其他参数（可以根据全局设置的参数） |
+
 ### 文章
 
 ## Github API

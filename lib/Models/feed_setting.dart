@@ -66,14 +66,14 @@ class FeedSetting {
   ArticleDetailHeadImageViewType? headImageViewType;
   ArticleDetailVideoViewType? videoViewType;
   MobilizerType? mobilizerType;
-  CacheType? cacheImageTypeWhenPull;
-  CacheType? cacheWebTypeWhenPull;
-  CacheType? cacheWebTypeWhenReading;
-  BoolType? pullWhenStartUp;
+  CacheType? cacheImageTypeOnPull;
+  CacheType? cacheWebTypeOnPull;
+  CacheType? cacheWebTypeOnRead;
+  BoolType? pullOnStartUp;
   BoolType? showRelatedArticles;
   BoolType? showImageAlt;
   BoolType? removeDuplicateArticles;
-  BoolType? autoReadWhenScrolling;
+  BoolType? autoReadOnScroll;
   int? autoPullFrequency;
 
   FeedSetting({
@@ -83,14 +83,14 @@ class FeedSetting {
     this.headImageViewType,
     this.videoViewType,
     this.mobilizerType,
-    this.cacheImageTypeWhenPull,
-    this.cacheWebTypeWhenPull,
-    this.cacheWebTypeWhenReading,
-    this.pullWhenStartUp,
+    this.cacheImageTypeOnPull,
+    this.cacheWebTypeOnPull,
+    this.cacheWebTypeOnRead,
+    this.pullOnStartUp,
     this.showRelatedArticles,
     this.showImageAlt,
     this.removeDuplicateArticles,
-    this.autoReadWhenScrolling,
+    this.autoReadOnScroll,
     this.autoPullFrequency,
   });
 

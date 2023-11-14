@@ -2,16 +2,16 @@
 
 import 'package:flutter/cupertino.dart';
 
-import 'global.dart';
+import 'provider_manager.dart';
 
 class SyncProvider with ChangeNotifier {
-  bool hasService = Global.serviceHandler != null;
+  bool hasService = ProviderManager.serviceHandler != null;
   bool syncing = false;
   bool _lastSyncSuccess = true;
   DateTime _lastSyncedTime = DateTime.fromMillisecondsSinceEpoch(0);
 
   void checkHasService() {
-    var value = Global.serviceHandler != null;
+    var value = ProviderManager.serviceHandler != null;
     if (value != hasService) {
       hasService = value;
       notifyListeners();
@@ -19,12 +19,13 @@ class SyncProvider with ChangeNotifier {
   }
 
   Future<void> removeService() async {
-    if (syncing || Global.serviceHandler == null) return;
+    if (syncing || ProviderManager.serviceHandler == null) return;
     syncing = true;
     notifyListeners();
-    var sids = Global.feedsProvider.getSources().map((s) => s.sid).toList();
-    await Global.feedsProvider.removeSources(sids);
-    Global.serviceHandler?.remove();
+    var sids =
+        ProviderManager.feedsProvider.getFeeds().map((s) => s.sid).toList();
+    await ProviderManager.feedsProvider.removeSources(sids);
+    ProviderManager.serviceHandler?.removeService();
     hasService = false;
     syncing = false;
     notifyListeners();
@@ -43,14 +44,14 @@ class SyncProvider with ChangeNotifier {
   }
 
   Future<void> syncWithService() async {
-    if (syncing || Global.serviceHandler == null) return;
+    if (syncing || ProviderManager.serviceHandler == null) return;
     syncing = true;
     notifyListeners();
     try {
-      await Global.serviceHandler?.reauthenticate();
-      await Global.feedsProvider.updateSources();
-      await Global.itemsProvider.syncItems();
-      await Global.itemsProvider.fetchItems();
+      await ProviderManager.serviceHandler?.authenticate();
+      await ProviderManager.feedsProvider.updateSources();
+      await ProviderManager.itemsProvider.syncItems();
+      await ProviderManager.itemsProvider.fetchItems();
       lastSyncSuccess = true;
     } catch (exp) {
       lastSyncSuccess = false;

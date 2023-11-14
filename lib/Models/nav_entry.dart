@@ -5,7 +5,7 @@ import 'package:cloudreader/Screens/Navigation/star_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../Providers/global.dart';
+import '../Providers/provider_manager.dart';
 import '../Screens/Navigation/library_screen.dart';
 import '../Screens/Navigation/read_later_screen.dart';
 import '../generated/l10n.dart';
@@ -106,13 +106,13 @@ class NavEntry {
   }
 
   static List<NavEntry> getNavs() {
-    List<NavEntry> navs = Global.globalProvider.navEntries;
+    List<NavEntry> navs = ProviderManager.globalProvider.navEntries;
     navs.sort(compare);
     return navs;
   }
 
   static List<NavEntry> getNavigationBarEntries() {
-    List<NavEntry> navEntries = Global.globalProvider.navEntries;
+    List<NavEntry> navEntries = ProviderManager.globalProvider.navEntries;
     navEntries.sort(compare);
     List<NavEntry> navigationBarEntries = [];
     for (NavEntry entry in navEntries) {
@@ -123,7 +123,7 @@ class NavEntry {
   }
 
   static List<NavEntry> getSidebarEntries() {
-    List<NavEntry> navEntries = Global.globalProvider.navEntries;
+    List<NavEntry> navEntries = ProviderManager.globalProvider.navEntries;
     navEntries.sort(compare);
     List<NavEntry> sidebarEntries = [];
     List<String> ids =

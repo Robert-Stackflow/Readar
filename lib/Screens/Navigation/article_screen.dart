@@ -12,8 +12,8 @@ import '../../Models/feed.dart';
 import '../../Models/feed_content.dart';
 import '../../Models/rss_item.dart';
 import '../../Providers/feeds_provider.dart';
-import '../../Providers/global.dart';
 import '../../Providers/items_provider.dart';
+import '../../Providers/provider_manager.dart';
 import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
 import '../../Widgets/Item/article_item.dart';
 
@@ -64,8 +64,8 @@ class _ArticleScreenState extends State<ArticleScreen>
 
   FeedContent getFeed() {
     return ModalRoute.of(context)?.settings.arguments != null
-        ? Global.feedContentProvider.source
-        : Global.feedContentProvider.all;
+        ? ProviderManager.feedContentProvider.source
+        : ProviderManager.feedContentProvider.all;
   }
 
   void _onRefresh() async {
@@ -167,7 +167,7 @@ class _ArticleScreenState extends State<ArticleScreen>
         return Selector2<ItemsProvider, FeedsProvider, Tuple2<RSSItem, Feed>>(
           selector: (context, itemsProvider, sourcesProvider) {
             var item = itemsProvider.getItem(feed.iids[index]);
-            var source = sourcesProvider.getSource(item.source);
+            var source = sourcesProvider.getFeed(item.feedSid);
             return Tuple2(item, source);
           },
           builder: (context, tuple, child) =>

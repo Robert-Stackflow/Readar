@@ -12,7 +12,7 @@ import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 
-import '../Providers/global.dart';
+import '../Providers/provider_manager.dart';
 import '../Utils/hive_util.dart';
 import '../Widgets/Custom/salomon_bottom_bar.dart';
 import '../Widgets/Item/item_builder.dart';
@@ -37,7 +37,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Timer? _timer;
   int _selectedIndex = 0;
   bool _isInVerify = false;
-  bool _showNavigationBar = Global.globalProvider.showNavigationBar;
+  bool _showNavigationBar = ProviderManager.globalProvider.showNavigationBar;
   final _pageController = PageController();
 
   @override
@@ -54,7 +54,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       goPinVerify();
       initData();
     });
-    Global.globalProvider.addListener(() {
+    ProviderManager.globalProvider.addListener(() {
       initData();
     });
   }
@@ -63,7 +63,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     _pageList = [];
     _navigationBarItemList = [];
     setState(() {
-      _showNavigationBar = Global.globalProvider.showNavigationBar &&
+      _showNavigationBar = ProviderManager.globalProvider.showNavigationBar &&
           NavEntry.getNavigationBarEntries().isNotEmpty;
       if (_showNavigationBar) {
         for (NavEntry item in NavEntry.getNavigationBarEntries()) {
@@ -158,7 +158,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   void setTimer() {
     _timer = Timer(
-        Duration(minutes: Global.globalProvider.autoLockTime), goPinVerify);
+        Duration(minutes: ProviderManager.globalProvider.autoLockTime),
+        goPinVerify);
   }
 
   @override
@@ -186,9 +187,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   }
 
   List<Widget> _contentEntries() {
-    List<NavEntry> sideBarEntries = Global.globalProvider.showNavigationBar
-        ? NavEntry.getSidebarEntries()
-        : NavEntry.getNavs();
+    List<NavEntry> sideBarEntries =
+        ProviderManager.globalProvider.showNavigationBar
+            ? NavEntry.getSidebarEntries()
+            : NavEntry.getNavs();
     List<Widget> widgets = [];
     for (NavEntry entry in sideBarEntries) {
       widgets.add(ItemBuilder.buildEntryItem(

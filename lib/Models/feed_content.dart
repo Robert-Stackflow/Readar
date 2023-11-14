@@ -1,7 +1,7 @@
 import 'package:cloudreader/Models/rss_item.dart';
 import 'package:tuple/tuple.dart';
 
-import '../Providers/global.dart';
+import '../Providers/provider_manager.dart';
 
 ///
 /// Filter type, including all, unread, read, starred, unstarred, and saved
@@ -53,7 +53,7 @@ class FeedContent {
   }
 
   bool testItem(RSSItem item) {
-    if (sids.isNotEmpty && !sids.contains(item.source)) return false;
+    if (sids.isNotEmpty && !sids.contains(item.feedSid)) return false;
     if (filterType == FilterType.unread && item.hasRead) return false;
     if (filterType == FilterType.starred && !item.starred) return false;
     if (search != "") {
@@ -69,7 +69,7 @@ class FeedContent {
     if (loading) return;
     loading = true;
     var predicates = _getPredicates();
-    var items = (await Global.db.query(
+    var items = (await ProviderManager.db.query(
       "items",
       orderBy: "date DESC",
       limit: loadLimit,
@@ -79,11 +79,11 @@ class FeedContent {
         .map((m) => RSSItem.fromJson(m))
         .toList();
     allLoaded = items.length < loadLimit;
-    Global.itemsProvider.loadItems(items);
+    ProviderManager.itemsProvider.loadItems(items);
     iids = items.map((i) => i.id).toList();
     loading = false;
     initialized = true;
-    Global.feedContentProvider.broadcast();
+    ProviderManager.feedContentProvider.broadcast();
   }
 
   Future<void> loadMore() async {
@@ -91,9 +91,9 @@ class FeedContent {
     loading = true;
     var predicates = _getPredicates();
     var offset = iids
-        .map((iid) => Global.itemsProvider.getItem(iid))
+        .map((iid) => ProviderManager.itemsProvider.getItem(iid))
         .fold(0, (c, i) => c + (testItem(i) ? 1 : 0));
-    var items = (await Global.db.query(
+    var items = (await ProviderManager.db.query(
       "items",
       orderBy: "date DESC",
       limit: loadLimit,
@@ -106,10 +106,10 @@ class FeedContent {
     if (items.length < loadLimit) {
       allLoaded = true;
     }
-    Global.itemsProvider.loadItems(items);
+    ProviderManager.itemsProvider.loadItems(items);
     iids.addAll(items.map((i) => i.id));
     loading = false;
-    Global.feedContentProvider.broadcast();
+    ProviderManager.feedContentProvider.broadcast();
   }
 
   Future<void> setFilter(FilterType filter) async {

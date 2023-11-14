@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import '../Models/feed_content.dart';
 import '../Models/rss_item.dart';
 import '../Utils/utils.dart';
-import 'global.dart';
+import 'provider_manager.dart';
 
 enum ItemSwipeOption {
   toggleRead,
@@ -76,17 +76,17 @@ class FeedContentProvider with ChangeNotifier {
   void addFetchedItems(Iterable<RSSItem> items) {
     for (var feed in [all, source]) {
       var lastDate = feed.iids.isNotEmpty
-          ? Global.itemsProvider.getItem(feed.iids.last).date
+          ? ProviderManager.itemsProvider.getItem(feed.iids.last).date
           : null;
       for (var item in items) {
         IPrint.debug(item.title);
         if (!feed.testItem(item)) continue;
         if (lastDate != null && item.date.isBefore(lastDate)) continue;
         var idx = Utils.binarySearch(feed.iids, item.id, (a, b) {
-          return Global.itemsProvider
+          return ProviderManager.itemsProvider
               .getItem(b)
               .date
-              .compareTo(Global.itemsProvider.getItem(a).date);
+              .compareTo(ProviderManager.itemsProvider.getItem(a).date);
         });
         feed.iids.insert(idx, item.id);
       }

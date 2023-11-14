@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloudreader/Api/service_handler.dart';
 import 'package:cloudreader/Providers/global_provider.dart';
 import 'package:cloudreader/Resources/theme.dart';
 import 'package:cloudreader/Screens/Content/article_detail_screen.dart';
@@ -25,7 +24,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Channel/android_back_desktop.dart';
-import 'Providers/global.dart';
+import 'Providers/provider_manager.dart';
 import 'Screens/Lock/pin_verify_screen.dart';
 import 'Screens/Navigation/article_screen.dart';
 import 'Screens/Navigation/feed_screen.dart';
@@ -42,13 +41,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initHive();
   Store.sp = await SharedPreferences.getInstance();
-  Store.sp.setInt(StoreKeys.SYNC_SERVICE, SyncService.googleReader.index);
-  Store.sp.setString(StoreKeys.ENDPOINT, "https://theoldreader.com");
-  Store.sp.setString(StoreKeys.USERNAME, "yutuan.victory@gmail.com");
-  Store.sp.setString(StoreKeys.PASSWORD, "6Jv#f9g@cXNPs9z");
-  Store.sp.setInt(StoreKeys.FETCH_LIMIT, 500);
-  Store.sp.setBool(StoreKeys.USE_INT_64, false);
-  Global.init();
+  ProviderManager.init();
   runApp(const MyApp());
   if (Platform.isAndroid) {
     SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
@@ -75,12 +68,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: Global.globalProvider),
-        ChangeNotifierProvider.value(value: Global.feedContentProvider),
-        ChangeNotifierProvider.value(value: Global.feedsProvider),
-        ChangeNotifierProvider.value(value: Global.groupsProvider),
-        ChangeNotifierProvider.value(value: Global.itemsProvider),
-        ChangeNotifierProvider.value(value: Global.syncProvider),
+        ChangeNotifierProvider.value(value: ProviderManager.globalProvider),
+        ChangeNotifierProvider.value(
+            value: ProviderManager.feedContentProvider),
+        ChangeNotifierProvider.value(value: ProviderManager.feedsProvider),
+        ChangeNotifierProvider.value(value: ProviderManager.groupsProvider),
+        ChangeNotifierProvider.value(value: ProviderManager.itemsProvider),
+        ChangeNotifierProvider.value(value: ProviderManager.syncProvider),
       ],
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(

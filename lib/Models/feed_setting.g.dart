@@ -18,22 +18,22 @@ FeedSetting _$FeedSettingFromJson(Map<String, dynamic> json) => FeedSetting(
           _$ArticleDetailVideoViewTypeEnumMap, json['videoViewType']),
       mobilizerType:
           $enumDecodeNullable(_$MobilizerTypeEnumMap, json['mobilizerType']),
-      cacheImageTypeWhenPull: $enumDecodeNullable(
-          _$CacheTypeEnumMap, json['cacheImageTypeWhenPull']),
-      cacheWebTypeWhenPull:
-          $enumDecodeNullable(_$CacheTypeEnumMap, json['cacheWebTypeWhenPull']),
-      cacheWebTypeWhenReading: $enumDecodeNullable(
-          _$CacheTypeEnumMap, json['cacheWebTypeWhenReading']),
-      pullWhenStartUp:
-          $enumDecodeNullable(_$BoolTypeEnumMap, json['pullWhenStartUp']),
+      cacheImageTypeOnPull:
+          $enumDecodeNullable(_$CacheTypeEnumMap, json['cacheImageTypeOnPull']),
+      cacheWebTypeOnPull:
+          $enumDecodeNullable(_$CacheTypeEnumMap, json['cacheWebTypeOnPull']),
+      cacheWebTypeOnRead:
+          $enumDecodeNullable(_$CacheTypeEnumMap, json['cacheWebTypeOnRead']),
+      pullOnStartUp:
+          $enumDecodeNullable(_$BoolTypeEnumMap, json['pullOnStartUp']),
       showRelatedArticles:
           $enumDecodeNullable(_$BoolTypeEnumMap, json['showRelatedArticles']),
       showImageAlt:
           $enumDecodeNullable(_$BoolTypeEnumMap, json['showImageAlt']),
       removeDuplicateArticles: $enumDecodeNullable(
           _$BoolTypeEnumMap, json['removeDuplicateArticles']),
-      autoReadWhenScrolling:
-          $enumDecodeNullable(_$BoolTypeEnumMap, json['autoReadWhenScrolling']),
+      autoReadOnScroll:
+          $enumDecodeNullable(_$BoolTypeEnumMap, json['autoReadOnScroll']),
       autoPullFrequency: json['autoPullFrequency'] as int?,
     );
 
@@ -48,18 +48,15 @@ Map<String, dynamic> _$FeedSettingToJson(FeedSetting instance) =>
       'videoViewType':
           _$ArticleDetailVideoViewTypeEnumMap[instance.videoViewType],
       'mobilizerType': _$MobilizerTypeEnumMap[instance.mobilizerType],
-      'cacheImageTypeWhenPull':
-          _$CacheTypeEnumMap[instance.cacheImageTypeWhenPull],
-      'cacheWebTypeWhenPull': _$CacheTypeEnumMap[instance.cacheWebTypeWhenPull],
-      'cacheWebTypeWhenReading':
-          _$CacheTypeEnumMap[instance.cacheWebTypeWhenReading],
-      'pullWhenStartUp': _$BoolTypeEnumMap[instance.pullWhenStartUp],
+      'cacheImageTypeOnPull': _$CacheTypeEnumMap[instance.cacheImageTypeOnPull],
+      'cacheWebTypeOnPull': _$CacheTypeEnumMap[instance.cacheWebTypeOnPull],
+      'cacheWebTypeOnRead': _$CacheTypeEnumMap[instance.cacheWebTypeOnRead],
+      'pullOnStartUp': _$BoolTypeEnumMap[instance.pullOnStartUp],
       'showRelatedArticles': _$BoolTypeEnumMap[instance.showRelatedArticles],
       'showImageAlt': _$BoolTypeEnumMap[instance.showImageAlt],
       'removeDuplicateArticles':
           _$BoolTypeEnumMap[instance.removeDuplicateArticles],
-      'autoReadWhenScrolling':
-          _$BoolTypeEnumMap[instance.autoReadWhenScrolling],
+      'autoReadOnScroll': _$BoolTypeEnumMap[instance.autoReadOnScroll],
       'autoPullFrequency': instance.autoPullFrequency,
     };
 

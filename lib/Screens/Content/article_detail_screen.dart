@@ -16,8 +16,8 @@ import '../../Models/feed.dart';
 import '../../Models/feed_setting.dart';
 import '../../Models/rss_item.dart';
 import '../../Providers/feeds_provider.dart';
-import '../../Providers/global.dart';
 import '../../Providers/items_provider.dart';
+import '../../Providers/provider_manager.dart';
 import '../../Utils/store.dart';
 import '../../Widgets/Item/toolbar.dart';
 import '../../generated/l10n.dart';
@@ -45,8 +45,8 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
   late bool isSourceFeed;
 
   void loadNewItem(String id, {bool? isSource}) {
-    if (!Global.itemsProvider.getItem(id).hasRead) {
-      Global.itemsProvider.updateItem(id, read: true);
+    if (!ProviderManager.itemsProvider.getItem(id).hasRead) {
+      ProviderManager.itemsProvider.updateItem(id, read: true);
     }
     setState(() {
       iid = id;
@@ -71,12 +71,12 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
 
   void _loadHtml(RSSItem item, Feed source, {loadFull = false}) async {
     var localUrl =
-        "http://${Global.address}:${Global.port}/article/article.html";
+        "http://${ProviderManager.address}:${ProviderManager.port}/article/article.html";
     var currId = requestId;
     String a;
     if (loadFull) {
       try {
-        var uri = Uri.parse(item.link);
+        var uri = Uri.parse(item.url);
         var html = (await http.get(uri)).body;
         a = Uri.encodeComponent(html);
       } catch (exp) {
@@ -99,16 +99,18 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
     h += '<article></article>';
     h = Uri.encodeComponent(h);
     var s = Store.getArticleFontSize();
-    localUrl += "?a=$a&h=$h&s=$s&u=${item.link}&m=${loadFull ? 1 : 0}";
-    if (Platform.isAndroid || Global.globalProvider.getBrightness() != null) {
-      var brightness = Global.currentBrightness(context);
+    localUrl += "?a=$a&h=$h&s=$s&u=${item.url}&m=${loadFull ? 1 : 0}";
+    if (Platform.isAndroid ||
+        ProviderManager.globalProvider.getBrightness() != null) {
+      var brightness = ProviderManager.currentBrightness(context);
       localUrl += "&t=${brightness.index}";
     }
     _controller.loadUrl(localUrl);
   }
 
   void _onPageReady(_) async {
-    if (Platform.isAndroid || Global.globalProvider.getBrightness() != null) {
+    if (Platform.isAndroid ||
+        ProviderManager.globalProvider.getBrightness() != null) {
       await Future.delayed(const Duration(milliseconds: 300));
     }
     setState(() {
@@ -145,7 +147,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
         break;
       case CrawlType.web:
       case CrawlType.external:
-        _controller.loadUrl(item.link);
+        _controller.loadUrl(item.url);
         break;
       case null:
       // TODO: Handle this case.
@@ -178,7 +180,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
     return Selector2<ItemsProvider, FeedsProvider, Tuple2<RSSItem, Feed>>(
       selector: (context, itemsProvider, feedsProvider) {
         var item = itemsProvider.getItem(iid);
-        var source = feedsProvider.getSource(item.source);
+        var source = feedsProvider.getFeed(item.feedSid);
         return Tuple2(item, source);
       },
       builder: (context, tuple, child) {
@@ -250,7 +252,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     semanticLabel: item.hasRead ? "标为未读" : "标为已读",
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      Global.itemsProvider
+                      ProviderManager.itemsProvider
                           .updateItem(item.id, read: !item.hasRead);
                     },
                   ),
@@ -261,7 +263,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     semanticLabel: item.starred ? S.of(context).star : "取消星标",
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      Global.itemsProvider
+                      ProviderManager.itemsProvider
                           .updateItem(item.id, starred: !item.starred);
                     },
                   ),
@@ -270,7 +272,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     semanticLabel: "分享",
                     onPressed: () {
                       final media = MediaQuery.of(context);
-                      Share.share(item.link,
+                      Share.share(item.url,
                           sharePositionOrigin: Rect.fromLTWH(
                               media.size.width -
                                   MediaQuery.of(context).size.width / 2,

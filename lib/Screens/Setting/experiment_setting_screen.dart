@@ -5,8 +5,8 @@ import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 
-import '../../Providers/global.dart';
 import '../../Providers/global_provider.dart';
+import '../../Providers/provider_manager.dart';
 import '../../Utils/hive_util.dart';
 import '../../Utils/itoast.dart';
 import '../../Widgets/BottomSheet/bottom_sheet_builder.dart';
@@ -230,7 +230,8 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
                             GlobalProvider.getAutoLockOptions(),
                             autoLockTime,
                             (item2) {
-                              Global.globalProvider.autoLockTime = item2;
+                              ProviderManager.globalProvider.autoLockTime =
+                                  item2;
                               Navigator.pop(context);
                             },
                             context: context,

@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
-import '../../Providers/global.dart';
+import '../../Providers/provider_manager.dart';
 import '../../Providers/global_provider.dart';
 import '../../Utils/locale_util.dart';
 import '../../Widgets/BottomSheet/bottom_sheet_builder.dart';
@@ -92,7 +92,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                           _supportedLocaleTuples,
                           locale,
                           (item2) {
-                            Global.globalProvider.locale = item2;
+                            ProviderManager.globalProvider.locale = item2;
                             Navigator.pop(context);
                           },
                           context: context,
@@ -120,7 +120,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                           GlobalProvider.getSupportedThemeMode(),
                           themeMode,
                           (item2) {
-                            Global.globalProvider.themeMode = item2;
+                            ProviderManager.globalProvider.themeMode = item2;
                             Navigator.pop(context);
                           },
                           context: context,

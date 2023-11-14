@@ -1,5 +1,5 @@
 import 'package:cloudreader/Models/nav_entry.dart';
-import 'package:cloudreader/Providers/global.dart';
+import 'package:cloudreader/Providers/provider_manager.dart';
 import 'package:cloudreader/Providers/global_provider.dart';
 import 'package:cloudreader/Utils/itoast.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +125,7 @@ class _NavSettingScreenState extends State<NavSettingScreen>
       cur += 1;
       navs.add(data);
     }
-    Global.globalProvider.navEntries = navs;
+    ProviderManager.globalProvider.navEntries = navs;
   }
 
   @override

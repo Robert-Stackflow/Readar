@@ -10,7 +10,7 @@ import '../../Models/feed.dart';
 import '../../Models/feed_setting.dart';
 import '../../Models/rss_item.dart';
 import '../../Providers/feed_content_provider.dart';
-import '../../Providers/global.dart';
+import '../../Providers/provider_manager.dart';
 import '../../Screens/Content/article_detail_screen.dart';
 import 'dismissible_background.dart';
 import 'favicon.dart';
@@ -34,10 +34,10 @@ class ArticleItemState extends State<ArticleItem> {
       return route.isFirst;
     });
     if (!widget.item.hasRead) {
-      Global.itemsProvider.updateItem(widget.item.id, read: true);
+      ProviderManager.itemsProvider.updateItem(widget.item.id, read: true);
     }
     if (widget.feed.feedSetting?.crawlType == CrawlType.external) {
-      launch(widget.item.link, forceSafariVC: false, forceWebView: false);
+      launch(widget.item.url, forceSafariVC: false, forceWebView: false);
     } else {
       var isSource = Navigator.of(context).canPop();
       if (ArticleDetailScreen.state.currentWidget != null) {
@@ -101,12 +101,12 @@ class ArticleItemState extends State<ArticleItem> {
     switch (option) {
       case ItemSwipeOption.toggleRead:
         await Future.delayed(const Duration(milliseconds: 200));
-        Global.itemsProvider
+        ProviderManager.itemsProvider
             .updateItem(widget.item.id, read: !widget.item.hasRead);
         break;
       case ItemSwipeOption.toggleStar:
         await Future.delayed(const Duration(milliseconds: 200));
-        Global.itemsProvider
+        ProviderManager.itemsProvider
             .updateItem(widget.item.id, starred: !widget.item.starred);
         break;
       case ItemSwipeOption.share:
@@ -116,9 +116,9 @@ class ArticleItemState extends State<ArticleItem> {
         break;
       case ItemSwipeOption.openExternal:
         if (!widget.item.hasRead) {
-          Global.itemsProvider.updateItem(widget.item.id, read: true);
+          ProviderManager.itemsProvider.updateItem(widget.item.id, read: true);
         }
-        launch(widget.item.link, forceSafariVC: false, forceWebView: false);
+        launch(widget.item.url, forceSafariVC: false, forceWebView: false);
         break;
     }
   }
@@ -126,9 +126,9 @@ class ArticleItemState extends State<ArticleItem> {
   Future<bool> _onDismiss(DismissDirection direction) async {
     HapticFeedback.mediumImpact();
     if (direction == DismissDirection.startToEnd) {
-      _performSwipeAction(Global.feedContentProvider.swipeR);
+      _performSwipeAction(ProviderManager.feedContentProvider.swipeR);
     } else {
-      _performSwipeAction(Global.feedContentProvider.swipeL);
+      _performSwipeAction(ProviderManager.feedContentProvider.swipeL);
     }
     return false;
   }
@@ -146,7 +146,7 @@ class ArticleItemState extends State<ArticleItem> {
     final _titleStyle = TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,
-      color: Global.feedContentProvider.dimRead && widget.item.hasRead
+      color: ProviderManager.feedContentProvider.dimRead && widget.item.hasRead
           ? CupertinoColors.secondaryLabel.resolveFrom(context)
           : CupertinoColors.label.resolveFrom(context),
     );
@@ -166,7 +166,8 @@ class ArticleItemState extends State<ArticleItem> {
             overflow: TextOverflow.ellipsis,
           )),
           Row(children: [
-            if (!Global.feedContentProvider.dimRead && !widget.item.hasRead)
+            if (!ProviderManager.feedContentProvider.dimRead &&
+                !widget.item.hasRead)
               _unreadIndicator,
             if (widget.item.starred) _starredIndicator,
             TimeText(widget.item.date, style: _descStyle),
@@ -182,7 +183,7 @@ class ArticleItemState extends State<ArticleItem> {
           widget.item.title,
           style: _titleStyle,
         ),
-        if (Global.feedContentProvider.showSnippet &&
+        if (ProviderManager.feedContentProvider.showSnippet &&
             widget.item.snippet.isNotEmpty)
           Text(
             widget.item.snippet,
@@ -238,7 +239,7 @@ class ArticleItemState extends State<ArticleItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             itemTexts,
-                            if (Global.feedContentProvider.showThumb &&
+                            if (ProviderManager.feedContentProvider.showThumb &&
                                 widget.item.thumb != null)
                               Padding(
                                 padding: const EdgeInsets.only(left: 4),
@@ -275,11 +276,13 @@ class ArticleItemState extends State<ArticleItem> {
     return Dismissible(
       key: Key("D-${widget.item.id}"),
       background: DismissibleBackground(
-        _getDismissIcon(Global.feedContentProvider.swipeR) ?? Icons.add,
+        _getDismissIcon(ProviderManager.feedContentProvider.swipeR) ??
+            Icons.add,
         true,
       ),
       secondaryBackground: DismissibleBackground(
-        _getDismissIcon(Global.feedContentProvider.swipeL) ?? Icons.add,
+        _getDismissIcon(ProviderManager.feedContentProvider.swipeL) ??
+            Icons.add,
         false,
       ),
       dismissThresholds: _dismissThresholds,

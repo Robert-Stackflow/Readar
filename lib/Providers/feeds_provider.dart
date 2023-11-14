@@ -1,3 +1,4 @@
+import 'package:cloudreader/Database/Dao/feed_dao.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
@@ -6,11 +7,12 @@ import 'package:sqflite/sqflite.dart';
 import '../Models/feed.dart';
 import '../Models/rss_item.dart';
 import '../Utils/utils.dart';
-import 'global.dart';
+import 'provider_manager.dart';
 
 class FeedsProvider with ChangeNotifier {
-  final Map<String, Feed> _sources = {};
+  final Map<String, Feed> _feeds = {};
   final Map<String, Feed> _deleted = {};
+
   bool _showUnreadTip = true;
 
   bool get showUnreadTip => _showUnreadTip;
@@ -21,28 +23,36 @@ class FeedsProvider with ChangeNotifier {
     }
   }
 
-  bool has(String id) => _sources.containsKey(id);
+  int _serviceId = 0;
 
-  Feed getSource(String id) => _sources[id] ?? _deleted[id]!;
+  int get serviceId => _serviceId;
 
-  Iterable<Feed> getSources() => _sources.values;
+  set serviceId(int value) {
+    if (value != _serviceId) {
+      _serviceId = value;
+      notifyListeners();
+    }
+  }
+
+  bool containsFeed(String id) => _feeds.containsKey(id);
+
+  Feed getFeed(String id) => _feeds[id] ?? _deleted[id]!;
+
+  Iterable<Feed> getFeeds() => _feeds.values;
 
   Future<void> init() async {
-    final maps = await Global.db.query("sources");
-    for (var map in maps) {
-      var source = Feed.fromJson(map);
-      _sources[source.sid] = source;
-    }
+    FeedDao.queryByServiceId(serviceId)
+        .then((value) => {for (Feed feed in value) _feeds[feed.sid] = feed});
     notifyListeners();
     await updateUnreadCounts();
   }
 
   Future<void> updateUnreadCounts() async {
-    final rows = await Global.db.rawQuery(
+    final rows = await ProviderManager.db.rawQuery(
         "SELECT source, COUNT(iid) FROM items WHERE hasRead=0 GROUP BY source;");
-    for (var source in _sources.values) {
+    for (var source in _feeds.values) {
       var cloned = source.clone();
-      _sources[source.sid] = cloned;
+      _feeds[source.sid] = cloned;
       // cloned.unreadCount = 0;
     }
     for (var row in rows) {
@@ -59,7 +69,7 @@ class FeedsProvider with ChangeNotifier {
   Future<void> updateWithFetchedItems(Iterable<RSSItem> items) async {
     Set<String> changed = {};
     for (var item in items) {
-      var source = _sources[item.source]!;
+      var source = _feeds[item.feedSid]!;
       // if (!item.hasRead) source.unreadCount = source.unreadCount! + 1;
       if (item.date.compareTo(source.latestArticleTime!) > 0 ||
           source.latestArticleTitle!.isEmpty) {
@@ -70,9 +80,9 @@ class FeedsProvider with ChangeNotifier {
     }
     notifyListeners();
     if (changed.isNotEmpty) {
-      var batch = Global.db.batch();
+      var batch = ProviderManager.db.batch();
       for (var sid in changed) {
-        var source = _sources[sid]!;
+        var source = _feeds[sid]!;
         batch.update(
           "sources",
           {
@@ -89,9 +99,9 @@ class FeedsProvider with ChangeNotifier {
 
   Future<void> put(Feed source, {force = false}) async {
     if (_deleted.containsKey(source.sid) && !force) return;
-    _sources[source.sid] = source;
+    _feeds[source.sid] = source;
     notifyListeners();
-    await Global.db.insert(
+    await ProviderManager.db.insert(
       "sources",
       source.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -99,10 +109,10 @@ class FeedsProvider with ChangeNotifier {
   }
 
   Future<void> putAll(Iterable<Feed> sources, {force = false}) async {
-    Batch batch = Global.db.batch();
+    Batch batch = ProviderManager.db.batch();
     for (var source in sources) {
       if (_deleted.containsKey(source.sid) && !force) continue;
-      _sources[source.sid] = source;
+      _feeds[source.sid] = source;
       batch.insert(
         "sources",
         source.toJson(),
@@ -114,10 +124,10 @@ class FeedsProvider with ChangeNotifier {
   }
 
   Future<void> updateSources() async {
-    if (Global.serviceHandler == null) return;
-    final tuple = await Global.serviceHandler!.getFeeds();
+    if (ProviderManager.serviceHandler == null) return;
+    final tuple = await ProviderManager.serviceHandler!.fetchFeeds();
     final sources = tuple.item1;
-    var curr = Set<String>.from(_sources.keys);
+    var curr = Set<String>.from(_feeds.keys);
     List<Feed> newSources = [];
     for (var source in sources) {
       if (curr.contains(source.sid)) {
@@ -128,15 +138,15 @@ class FeedsProvider with ChangeNotifier {
     }
     await putAll(newSources, force: true);
     await removeSources(curr);
-    Global.groupsProvider.groups = tuple.item2;
+    ProviderManager.groupsProvider.groups = tuple.item2;
     fetchFavicons();
   }
 
   Future<void> removeSources(Iterable<String> ids) async {
-    final batch = Global.db.batch();
+    final batch = ProviderManager.db.batch();
     for (var id in ids) {
-      if (!_sources.containsKey(id)) continue;
-      var source = _sources[id];
+      if (!_feeds.containsKey(id)) continue;
+      var source = _feeds[id];
       batch.delete(
         "items",
         where: "source = ?",
@@ -147,20 +157,20 @@ class FeedsProvider with ChangeNotifier {
         where: "sid = ?",
         whereArgs: [id],
       );
-      _sources.remove(id);
+      _feeds.remove(id);
       _deleted[id] = source!;
     }
     await batch.commit(noResult: true);
-    Global.feedContentProvider.initAll();
+    ProviderManager.feedContentProvider.initAll();
     notifyListeners();
   }
 
   Future<void> fetchFavicons() async {
-    for (var key in _sources.keys) {
-      if (_sources[key]?.iconUrl == null) {
-        _fetchFavicon(_sources[key]!.url).then((url) {
-          if (!_sources.containsKey(key)) return;
-          var source = _sources[key]!.clone();
+    for (var key in _feeds.keys) {
+      if (_feeds[key]?.iconUrl == null) {
+        _fetchFavicon(_feeds[key]!.url).then((url) {
+          if (!_feeds.containsKey(key)) return;
+          var source = _feeds[key]!.clone();
           source.iconUrl = url;
           put(source);
         });

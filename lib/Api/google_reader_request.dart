@@ -1,128 +1,46 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloudreader/Database/Dao/feed_service_dao.dart';
+import 'package:cloudreader/Models/feed_service.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:tuple/tuple.dart';
 
 import '../Models/feed.dart';
 import '../Models/rss_item.dart';
-import '../Providers/global.dart';
+import '../Providers/provider_manager.dart';
 import '../Utils/iprint.dart';
-import '../Utils/store.dart';
 import 'service_handler.dart';
 
 class GReaderServiceHandler extends ServiceHandler {
-  static const _ALL_TAG = "user/-/state/com.google/reading-list";
-  static const _READ_TAG = "user/-/state/com.google/read";
-  static const _STAR_TAG = "user/-/state/com.google/starred";
+  static const _tagAll = "user/-/state/com.google/reading-list";
+  static const _tagHasRead = "user/-/state/com.google/read";
+  static const _tagStarred = "user/-/state/com.google/starred";
+  static final _authRegex = RegExp(r"Auth=(\S+)");
 
-  String? endpoint;
-  String? username;
-  String? password;
-  int? fetchLimit;
-  int? _lastFetched;
-  String? _lastId;
-  String? _auth;
-  bool? useInt64;
-  String? inoreaderId;
-  String? inoreaderKey;
-  bool? removeInoreaderAd;
+  FeedService feedService;
 
-  GReaderServiceHandler()
-      : endpoint = Store.sp.getString(StoreKeys.ENDPOINT),
-        username = Store.sp.getString(StoreKeys.USERNAME),
-        password = Store.sp.getString(StoreKeys.PASSWORD),
-        fetchLimit = Store.sp.getInt(StoreKeys.FETCH_LIMIT),
-        _lastFetched = Store.sp.getInt(StoreKeys.LAST_FETCHED),
-        _lastId = Store.sp.getString(StoreKeys.LAST_ID),
-        _auth = Store.sp.getString(StoreKeys.AUTH),
-        useInt64 = Store.sp.getBool(StoreKeys.USE_INT_64),
-        inoreaderId = Store.sp.getString(StoreKeys.API_ID),
-        inoreaderKey = Store.sp.getString(StoreKeys.API_KEY),
-        removeInoreaderAd = Store.sp.getBool(StoreKeys.INOREADER_REMOVE_AD);
+  GReaderServiceHandler(this.feedService);
 
-  GReaderServiceHandler.fromValues(
-    this.endpoint,
-    this.username,
-    this.password,
-    this.fetchLimit, {
-    required this.inoreaderId,
-    required this.inoreaderKey,
-    required this.removeInoreaderAd,
-  }) {
-    _lastFetched = Store.sp.getInt(StoreKeys.LAST_FETCHED);
-    _lastId = Store.sp.getString(StoreKeys.LAST_ID);
-    _auth = Store.sp.getString(StoreKeys.AUTH);
-    useInt64 = Store.sp.getBool(StoreKeys.USE_INT_64) ??
-        !endpoint!.endsWith("theoldreader.com");
-  }
-
-  void persist() {
-    Store.sp.setInt(
-        StoreKeys.SYNC_SERVICE,
-        inoreaderId != null
-            ? SyncService.inoreader.index
-            : SyncService.googleReader.index);
-    Store.sp.setString(StoreKeys.ENDPOINT, endpoint!);
-    Store.sp.setString(StoreKeys.USERNAME, username!);
-    Store.sp.setString(StoreKeys.PASSWORD, password!);
-    Store.sp.setInt(StoreKeys.FETCH_LIMIT, fetchLimit!);
-    Store.sp.setBool(StoreKeys.USE_INT_64, useInt64!);
-    if (inoreaderId != null) {
-      Store.sp.setString(StoreKeys.API_ID, inoreaderId!);
-      Store.sp.setString(StoreKeys.API_KEY, inoreaderKey!);
-      Store.sp.setBool(StoreKeys.INOREADER_REMOVE_AD, removeInoreaderAd!);
-    }
-    Global.serviceHandler = this;
+  @override
+  void removeService() {
+    super.removeService();
+    FeedServiceDao.delete(feedService);
+    ProviderManager.serviceHandler = null;
   }
 
   @override
-  void remove() {
-    super.remove();
-    Store.sp.remove(StoreKeys.ENDPOINT);
-    Store.sp.remove(StoreKeys.USERNAME);
-    Store.sp.remove(StoreKeys.PASSWORD);
-    Store.sp.remove(StoreKeys.FETCH_LIMIT);
-    Store.sp.remove(StoreKeys.LAST_FETCHED);
-    Store.sp.remove(StoreKeys.LAST_ID);
-    Store.sp.remove(StoreKeys.AUTH);
-    Store.sp.remove(StoreKeys.USE_INT_64);
-    Store.sp.remove(StoreKeys.API_ID);
-    Store.sp.remove(StoreKeys.API_KEY);
-    Store.sp.remove(StoreKeys.INOREADER_REMOVE_AD);
-    Global.serviceHandler = null;
-  }
-
-  int? get lastFetched => _lastFetched;
-
-  set lastFetched(int? value) {
-    _lastFetched = value;
-    Store.sp.setInt(StoreKeys.LAST_FETCHED, value ?? 0);
-  }
-
-  String? get lastId => _lastId;
-
-  set lastId(String? value) {
-    _lastId = value;
-    Store.sp.setString(StoreKeys.LAST_ID, value ?? "");
-  }
-
-  String? get auth => _auth;
-
-  set auth(String? value) {
-    _auth = value;
-    Store.sp.setString(StoreKeys.AUTH, value ?? "");
-  }
-
-  Future<http.Response> _fetchAPI(String params, {dynamic body}) async {
+  Future<http.Response> fetchResponse(String path, {dynamic body}) async {
     final headers = <String, String>{};
-    if (auth != null) headers["Authorization"] = auth!;
-    if (inoreaderId != null) {
-      headers["AppId"] = inoreaderId!;
-      headers["AppKey"] = inoreaderKey!;
+    if (feedService.authorization != null) {
+      headers["Authorization"] = feedService.authorization!;
     }
-    var uri = Uri.parse(endpoint! + params);
+    if (feedService.appId != null && feedService.appKey != null) {
+      headers["AppId"] = feedService.appId!;
+      headers["AppKey"] = feedService.appKey!;
+    }
+    var uri = Uri.parse(feedService.endpoint + path);
     if (body == null) {
       return await http.get(uri, headers: headers);
     } else {
@@ -138,7 +56,7 @@ class GReaderServiceHandler extends ServiceHandler {
     do {
       var p = params;
       p += "&c=$continuation";
-      final response = await _fetchAPI(p);
+      final response = await fetchResponse(p);
       assert(response.statusCode == 200);
       final parsed = jsonDecode(response.body);
       fetched = parsed["itemRefs"];
@@ -154,47 +72,55 @@ class GReaderServiceHandler extends ServiceHandler {
 
   Future<http.Response> _editTag(String ref, String tag, {add = true}) async {
     final body = "i=$ref&${add ? "a" : "r"}=$tag";
-    return await _fetchAPI("/reader/api/0/edit-tag", body: body);
+    return await fetchResponse("/reader/api/0/edit-tag", body: body);
   }
 
   String _compactId(String longId) {
     final last = longId.split("/").last;
-    if (useInt64 == null || !useInt64!) return last;
+    if (feedService.params == null ||
+        feedService.params!['useInt64'] == null ||
+        feedService.params!['useInt64'] is! bool ||
+        !(feedService.params!['useInt64']! as bool)) return last;
     return int.parse(last, radix: 16).toString();
   }
 
   @override
   Future<bool> validate() async {
     try {
-      final result = await _fetchAPI("/reader/api/0/user-info");
+      final result = await fetchResponse("/reader/api/0/user-info");
       return result.statusCode == 200;
     } catch (exp) {
       return false;
     }
   }
 
-  static final _authRegex = RegExp(r"Auth=(\S+)");
-
   @override
-  Future<void> reauthenticate() async {
+  Future<bool> authenticate() async {
     if (!await validate()) {
       final body = {
-        "Email": username,
-        "Passwd": password,
+        "Email": feedService.username,
+        "Passwd": feedService.password,
       };
-      final result = await _fetchAPI("/accounts/ClientLogin", body: body);
-      assert(result.statusCode == 200);
-      final match = _authRegex.firstMatch(result.body);
-      if (match != null && match.groupCount > 0) {
-        auth = "GoogleLogin auth=${match.group(1)}";
+      final result = await fetchResponse("/accounts/ClientLogin", body: body);
+      if (result.statusCode != 200) {
+        return false;
+      } else {
+        final match = _authRegex.firstMatch(result.body);
+        if (match != null && match.groupCount > 0) {
+          feedService.authorization = "GoogleLogin auth=${match.group(1)}";
+          return true;
+        } else {
+          return false;
+        }
       }
     }
+    return true;
   }
 
   @override
-  Future<Tuple2<List<Feed>, Map<String, List<String>>>> getFeeds() async {
+  Future<Tuple2<List<Feed>, Map<String, List<String>>>> fetchFeeds() async {
     final response =
-        await _fetchAPI("/reader/api/0/subscription/list?output=json");
+        await fetchResponse("/reader/api/0/subscription/list?output=json");
     assert(response.statusCode == 200);
     List subscriptions = jsonDecode(response.body)["subscriptions"];
     final groupsMap = <String, List<String>>{};
@@ -221,17 +147,20 @@ class GReaderServiceHandler extends ServiceHandler {
     String? continuation;
     do {
       try {
-        final limit = min(fetchLimit! - items.length, 1000);
+        final limit = min(feedService.fetchLimit - items.length, 1000);
         var params = "/reader/api/0/stream/contents?output=json&n=$limit";
-        if (lastFetched != null) params += "&ot=$lastFetched";
+        if (feedService.latestFetchedTime != null) {
+          params += "&ot=${feedService.latestFetchedTime}";
+        }
         if (continuation != null) params += "&c=$continuation";
-        final response = await _fetchAPI(params);
+        final response = await fetchResponse(params);
         assert(response.statusCode == 200);
         final fetched = jsonDecode(response.body);
         fetchedItems = fetched["items"];
         for (var i in fetchedItems) {
           i["id"] = _compactId(i["id"]);
-          if (i["id"] == lastId || items.length >= fetchLimit!) {
+          if (i["id"] == feedService.lastedFetchedId ||
+              items.length >= feedService.fetchLimit) {
             break;
           } else {
             items.add(i);
@@ -243,31 +172,36 @@ class GReaderServiceHandler extends ServiceHandler {
         IPrint.debug(exp);
         break;
       }
-    } while (continuation != null && items.length < fetchLimit!);
+    } while (continuation != null && items.length < feedService.fetchLimit);
     if (items.isNotEmpty) {
-      lastId = items[0]["id"];
-      lastFetched = int.parse(items[0]["crawlTimeMsec"]) ~/ 1000;
+      feedService.lastedFetchedId = items[0]["id"];
+      feedService.latestFetchedTime = DateTime.fromMillisecondsSinceEpoch(
+          int.parse(items[0]["crawlTimeMsec"]));
     }
     final parsedItems = items.map<RSSItem>((i) {
       final dom = parse(i["summary"]["content"]);
-      if (removeInoreaderAd == true) {
+      if (feedService.params != null &&
+          feedService.params!['removeInoreaderAd'] != null &&
+          feedService.params!['removeInoreaderAd'] is bool &&
+          feedService.params!['removeInoreaderAd'] == true) {
         if (dom.documentElement!.text.trim().startsWith("Ads from Inoreader")) {
           dom.body!.firstChild!.remove();
         }
       }
       final item = RSSItem(
         id: i["id"],
-        source: i["origin"]["streamId"],
+        feedSid: i["origin"]["streamId"],
         title: i["title"],
-        link: i["canonical"][0]["href"],
+        url: i["canonical"][0]["href"],
         date: DateTime.fromMillisecondsSinceEpoch(i["published"] * 1000),
         content: dom.body!.innerHtml,
         snippet: dom.documentElement!.text.trim(),
         creator: i["author"],
         hasRead: false,
         starred: false,
+        feedId: 0,
       );
-      if (inoreaderId != null) {
+      if (feedService.appId != null) {
         final titleDom = parse(item.title);
         item.title = titleDom.documentElement!.text;
       }
@@ -293,19 +227,19 @@ class GReaderServiceHandler extends ServiceHandler {
   @override
   Future<Tuple2<Set<String>, Set<String>>> syncItems() async {
     List<Set<String>> results;
-    if (inoreaderId != null) {
+    if (feedService.appId != null) {
       results = await Future.wait([
         _fetchAll(
-            "/reader/api/0/stream/items/ids?output=json&xt=$_READ_TAG&n=1000"),
+            "/reader/api/0/stream/items/ids?output=json&xt=$_tagHasRead&n=1000"),
         _fetchAll(
-            "/reader/api/0/stream/items/ids?output=json&it=$_STAR_TAG&n=1000"),
+            "/reader/api/0/stream/items/ids?output=json&it=$_tagStarred&n=1000"),
       ]);
     } else {
       results = await Future.wait([
         _fetchAll(
-            "/reader/api/0/stream/items/ids?output=json&s=$_ALL_TAG&xt=$_READ_TAG&n=1000"),
+            "/reader/api/0/stream/items/ids?output=json&s=$_tagAll&xt=$_tagHasRead&n=1000"),
         _fetchAll(
-            "/reader/api/0/stream/items/ids?output=json&s=$_STAR_TAG&n=1000"),
+            "/reader/api/0/stream/items/ids?output=json&s=$_tagStarred&n=1000"),
       ]);
     }
     return Tuple2.fromList(results);
@@ -322,7 +256,7 @@ class GReaderServiceHandler extends ServiceHandler {
       }
       predicates
           .add("date ${before ? "<=" : ">="} ${date.millisecondsSinceEpoch}");
-      final rows = await Global.db.query(
+      final rows = await ProviderManager.db.query(
         "items",
         columns: ["iid"],
         where: predicates.join(" AND "),
@@ -333,39 +267,40 @@ class GReaderServiceHandler extends ServiceHandler {
       while (iids.moveNext()) {
         refs.add(iids.current as String);
         if (refs.length >= 1000) {
-          _editTag(refs.join("&i="), _READ_TAG);
+          _editTag(refs.join("&i="), _tagHasRead);
           refs = [];
         }
       }
-      if (refs.isNotEmpty) _editTag(refs.join("&i="), _READ_TAG);
+      if (refs.isNotEmpty) _editTag(refs.join("&i="), _tagHasRead);
     } else {
       if (sids.isEmpty) {
-        sids = Set.from(Global.feedsProvider.getSources().map((s) => s.sid));
+        sids = Set.from(
+            ProviderManager.feedsProvider.getFeeds().map((s) => s.sid));
       }
       for (var sid in sids) {
         final body = {"s": sid};
-        _fetchAPI("/reader/api/0/mark-all-as-read", body: body);
+        fetchResponse("/reader/api/0/mark-all-as-read", body: body);
       }
     }
   }
 
   @override
   Future<void> markRead(RSSItem item) async {
-    await _editTag(item.id, _READ_TAG);
+    await _editTag(item.id, _tagHasRead);
   }
 
   @override
   Future<void> markUnread(RSSItem item) async {
-    await _editTag(item.id, _READ_TAG, add: false);
+    await _editTag(item.id, _tagHasRead, add: false);
   }
 
   @override
   Future<void> star(RSSItem item) async {
-    await _editTag(item.id, _STAR_TAG);
+    await _editTag(item.id, _tagStarred);
   }
 
   @override
   Future<void> unstar(RSSItem item) async {
-    await _editTag(item.id, _STAR_TAG, add: false);
+    await _editTag(item.id, _tagStarred, add: false);
   }
 }
