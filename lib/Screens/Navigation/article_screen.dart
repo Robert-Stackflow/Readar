@@ -167,7 +167,7 @@ class _ArticleScreenState extends State<ArticleScreen>
         return Selector2<ItemsProvider, FeedsProvider, Tuple2<RSSItem, Feed>>(
           selector: (context, itemsProvider, sourcesProvider) {
             var item = itemsProvider.getItem(feed.iids[index]);
-            var source = sourcesProvider.getFeed(item.feedSid);
+            var source = sourcesProvider.getFeed(item.feedFid);
             return Tuple2(item, source);
           },
           builder: (context, tuple, child) =>

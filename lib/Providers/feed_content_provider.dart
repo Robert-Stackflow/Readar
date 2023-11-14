@@ -1,4 +1,3 @@
-import 'package:cloudreader/Utils/iprint.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../Models/feed_content.dart';
@@ -73,22 +72,21 @@ class FeedContentProvider with ChangeNotifier {
     await source.init();
   }
 
-  void addFetchedItems(Iterable<RSSItem> items) {
+  void mergeFetchedItems(Iterable<RSSItem> items) {
     for (var feed in [all, source]) {
       var lastDate = feed.iids.isNotEmpty
           ? ProviderManager.itemsProvider.getItem(feed.iids.last).date
           : null;
       for (var item in items) {
-        IPrint.debug(item.title);
         if (!feed.testItem(item)) continue;
         if (lastDate != null && item.date.isBefore(lastDate)) continue;
-        var idx = Utils.binarySearch(feed.iids, item.id, (a, b) {
+        var idx = Utils.binarySearch(feed.iids, item.iid, (a, b) {
           return ProviderManager.itemsProvider
               .getItem(b)
               .date
               .compareTo(ProviderManager.itemsProvider.getItem(a).date);
         });
-        feed.iids.insert(idx, item.id);
+        feed.iids.insert(idx, item.iid);
       }
     }
     notifyListeners();

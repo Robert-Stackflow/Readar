@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_getters_setters
 
+import 'package:cloudreader/Utils/iprint.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'provider_manager.dart';
@@ -23,8 +24,8 @@ class SyncProvider with ChangeNotifier {
     syncing = true;
     notifyListeners();
     var sids =
-        ProviderManager.feedsProvider.getFeeds().map((s) => s.sid).toList();
-    await ProviderManager.feedsProvider.removeSources(sids);
+        ProviderManager.feedsProvider.getFeeds().map((s) => s.fid).toList();
+    await ProviderManager.feedsProvider.removeFeeds(sids);
     ProviderManager.serviceHandler?.removeService();
     hasService = false;
     syncing = false;
@@ -49,9 +50,13 @@ class SyncProvider with ChangeNotifier {
     notifyListeners();
     try {
       await ProviderManager.serviceHandler?.authenticate();
-      await ProviderManager.feedsProvider.updateSources();
+      IPrint.debug("authed");
+      await ProviderManager.feedsProvider.syncFeeds();
+      IPrint.debug("synced Feeds");
       await ProviderManager.itemsProvider.syncItems();
+      IPrint.debug("synced Items");
       await ProviderManager.itemsProvider.fetchItems();
+      IPrint.debug("fetched Items");
       lastSyncSuccess = true;
     } catch (exp) {
       lastSyncSuccess = false;

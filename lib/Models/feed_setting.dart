@@ -1,7 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'feed_setting.g.dart';
-
 /// 文章拉取方式：跟随全局设置、RSS、全文、Web页面、外部浏览器
 enum CrawlType { unspecified, rss, full, web, external }
 
@@ -58,7 +54,6 @@ enum SyncStatus { unspecified, success, fail }
 
 /// （全局）订阅源设置，包含文章抓取方式、文章列表布局、文章详情布局、文章详情头图显示选项、文章详情视频显示选项、拉取时是否下载图片、拉取时是否下载Web页面、阅读时是否下载Web页面、
 ///  软件启动时是否拉取、是否显示相关文章、是否显示图片标题、是否移除重复文章、滚动时是否自动标为已读、自动拉取频率
-@JsonSerializable()
 class FeedSetting {
   CrawlType? crawlType;
   ArticleListLayoutType? listLayoutType;
@@ -94,8 +89,67 @@ class FeedSetting {
     this.autoPullFrequency,
   });
 
-  Map<String, dynamic> toJson() => _$FeedSettingToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'crawlType': crawlType?.index,
+        'listLayoutType': listLayoutType?.index,
+        'detailLayoutType': detailLayoutType?.index,
+        'headImageViewType': headImageViewType?.index,
+        'videoViewType': videoViewType?.index,
+        'mobilizerType': mobilizerType?.index,
+        'cacheImageTypeOnPull': cacheImageTypeOnPull?.index,
+        'cacheWebTypeOnPull': cacheWebTypeOnPull?.index,
+        'cacheWebTypeOnRead': cacheWebTypeOnRead?.index,
+        'pullOnStartUp': pullOnStartUp?.index,
+        'showRelatedArticles': showRelatedArticles?.index,
+        'showImageAlt': showImageAlt?.index,
+        'removeDuplicateArticles': removeDuplicateArticles?.index,
+        'autoReadOnScroll': autoReadOnScroll?.index,
+        'autoPullFrequency': autoPullFrequency,
+      };
 
-  factory FeedSetting.fromJson(Map<String, dynamic> json) =>
-      _$FeedSettingFromJson(json);
+  factory FeedSetting.fromJson(Map<String, dynamic> json) => FeedSetting(
+        crawlType: json['crawlType'] != null
+            ? CrawlType.values[json['crawlType']]
+            : null,
+        listLayoutType: json['listLayoutType'] != null
+            ? ArticleListLayoutType.values[json['listLayoutType']]
+            : null,
+        detailLayoutType: json['detailLayoutType'] != null
+            ? ArticleDetailLayoutType.values[json['detailLayoutType']]
+            : null,
+        headImageViewType: json['headImageViewType'] != null
+            ? ArticleDetailHeadImageViewType.values[json['headImageViewType']]
+            : null,
+        videoViewType: json['videoViewType'] != null
+            ? ArticleDetailVideoViewType.values[json['videoViewType']]
+            : null,
+        mobilizerType: json['mobilizerType'] != null
+            ? MobilizerType.values[json['mobilizerType']]
+            : null,
+        cacheImageTypeOnPull: json['cacheImageTypeOnPull'] != null
+            ? CacheType.values[json['cacheImageTypeOnPull']]
+            : null,
+        cacheWebTypeOnPull: json['cacheWebTypeOnPull'] != null
+            ? CacheType.values[json['cacheWebTypeOnPull']]
+            : null,
+        cacheWebTypeOnRead: json['cacheWebTypeOnRead'] != null
+            ? CacheType.values[json['cacheWebTypeOnRead']]
+            : null,
+        pullOnStartUp: json['pullOnStartUp'] != null
+            ? BoolType.values[json['pullOnStartUp']]
+            : null,
+        showRelatedArticles: json['showRelatedArticles'] != null
+            ? BoolType.values[json['showRelatedArticles']]
+            : null,
+        showImageAlt: json['showImageAlt'] != null
+            ? BoolType.values[json['showImageAlt']]
+            : null,
+        removeDuplicateArticles: json['removeDuplicateArticles'] != null
+            ? BoolType.values[json['removeDuplicateArticles']]
+            : null,
+        autoReadOnScroll: json['autoReadOnScroll'] != null
+            ? BoolType.values[json['autoReadOnScroll']]
+            : null,
+        autoPullFrequency: json['autoPullFrequency'] as int?,
+      );
 }

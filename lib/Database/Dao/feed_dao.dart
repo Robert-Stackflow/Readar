@@ -1,5 +1,5 @@
 import 'package:cloudreader/Database/create_table_sql.dart';
-import 'package:cloudreader/Database/database_manager.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../Models/feed.dart';
 import '../../Providers/provider_manager.dart';
@@ -7,34 +7,35 @@ import '../../Providers/provider_manager.dart';
 class FeedDao {
   static final String tableName = CreateTableSql.feed.tableName;
 
-  static void insert(Feed feed) {
-    DatabaseManager.getDataBase().then(
-      (value) => value.insert(tableName, feed.toJson()),
-    );
+  static Future<void> insert(Feed feed) async {
+    await ProviderManager.db.insert(tableName, feed.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static void insertAll(List<Feed> feeds) {
+  static Future<void> insertAll(List<Feed> feeds) async {
+    Batch batch = ProviderManager.db.batch();
     for (Feed feed in feeds) {
-      insert(feed);
+      batch.insert(tableName, feed.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
     }
+    await batch.commit(noResult: true);
   }
 
-  static void delete(Feed feed) {
-    DatabaseManager.getDataBase().then(
-      (value) => value.delete(tableName, where: 'id = ?', whereArgs: [feed.id]),
-    );
+  static Future<void> delete(Feed feed) async {
+    await ProviderManager.db
+        .delete(tableName, where: 'id = ?', whereArgs: [feed.id]);
   }
 
-  static void update(Feed feed) {
-    DatabaseManager.getDataBase().then(
-      (value) => value.update(tableName, feed.toJson()),
-    );
+  static Future<void> update(Feed feed) async {
+    await ProviderManager.db.update(tableName, feed.toJson());
   }
 
-  static void updateAll(List<Feed> feeds) {
+  static Future<void> updateAll(List<Feed> feeds) async {
+    Batch batch = ProviderManager.db.batch();
     for (Feed feed in feeds) {
-      update(feed);
+      batch.update(tableName, feed.toJson());
     }
+    await batch.commit(noResult: true);
   }
 
   static Future<List<Feed>> queryByServiceId(int serviceId) async {
@@ -53,10 +54,16 @@ class FeedDao {
     return Feed.fromJson(result[0]);
   }
 
-  static Future<Feed> queryBySId(String sid) async {
+  static Future<Feed> queryByFid(String fid) async {
     List<Map<String, Object?>> result = await ProviderManager.db
-        .query(tableName, where: 'sid = ?', whereArgs: [sid]);
+        .query(tableName, where: 'fid = ?', whereArgs: [fid]);
     return Feed.fromJson(result[0]);
+  }
+
+  static Future<int> getIdByFid(String fid) async {
+    List<Map<String, Object?>> result = await ProviderManager.db
+        .query(tableName, where: 'fid = ?', whereArgs: [fid]);
+    return Feed.fromJson(result[0]).id ?? 0;
   }
 
   static Future<Feed> queryByUrl(String url) async {

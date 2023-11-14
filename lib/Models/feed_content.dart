@@ -53,7 +53,7 @@ class FeedContent {
   }
 
   bool testItem(RSSItem item) {
-    if (sids.isNotEmpty && !sids.contains(item.feedSid)) return false;
+    if (sids.isNotEmpty && !sids.contains(item.feedFid)) return false;
     if (filterType == FilterType.unread && item.hasRead) return false;
     if (filterType == FilterType.starred && !item.starred) return false;
     if (search != "") {
@@ -79,8 +79,8 @@ class FeedContent {
         .map((m) => RSSItem.fromJson(m))
         .toList();
     allLoaded = items.length < loadLimit;
-    ProviderManager.itemsProvider.loadItems(items);
-    iids = items.map((i) => i.id).toList();
+    ProviderManager.itemsProvider.mappingItems(items);
+    iids = items.map((i) => i.iid).toList();
     loading = false;
     initialized = true;
     ProviderManager.feedContentProvider.broadcast();
@@ -106,8 +106,8 @@ class FeedContent {
     if (items.length < loadLimit) {
       allLoaded = true;
     }
-    ProviderManager.itemsProvider.loadItems(items);
-    iids.addAll(items.map((i) => i.id));
+    ProviderManager.itemsProvider.mappingItems(items);
+    iids.addAll(items.map((i) => i.iid));
     loading = false;
     ProviderManager.feedContentProvider.broadcast();
   }

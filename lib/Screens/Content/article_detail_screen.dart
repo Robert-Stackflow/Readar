@@ -180,7 +180,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
     return Selector2<ItemsProvider, FeedsProvider, Tuple2<RSSItem, Feed>>(
       selector: (context, itemsProvider, feedsProvider) {
         var item = itemsProvider.getItem(iid);
-        var source = feedsProvider.getFeed(item.feedSid);
+        var source = feedsProvider.getFeed(item.feedFid);
         return Tuple2(item, source);
       },
       builder: (context, tuple, child) {
@@ -253,7 +253,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     onPressed: () {
                       HapticFeedback.mediumImpact();
                       ProviderManager.itemsProvider
-                          .updateItem(item.id, read: !item.hasRead);
+                          .updateItem(item.iid, read: !item.hasRead);
                     },
                   ),
                   CupertinoToolbarItem(
@@ -264,7 +264,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     onPressed: () {
                       HapticFeedback.mediumImpact();
                       ProviderManager.itemsProvider
-                          .updateItem(item.id, starred: !item.starred);
+                          .updateItem(item.iid, starred: !item.starred);
                     },
                   ),
                   CupertinoToolbarItem(

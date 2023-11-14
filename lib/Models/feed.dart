@@ -1,17 +1,14 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
 
 import 'feed_setting.dart';
-
-part 'feed.g.dart';
 
 ///
 /// Feed class, including ID, link, icon, name and other elements
 ///
-@JsonSerializable()
 class Feed {
-  int id;
+  int? id;
   int serviceId;
-  String sid;
+  String fid;
   String url;
   String? iconUrl;
   String name;
@@ -20,13 +17,13 @@ class Feed {
   DateTime? lastPullTime;
   DateTime? latestArticleTime;
   String? latestArticleTitle;
-  String? params;
+  Map<String, Object?>? params;
 
   Feed(
-    this.sid,
+    this.fid,
     this.url,
     this.name, {
-    required this.id,
+    this.id,
     required this.serviceId,
     this.feedSetting,
     this.lastPullTime,
@@ -43,7 +40,7 @@ class Feed {
   Feed._privateConstructor(
     this.id,
     this.serviceId,
-    this.sid,
+    this.fid,
     this.url,
     this.iconUrl,
     this.name,
@@ -59,7 +56,7 @@ class Feed {
     return Feed._privateConstructor(
       id,
       serviceId,
-      sid,
+      fid,
       url,
       iconUrl,
       name,
@@ -72,7 +69,42 @@ class Feed {
     );
   }
 
-  Map<String, dynamic> toJson() => _$FeedToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'serviceId': serviceId,
+        'fid': fid,
+        'url': url,
+        'iconUrl': iconUrl,
+        'name': name,
+        'feedSetting':
+            feedSetting != null ? jsonEncode(feedSetting!.toJson()) : null,
+        'lastPullStatus': lastPullStatus?.index,
+        'lastPullTime': lastPullTime?.millisecondsSinceEpoch,
+        'latestArticleTime': latestArticleTime?.millisecondsSinceEpoch,
+        'latestArticleTitle': latestArticleTitle,
+        'params': jsonEncode(params),
+      };
 
-  factory Feed.fromJson(Map<String, dynamic> json) => _$FeedFromJson(json);
+  factory Feed.fromJson(Map<String, dynamic> map) => Feed(
+        map['fid'] as String,
+        map['url'] as String,
+        map['name'] as String,
+        id: map['id'] as int,
+        serviceId: map['serviceId'] as int,
+        feedSetting: map['feedSetting'] == null
+            ? null
+            : FeedSetting.fromJson(jsonDecode(map['feedSetting'])),
+        lastPullTime: map['lastPullTime'] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(map['lastPullTime']),
+        lastPullStatus: map['lastPullStatus'] == null
+            ? null
+            : SyncStatus.values[map['lastPullStatus']],
+        iconUrl: map['iconUrl'] as String?,
+        latestArticleTime: map['latestArticleTime'] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(map['latestArticleTime']),
+        latestArticleTitle: map['latestArticleTitle'] as String?,
+        params: jsonDecode(map['params']),
+      );
 }

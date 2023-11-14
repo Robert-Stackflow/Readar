@@ -1,3 +1,5 @@
+import 'package:cloudreader/Database/Dao/item_dao.dart';
+import 'package:cloudreader/Database/create_table_sql.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -5,17 +7,17 @@ import '../Models/rss_item.dart';
 import 'provider_manager.dart';
 
 class ItemsProvider with ChangeNotifier {
-  final Map<String, RSSItem> _items = {};
+  final Map<String, RSSItem> _idToItemMap = {};
 
-  bool has(String id) => _items.containsKey(id);
+  bool containsItem(String id) => _idToItemMap.containsKey(id);
 
-  RSSItem getItem(String id) => _items[id]!;
+  RSSItem getItem(String id) => _idToItemMap[id]!;
 
-  Iterable<RSSItem> getItems() => _items.values;
+  Iterable<RSSItem> getItems() => _idToItemMap.values;
 
-  void loadItems(Iterable<RSSItem> items) {
+  void mappingItems(Iterable<RSSItem> items) {
     for (var item in items) {
-      _items[item.id] = item;
+      _idToItemMap[item.iid] = item;
     }
   }
 
@@ -28,8 +30,8 @@ class ItemsProvider with ChangeNotifier {
   }) async {
     if (ProviderManager.serviceHandler == null) return;
     Map<String, dynamic> updateMap = {};
-    if (_items.containsKey(iid)) {
-      final item = _items[iid]!.clone();
+    if (_idToItemMap.containsKey(iid)) {
+      final item = _idToItemMap[iid]!.clone();
       if (read != null) {
         item.hasRead = read;
         if (!local) {
@@ -40,7 +42,7 @@ class ItemsProvider with ChangeNotifier {
           }
         }
         ProviderManager.feedsProvider
-            .updateUnreadCount(item.feedSid, read ? -1 : 1);
+            .updateUnreadCount(item.feedFid, read ? -1 : 1);
       }
       if (starred != null) {
         item.starred = starred;
@@ -52,16 +54,17 @@ class ItemsProvider with ChangeNotifier {
           }
         }
       }
-      _items[iid] = item;
+      _idToItemMap[iid] = item;
     }
     if (read != null) updateMap["hasRead"] = read ? 1 : 0;
     if (starred != null) updateMap["starred"] = starred ? 1 : 0;
     if (batch != null) {
-      batch.update("items", updateMap, where: "iid = ?", whereArgs: [iid]);
+      batch.update(CreateTableSql.items.tableName, updateMap,
+          where: "iid = ?", whereArgs: [iid]);
     } else {
       notifyListeners();
-      await ProviderManager.db
-          .update("items", updateMap, where: "iid = ?", whereArgs: [iid]);
+      await ProviderManager.db.update(CreateTableSql.items.tableName, updateMap,
+          where: "iid = ?", whereArgs: [iid]);
     }
   }
 
@@ -76,44 +79,40 @@ class ItemsProvider with ChangeNotifier {
     List<String> predicates = ["hasRead = 0"];
     if (sids.isNotEmpty) {
       predicates
-          .add("source IN (${List.filled(sids.length, "?").join(" , ")})");
+          .add("feedFid IN (${List.filled(sids.length, "?").join(" , ")})");
     }
     predicates
         .add("date ${before ? "<=" : ">="} ${date.millisecondsSinceEpoch}");
     await ProviderManager.db.update(
-      "items",
+      CreateTableSql.items.tableName,
       {"hasRead": 1},
       where: predicates.join(" AND "),
       whereArgs: sids.toList(),
     );
-    for (var item in _items.values.toList()) {
-      if (sids.isNotEmpty && !sids.contains(item.feedSid)) continue;
+    for (var item in _idToItemMap.values.toList()) {
+      if (sids.isNotEmpty && !sids.contains(item.feedFid)) continue;
       if ((before
           ? item.date.compareTo(date) > 0
           : item.date.compareTo(date) < 0)) continue;
       item.hasRead = true;
     }
     notifyListeners();
-    ProviderManager.feedsProvider.updateUnreadCounts();
+    // ProviderManager.feedsProvider.updateUnreadCounts();
   }
 
   Future<void> fetchItems() async {
     if (ProviderManager.serviceHandler == null) return;
     final items = await ProviderManager.serviceHandler!.fetchItems();
-    final batch = ProviderManager.db.batch();
+    List<RSSItem> batchedItems = [];
     for (var item in items) {
-      if (!ProviderManager.feedsProvider.containsFeed(item.feedSid)) continue;
-      _items[item.id] = item;
-      batch.insert(
-        "items",
-        item.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      if (!ProviderManager.feedsProvider.containsFeed(item.feedFid)) continue;
+      _idToItemMap[item.iid] = item;
+      batchedItems.add(item);
     }
-    await batch.commit(noResult: true);
-    // notifyListeners();
-    ProviderManager.feedsProvider.updateWithFetchedItems(items);
-    ProviderManager.feedContentProvider.addFetchedItems(items);
+    RSSItemDao.insertAll(batchedItems);
+    notifyListeners();
+    ProviderManager.feedsProvider.mergeFetchedItems(items);
+    ProviderManager.feedContentProvider.mergeFetchedItems(items);
   }
 
   Future<void> syncItems() async {
@@ -122,7 +121,7 @@ class ItemsProvider with ChangeNotifier {
     final unreadIds = tuple.item1;
     final starredIds = tuple.item2;
     final rows = await ProviderManager.db.query(
-      "items",
+      CreateTableSql.items.tableName,
       columns: ["iid", "hasRead", "starred"],
       where: "hasRead = 0 OR starred = 1",
     );
@@ -145,6 +144,6 @@ class ItemsProvider with ChangeNotifier {
     }
     notifyListeners();
     await batch.commit(noResult: true);
-    await ProviderManager.feedsProvider.updateUnreadCounts();
+    // await ProviderManager.feedsProvider.updateUnreadCounts();
   }
 }

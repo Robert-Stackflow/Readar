@@ -34,7 +34,7 @@ class ArticleItemState extends State<ArticleItem> {
       return route.isFirst;
     });
     if (!widget.item.hasRead) {
-      ProviderManager.itemsProvider.updateItem(widget.item.id, read: true);
+      ProviderManager.itemsProvider.updateItem(widget.item.iid, read: true);
     }
     if (widget.feed.feedSetting?.crawlType == CrawlType.external) {
       launch(widget.item.url, forceSafariVC: false, forceWebView: false);
@@ -42,12 +42,12 @@ class ArticleItemState extends State<ArticleItem> {
       var isSource = Navigator.of(context).canPop();
       if (ArticleDetailScreen.state.currentWidget != null) {
         ArticleDetailScreen.state.currentState!.loadNewItem(
-          widget.item.id,
+          widget.item.iid,
           isSource: isSource,
         );
       } else {
         Navigator.of(context).pushNamed("/article/detail",
-            arguments: Tuple2(widget.item.id, isSource));
+            arguments: Tuple2(widget.item.iid, isSource));
       }
     }
   }
@@ -102,12 +102,12 @@ class ArticleItemState extends State<ArticleItem> {
       case ItemSwipeOption.toggleRead:
         await Future.delayed(const Duration(milliseconds: 200));
         ProviderManager.itemsProvider
-            .updateItem(widget.item.id, read: !widget.item.hasRead);
+            .updateItem(widget.item.iid, read: !widget.item.hasRead);
         break;
       case ItemSwipeOption.toggleStar:
         await Future.delayed(const Duration(milliseconds: 200));
         ProviderManager.itemsProvider
-            .updateItem(widget.item.id, starred: !widget.item.starred);
+            .updateItem(widget.item.iid, starred: !widget.item.starred);
         break;
       case ItemSwipeOption.share:
         break;
@@ -116,7 +116,7 @@ class ArticleItemState extends State<ArticleItem> {
         break;
       case ItemSwipeOption.openExternal:
         if (!widget.item.hasRead) {
-          ProviderManager.itemsProvider.updateItem(widget.item.id, read: true);
+          ProviderManager.itemsProvider.updateItem(widget.item.iid, read: true);
         }
         launch(widget.item.url, forceSafariVC: false, forceWebView: false);
         break;
@@ -274,7 +274,7 @@ class ArticleItemState extends State<ArticleItem> {
       ),
     );
     return Dismissible(
-      key: Key("D-${widget.item.id}"),
+      key: Key("D-${widget.item.iid}"),
       background: DismissibleBackground(
         _getDismissIcon(ProviderManager.feedContentProvider.swipeR) ??
             Icons.add,

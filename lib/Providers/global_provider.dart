@@ -1,6 +1,8 @@
+import 'package:cloudreader/Models/feed_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tuple/tuple.dart';
 
+import '../Models/feed.dart';
 import '../Models/nav_entry.dart';
 import '../Utils/hive_util.dart';
 import '../generated/l10n.dart';
@@ -131,5 +133,27 @@ class GlobalProvider with ChangeNotifier {
 
   set syncOnStart(bool value) {
     _syncOnStart = value;
+  }
+
+  FeedService? _currentFeedService;
+
+  FeedService? get currentFeedService => _currentFeedService;
+
+  set currentFeedService(FeedService? value) {
+    if (value != _currentFeedService) {
+      _currentFeedService = value;
+      notifyListeners();
+    }
+  }
+
+  Feed? _currentFeed;
+
+  Feed? get currentFeed => _currentFeed;
+
+  set currentFeed(Feed? value) {
+    if (value != _currentFeed) {
+      _currentFeed = value;
+      notifyListeners();
+    }
   }
 }

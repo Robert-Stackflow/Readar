@@ -1,6 +1,9 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloudreader/Database/Dao/feed_dao.dart';
 import 'package:cloudreader/Database/Dao/feed_service_dao.dart';
 import 'package:cloudreader/Models/feed_service.dart';
 import 'package:html/parser.dart';
@@ -19,9 +22,9 @@ class GReaderServiceHandler extends ServiceHandler {
   static const _tagStarred = "user/-/state/com.google/starred";
   static final _authRegex = RegExp(r"Auth=(\S+)");
 
-  FeedService feedService;
+  FeedService feedService = ProviderManager.globalProvider.currentFeedService;
 
-  GReaderServiceHandler(this.feedService);
+  GReaderServiceHandler();
 
   @override
   void removeService() {
@@ -47,41 +50,6 @@ class GReaderServiceHandler extends ServiceHandler {
       headers["Content-Type"] = "application/x-www-form-urlencoded";
       return await http.post(uri, headers: headers, body: body);
     }
-  }
-
-  Future<Set<String>> _fetchAll(String params) async {
-    final results = List<String>.empty(growable: true);
-    List fetched;
-    String? continuation;
-    do {
-      var p = params;
-      p += "&c=$continuation";
-      final response = await fetchResponse(p);
-      assert(response.statusCode == 200);
-      final parsed = jsonDecode(response.body);
-      fetched = parsed["itemRefs"];
-      if (fetched.isNotEmpty) {
-        for (var i in fetched) {
-          results.add(i["id"]);
-        }
-      }
-      continuation = parsed["continuation"];
-    } while (continuation != null && fetched.length >= 1000);
-    return Set.from(results);
-  }
-
-  Future<http.Response> _editTag(String ref, String tag, {add = true}) async {
-    final body = "i=$ref&${add ? "a" : "r"}=$tag";
-    return await fetchResponse("/reader/api/0/edit-tag", body: body);
-  }
-
-  String _compactId(String longId) {
-    final last = longId.split("/").last;
-    if (feedService.params == null ||
-        feedService.params!['useInt64'] == null ||
-        feedService.params!['useInt64'] is! bool ||
-        !(feedService.params!['useInt64']! as bool)) return last;
-    return int.parse(last, radix: 16).toString();
   }
 
   @override
@@ -118,13 +86,16 @@ class GReaderServiceHandler extends ServiceHandler {
   }
 
   @override
-  Future<Tuple2<List<Feed>, Map<String, List<String>>>> fetchFeeds() async {
+  Future<Tuple2<List<Feed>, Map<String, List<String>>>>
+      fetchFeedsAndGroups() async {
     final response =
         await fetchResponse("/reader/api/0/subscription/list?output=json");
-    assert(response.statusCode == 200);
-    List subscriptions = jsonDecode(response.body)["subscriptions"];
+    if (response.statusCode != 200) {
+      return const Tuple2([], {});
+    }
+    var rawFeeds = jsonDecode(response.body)["subscriptions"];
     final groupsMap = <String, List<String>>{};
-    for (var s in subscriptions) {
+    for (var s in rawFeeds) {
       final categories = s["categories"];
       if (categories != null) {
         for (var c in categories) {
@@ -133,64 +104,71 @@ class GReaderServiceHandler extends ServiceHandler {
         }
       }
     }
-    final sources = subscriptions.map<Feed>((s) {
+    final sources = rawFeeds.map<Feed>((s) {
       return Feed(s["id"], s["url"] ?? s["htmlUrl"], s["title"],
-          id: 0, serviceId: 0);
+          serviceId: feedService.id!);
     }).toList();
     return Tuple2(sources, groupsMap);
   }
 
   @override
   Future<List<RSSItem>> fetchItems() async {
-    List items = [];
+    List rawItems = [];
     List fetchedItems;
     String? continuation;
     do {
       try {
-        final limit = min(feedService.fetchLimit - items.length, 1000);
+        //构造请求串
+        final limit = min(feedService.fetchLimit - rawItems.length, 1000);
         var params = "/reader/api/0/stream/contents?output=json&n=$limit";
         if (feedService.latestFetchedTime != null) {
           params += "&ot=${feedService.latestFetchedTime}";
         }
         if (continuation != null) params += "&c=$continuation";
         final response = await fetchResponse(params);
-        assert(response.statusCode == 200);
-        final fetched = jsonDecode(response.body);
-        fetchedItems = fetched["items"];
+        if (response.statusCode != 200) {
+          break;
+        }
+        //如果不超过fetchLimit则添加到items
+        final responseBody = jsonDecode(response.body);
+        fetchedItems = responseBody["items"];
         for (var i in fetchedItems) {
           i["id"] = _compactId(i["id"]);
           if (i["id"] == feedService.lastedFetchedId ||
-              items.length >= feedService.fetchLimit) {
+              rawItems.length >= feedService.fetchLimit) {
             break;
           } else {
-            items.add(i);
+            rawItems.add(i);
           }
         }
-        // continuation = fetched["continuation"];
+        // continuation = responseBody["continuation"];
         continuation = "";
       } catch (exp) {
         IPrint.debug(exp);
         break;
       }
-    } while (continuation != null && items.length < feedService.fetchLimit);
-    if (items.isNotEmpty) {
-      feedService.lastedFetchedId = items[0]["id"];
+    } while (continuation != null && rawItems.length < feedService.fetchLimit);
+    //更新最新拉取信息
+    if (rawItems.isNotEmpty) {
+      feedService.lastedFetchedId = rawItems[0]["id"];
       feedService.latestFetchedTime = DateTime.fromMillisecondsSinceEpoch(
-          int.parse(items[0]["crawlTimeMsec"]));
+          int.parse(rawItems[0]["crawlTimeMsec"]));
     }
-    final parsedItems = items.map<RSSItem>((i) {
+    //解析到RSSItem对象
+    List<RSSItem> parsedItems = [];
+    for (var i in rawItems) {
       final dom = parse(i["summary"]["content"]);
       if (feedService.params != null &&
           feedService.params!['removeInoreaderAd'] != null &&
           feedService.params!['removeInoreaderAd'] is bool &&
-          feedService.params!['removeInoreaderAd'] == true) {
+          feedService.params!['removeInoreaderAd'] as bool) {
         if (dom.documentElement!.text.trim().startsWith("Ads from Inoreader")) {
           dom.body!.firstChild!.remove();
         }
       }
       final item = RSSItem(
-        id: i["id"],
-        feedSid: i["origin"]["streamId"],
+        iid: i["id"],
+        feedFid: i["origin"]["streamId"],
         title: i["title"],
         url: i["canonical"][0]["href"],
         date: DateTime.fromMillisecondsSinceEpoch(i["published"] * 1000),
@@ -199,11 +177,10 @@ class GReaderServiceHandler extends ServiceHandler {
         creator: i["author"],
         hasRead: false,
         starred: false,
-        feedId: 0,
+        feedId: await FeedDao.getIdByFid(i["origin"]["streamId"]),
       );
       if (feedService.appId != null) {
-        final titleDom = parse(item.title);
-        item.title = titleDom.documentElement!.text;
+        item.title = parse(item.title).documentElement!.text;
       }
       var img = dom.querySelector("img");
       if (img != null && img.attributes["src"] != null) {
@@ -219,8 +196,8 @@ class GReaderServiceHandler extends ServiceHandler {
           item.starred = true;
         }
       }
-      return item;
-    }).toList();
+      parsedItems.add(item);
+    }
     return parsedItems;
   }
 
@@ -275,7 +252,7 @@ class GReaderServiceHandler extends ServiceHandler {
     } else {
       if (sids.isEmpty) {
         sids = Set.from(
-            ProviderManager.feedsProvider.getFeeds().map((s) => s.sid));
+            ProviderManager.feedsProvider.getFeeds().map((s) => s.fid));
       }
       for (var sid in sids) {
         final body = {"s": sid};
@@ -286,21 +263,56 @@ class GReaderServiceHandler extends ServiceHandler {
 
   @override
   Future<void> markRead(RSSItem item) async {
-    await _editTag(item.id, _tagHasRead);
+    await _editTag(item.iid, _tagHasRead);
   }
 
   @override
   Future<void> markUnread(RSSItem item) async {
-    await _editTag(item.id, _tagHasRead, add: false);
+    await _editTag(item.iid, _tagHasRead, add: false);
   }
 
   @override
   Future<void> star(RSSItem item) async {
-    await _editTag(item.id, _tagStarred);
+    await _editTag(item.iid, _tagStarred);
   }
 
   @override
   Future<void> unstar(RSSItem item) async {
-    await _editTag(item.id, _tagStarred, add: false);
+    await _editTag(item.iid, _tagStarred, add: false);
+  }
+
+  Future<Set<String>> _fetchAll(String params) async {
+    final results = List<String>.empty(growable: true);
+    List fetched;
+    String? continuation;
+    do {
+      var p = params;
+      p += "&c=$continuation";
+      final response = await fetchResponse(p);
+      assert(response.statusCode == 200);
+      final parsed = jsonDecode(response.body);
+      fetched = parsed["itemRefs"];
+      if (fetched.isNotEmpty) {
+        for (var i in fetched) {
+          results.add(i["id"]);
+        }
+      }
+      continuation = parsed["continuation"];
+    } while (continuation != null && fetched.length >= 1000);
+    return Set.from(results);
+  }
+
+  Future<http.Response> _editTag(String ref, String tag, {add = true}) async {
+    final body = "i=$ref&${add ? "a" : "r"}=$tag";
+    return await fetchResponse("/reader/api/0/edit-tag", body: body);
+  }
+
+  String _compactId(String longId) {
+    final last = longId.split("/").last;
+    if (feedService.params == null ||
+        feedService.params!['useInt64'] == null ||
+        feedService.params!['useInt64'] is! bool ||
+        !(feedService.params!['useInt64'] as bool)) return last;
+    return int.parse(last, radix: 16).toString();
   }
 }

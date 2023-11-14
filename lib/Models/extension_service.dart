@@ -1,13 +1,10 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
 
 import 'feed_setting.dart';
-
-part 'extension_service.g.dart';
 
 ///
 /// Feed Service class
 ///
-@JsonSerializable()
 class ExtensionService {
   int id;
   String endpoint;
@@ -18,7 +15,7 @@ class ExtensionService {
   int articleCount;
   SyncStatus? lastPullStatus;
   DateTime? lastPullTime;
-  String? params;
+  Map<String, Object?>? params;
 
   ExtensionService(
     this.endpoint, {
@@ -61,8 +58,34 @@ class ExtensionService {
     );
   }
 
-  Map<String, dynamic> toJson() => _$ExtensionServiceToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'endpoint': endpoint,
+        'username': username,
+        'password': password,
+        'appId': appId,
+        'appKey': appKey,
+        'articleCount': articleCount,
+        'lastPullStatus': lastPullStatus?.index,
+        'lastPullTime': lastPullTime?.millisecondsSinceEpoch,
+        'params': jsonEncode(params),
+      };
 
-  factory ExtensionService.fromJson(Map<String, dynamic> json) =>
-      _$ExtensionServiceFromJson(json);
+  factory ExtensionService.fromJson(Map<String, dynamic> map) =>
+      ExtensionService(
+        map['endpoint'] as String,
+        id: map['id'] as int,
+        username: map['username'] as String?,
+        password: map['password'] as String?,
+        appId: map['appId'] as String?,
+        appKey: map['appKey'] as String?,
+        lastPullStatus: map['lastPullStatus'] == null
+            ? null
+            : SyncStatus.values[map['lastPullStatus']],
+        lastPullTime: map['lastPullTime'] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(map['lastPullTime']),
+        articleCount: map['articleCount'] as int? ?? 0,
+        params: jsonDecode(map['params']),
+      );
 }

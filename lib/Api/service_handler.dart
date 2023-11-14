@@ -42,7 +42,7 @@ abstract class ServiceHandler {
   ///
   /// 获取订阅源
   ///
-  Future<Tuple2<List<Feed>, Map<String, List<String>>>> fetchFeeds();
+  Future<Tuple2<List<Feed>, Map<String, List<String>>>> fetchFeedsAndGroups();
 
   ///
   /// 获取文章列表

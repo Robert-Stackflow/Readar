@@ -1,13 +1,10 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
 
 import 'feed_setting.dart';
-
-part 'cloud_service.g.dart';
 
 ///
 /// Feed Service class
 ///
-@JsonSerializable()
 class CloudService {
   int id;
   String endpoint;
@@ -19,7 +16,7 @@ class CloudService {
   DateTime? lastPullTime;
   SyncStatus? lastPushStatus;
   DateTime? lastPushTime;
-  String? params;
+  Map<String, Object?>? params;
 
   CloudService(
     this.endpoint, {
@@ -65,8 +62,39 @@ class CloudService {
     );
   }
 
-  Map<String, dynamic> toJson() => _$CloudServiceToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'endpoint': endpoint,
+        'username': username,
+        'password': password,
+        'appId': appId,
+        'appKey': appKey,
+        'lastPullStatus': lastPullStatus?.index,
+        'lastPullTime': lastPullTime?.millisecondsSinceEpoch,
+        'lastPushStatus': lastPullStatus?.index,
+        'lastPushTime': lastPushTime?.millisecondsSinceEpoch,
+        'params': jsonEncode(params),
+      };
 
-  factory CloudService.fromJson(Map<String, dynamic> json) =>
-      _$CloudServiceFromJson(json);
+  factory CloudService.fromJson(Map<String, dynamic> map) => CloudService(
+        map['endpoint'] as String,
+        id: map['id'] as int,
+        username: map['username'] as String?,
+        password: map['password'] as String?,
+        appId: map['appId'] as String?,
+        appKey: map['appKey'] as String?,
+        lastPullStatus: map['lastPullStatus'] == null
+            ? null
+            : SyncStatus.values[map['lastPullStatus']],
+        lastPullTime: map['lastPullTime'] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(map['lastPullTime']),
+        lastPushStatus: map['lastPushStatus'] == null
+            ? null
+            : SyncStatus.values[map['lastPushStatus']],
+        lastPushTime: map['lastPushTime'] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(map['lastPushTime']),
+        params: jsonDecode(map['params']),
+      );
 }

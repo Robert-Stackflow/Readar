@@ -1,8 +1,6 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
 
 import 'feed_setting.dart';
-
-part 'feed_service.g.dart';
 
 enum FeedServiceType {
   Inoreader("Inoreader", [
@@ -34,7 +32,6 @@ enum FeedServiceType {
 ///
 /// Feed Service class
 ///
-@JsonSerializable()
 class FeedService {
   int? id;
   String endpoint;
@@ -108,8 +105,45 @@ class FeedService {
     );
   }
 
-  Map<String, dynamic> toJson() => _$FeedServiceToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'endpoint': endpoint,
+        'feedServiceType': feedServiceType.index,
+        'username': username,
+        'password': password,
+        'appId': appId,
+        'appKey': appKey,
+        'authorization': authorization,
+        'fetchLimit': fetchLimit,
+        'pullOnStartUp': pullOnStartUp ? 1 : 0,
+        'lastSyncStatus': lastSyncStatus?.index,
+        'lastSyncTime': lastSyncTime?.millisecondsSinceEpoch,
+        'latestFetchedTime': latestFetchedTime?.millisecondsSinceEpoch,
+        'lastedFetchedId': lastedFetchedId,
+        'params': jsonEncode(params),
+      };
 
-  factory FeedService.fromJson(Map<String, dynamic> json) =>
-      _$FeedServiceFromJson(json);
+  factory FeedService.fromJson(Map<String, dynamic> map) => FeedService(
+        map['endpoint'] as String,
+        FeedServiceType.values[map['feedServiceType']],
+        id: map['id'] as int?,
+        username: map['username'] as String?,
+        password: map['password'] as String?,
+        appId: map['appId'] as String?,
+        appKey: map['appKey'] as String?,
+        authorization: map['authorization'] as String?,
+        fetchLimit: map['fetchLimit'] as int? ?? 500,
+        pullOnStartUp: map['pullOnStartUp'] == 0 ? false : true,
+        lastSyncStatus: map['lastSyncStatus'] == null
+            ? null
+            : SyncStatus.values[map['lastSyncStatus']],
+        lastSyncTime: map['lastSyncTime'] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(map['lastSyncTime']),
+        lastedFetchedId: map['lastedFetchedId'] as String?,
+        latestFetchedTime: map['latestFetchedTime'] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(map['latestFetchedTime']),
+        params: jsonDecode(map['params']),
+      );
 }

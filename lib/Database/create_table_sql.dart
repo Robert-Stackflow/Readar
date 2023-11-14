@@ -24,7 +24,7 @@ enum CreateTableSql {
       CREATE TABLE feed (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         serviceId INTEGER NOT NULL,
-        sid TEXT NOT NULL,
+        fid TEXT NOT NULL,
         url TEXT NOT NULL,
         name TEXT NOT NULL,
         iconUrl TEXT,
@@ -42,8 +42,9 @@ enum CreateTableSql {
     '''
       CREATE TABLE items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        iid TEXT NOT NULL,
         feedId INTEGER NOT NULL,
-        feedSid TEXT NOT NULL,
+        feedFid TEXT NOT NULL,
         title TEXT NOT NULL,
         url TEXT NOT NULL,
         date INTEGER NOT NULL,
