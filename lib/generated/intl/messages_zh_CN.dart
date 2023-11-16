@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("关于"),
+        "advancedSetting": MessageLookupByLibrary.simpleMessage("高级设置"),
         "allEntriesHidddenTip":
             MessageLookupByLibrary.simpleMessage("所有入口均移至侧边栏，导航栏将不再显示"),
         "appName": MessageLookupByLibrary.simpleMessage("Cloud Reader"),
@@ -44,6 +45,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "autoReadWhenScrolling":
             MessageLookupByLibrary.simpleMessage("滚动时自动标记为已读"),
         "backupSetting": MessageLookupByLibrary.simpleMessage("备份"),
+        "basicSetting": MessageLookupByLibrary.simpleMessage("基本设置"),
         "bottomNavigationBarSetting":
             MessageLookupByLibrary.simpleMessage("导航栏设置"),
         "bugReport": MessageLookupByLibrary.simpleMessage("报告BUG"),

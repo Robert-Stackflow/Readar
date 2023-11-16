@@ -1,6 +1,6 @@
 import 'package:cloudreader/Models/nav_entry.dart';
-import 'package:cloudreader/Providers/provider_manager.dart';
 import 'package:cloudreader/Providers/global_provider.dart';
+import 'package:cloudreader/Providers/provider_manager.dart';
 import 'package:cloudreader/Utils/itoast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -186,14 +186,6 @@ class _NavSettingScreenState extends State<NavSettingScreen>
               child: Text(S.current.navigationBarPreview,
                   style: Theme.of(context).textTheme.titleSmall),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).shadowColor.withAlpha(70),
-                offset: const Offset(0, 14),
-                blurRadius: 24,
-                spreadRadius: 0,
-              )
-            ],
             backgroundColor: Theme.of(context).canvasColor,
             selectedItemColor: Theme.of(context).primaryColor,
             onTap: (index) => setState(() => _selectedIndex = index),

@@ -2,13 +2,14 @@ import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Utils/cache_util.dart';
 import 'package:cloudreader/Utils/itoast.dart';
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
-import '../../Providers/provider_manager.dart';
 import '../../Providers/global_provider.dart';
+import '../../Providers/provider_manager.dart';
 import '../../Utils/locale_util.dart';
 import '../../Widgets/BottomSheet/bottom_sheet_builder.dart';
 import '../../Widgets/BottomSheet/list_bottom_sheet.dart';
@@ -37,6 +38,11 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
     getCacheSize();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
   void getCacheSize() {
     CacheUtil.loadCache().then((value) {
       setState(() {
@@ -62,6 +68,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: ItemBuilder.buildSimpleAppBar(
             title: S.current.generalSetting, context: context),
         body: Container(
@@ -73,10 +80,9 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
+                const SizedBox(height: 10),
                 Selector<GlobalProvider, Locale?>(
                   selector: (context, globalProvider) => globalProvider.locale,
-                  shouldRebuild: (pre, next) =>
-                      pre?.toLanguageTag() != next?.toLanguageTag(),
                   builder: (context, locale, child) =>
                       ItemBuilder.buildEntryItem(
                     context: context,
@@ -134,8 +140,10 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                   context: context,
                   title: S.current.selectTheme,
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed(SelectThemeScreen.routeName);
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => const SelectThemeScreen()));
                   },
                 ),
                 ItemBuilder.buildEntryItem(
@@ -144,8 +152,10 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                   bottomRadius: true,
                   onTap: () {
                     setState(() {
-                      Navigator.of(context)
-                          .pushNamed(NavSettingScreen.routeName);
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => const NavSettingScreen()));
                     });
                   },
                 ),

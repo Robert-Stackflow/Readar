@@ -17,6 +17,8 @@
   "statistics": "统计",
   "tts": "TTS",
   "setting": "设置",
+  "basicSetting": "基本设置",
+  "advancedSetting": "高级设置",
   "generalSetting": "通用",
   "globalSetting": "全局",
   "apprearanceSetting": "外观",

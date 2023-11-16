@@ -17,6 +17,8 @@
   "statistics": "Statistics",
   "tts": "TTS",
   "setting": "Setting",
+  "basicSetting": "Basic Setting",
+  "advancedSetting": "Advanced Setting",
   "generalSetting": "General",
   "globalSetting": "Global",
   "apprearanceSetting": "Apprearance",

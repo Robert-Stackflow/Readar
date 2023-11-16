@@ -1,4 +1,5 @@
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../Widgets/Item/item_builder.dart';
@@ -68,8 +69,11 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   title: "选择备份服务",
                   description: "已选择：Dropbox",
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed(BackupServiceSettingScreen.routeName);
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) =>
+                                const BackupServiceSettingScreen()));
                   },
                 ),
                 ItemBuilder.buildEntryItem(

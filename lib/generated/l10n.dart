@@ -220,6 +220,26 @@ class S {
     );
   }
 
+  /// `Basic Setting`
+  String get basicSetting {
+    return Intl.message(
+      'Basic Setting',
+      name: 'basicSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Advanced Setting`
+  String get advancedSetting {
+    return Intl.message(
+      'Advanced Setting',
+      name: 'advancedSetting',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `General`
   String get generalSetting {
     return Intl.message(

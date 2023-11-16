@@ -267,7 +267,6 @@
 | :------: | :--------: | :------: | :------: | :--------------------------------: |
 |    id    |    Text    |  String  |    是    |             字符串主键             |
 |  feedId  |  INTEGER   |   int    |    是    |            所属订阅源ID            |
-|  source  |    TEXT    |   int    |    是    |              订阅源ID              |
 |  title   |    TEXT    |  String  |    是    |                标题                |
 |   url    |    TEXT    |  String  |    是    |              文章地址              |
 |   date   |  INTEGER   |   int    |    是    |            文章发布时间            |

@@ -15,6 +15,7 @@ import 'package:cloudreader/Screens/Setting/global_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
+import 'package:cloudreader/Screens/Setting/setting_screen.dart';
 import 'package:cloudreader/Utils/hive_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -114,16 +115,17 @@ class MyApp extends StatelessWidget {
             },
             child: const MainScreen(),
           ),
-          // builder: (context, widget) {
-          //   return MediaQuery(
-          //     data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-          //     child: widget!,
-          //   );
-          // },
+          builder: (context, widget) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: widget!,
+            );
+          },
           routes: {
             TTSScreen.routeName: (context) => const TTSScreen(),
             ArticleScreen.routeName: (context) =>
                 ArticleScreen(ScrollTopNotifier()),
+            SettingScreen.routeName: (context) => const SettingScreen(),
             StarScreen.routeName: (context) => const StarScreen(),
             LibraryScreen.routeName: (context) => const LibraryScreen(),
             ExploreScreen.routeName: (context) => const ExploreScreen(),

@@ -26,6 +26,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("About"),
+        "advancedSetting":
+            MessageLookupByLibrary.simpleMessage("Advanced Setting"),
         "allEntriesHidddenTip": MessageLookupByLibrary.simpleMessage(
             "All entries have been moved to the sidebar, and the navigation bar will no longer be displayed."),
         "appName": MessageLookupByLibrary.simpleMessage("Cloud Reader"),
@@ -47,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "autoReadWhenScrolling": MessageLookupByLibrary.simpleMessage(
             "Automatically mark as read when scrolling"),
         "backupSetting": MessageLookupByLibrary.simpleMessage("Backup"),
+        "basicSetting": MessageLookupByLibrary.simpleMessage("Basic Setting"),
         "bottomNavigationBarSetting":
             MessageLookupByLibrary.simpleMessage("Navigation Bar Setting"),
         "bugReport": MessageLookupByLibrary.simpleMessage("Bug Report"),

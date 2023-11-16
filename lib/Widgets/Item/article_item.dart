@@ -46,8 +46,12 @@ class ArticleItemState extends State<ArticleItem> {
           isSource: isSource,
         );
       } else {
-        Navigator.of(context).pushNamed("/article/detail",
-            arguments: Tuple2(widget.item.iid, isSource));
+        Navigator.push(
+            context,
+            CupertinoPageRoute(
+                builder: (context) => ArticleDetailScreen(),
+                settings: RouteSettings(
+                    arguments: Tuple2(widget.item.iid, isSource))));
       }
     }
   }
