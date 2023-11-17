@@ -3,6 +3,7 @@ import 'package:cloudreader/Api/service_handler.dart';
 import 'package:cloudreader/Database/database_manager.dart';
 import 'package:cloudreader/Providers/feeds_provider.dart';
 import 'package:cloudreader/Providers/sync_provider.dart';
+import 'package:cloudreader/Utils/iprint.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jaguar/serve/server.dart';
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
@@ -38,12 +39,18 @@ abstract class ProviderManager {
 
   static Future<void> initDatabase() async {
     db = await DatabaseManager.getDataBase();
+    // insertData();
     await FeedServiceDao.queryById(1).then((value) async {
       globalProvider.currentFeedService = value;
-      if (value != null) serviceHandler = GReaderServiceHandler();
+      if (value != null) {
+        serviceHandler =
+            GReaderServiceHandler(globalProvider.currentFeedService!);
+      }
       await feedsProvider.init();
       await feedContentProvider.all.init();
       if (globalProvider.syncOnStart) await syncProvider.syncWithService();
+    }).catchError((err) {
+      IPrint.debug(err);
     });
     server =
         Jaguar(address: ProviderManager.address, port: ProviderManager.port);

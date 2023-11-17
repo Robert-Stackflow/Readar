@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../Providers/provider_manager.dart';
 import '../../Widgets/Item/item_builder.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -14,7 +15,10 @@ class FeedScreen extends StatefulWidget {
   State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
+class _FeedScreenState extends State<FeedScreen>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   @override
   void initState() {
     if (Platform.isAndroid) {
@@ -28,6 +32,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: _buildAppBar(),
       body: Container(),
@@ -53,6 +58,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
       onLeadingTap: () {
         if (_isNavigationBarEntry()) {
           Scaffold.of(context).openDrawer();
+          ProviderManager.globalProvider.isDrawerOpen = true;
         } else {
           Navigator.of(context).pop();
         }

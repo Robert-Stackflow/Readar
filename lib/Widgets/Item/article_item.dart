@@ -19,8 +19,10 @@ class ArticleItem extends StatefulWidget {
   final RSSItem item;
   final Feed feed;
   final Function openActionSheet;
+  final bool topMargin;
 
-  const ArticleItem(this.item, this.feed, this.openActionSheet, {super.key});
+  const ArticleItem(this.item, this.feed, this.openActionSheet,
+      {required this.topMargin, super.key});
 
   @override
   ArticleItemState createState() => ArticleItemState();
@@ -216,7 +218,8 @@ class ArticleItemState extends State<ArticleItem> {
       onLongPress: _openActionSheet,
       onTap: _openArticle,
       child: Container(
-        margin: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
+        margin: EdgeInsets.only(
+            left: 10, right: 10, top: widget.topMargin ? 10 : 0, bottom: 5),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: pressed

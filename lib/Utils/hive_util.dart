@@ -105,7 +105,7 @@ class HiveUtil {
   }
 
   static bool showNavigationBar() =>
-      HiveUtil.getBool(key: HiveUtil.showNavigationBarKey, defaultValue: true);
+      HiveUtil.getBool(key: HiveUtil.showNavigationBarKey, defaultValue: false);
 
   static void setShowNavigationBar(bool value) =>
       HiveUtil.put(key: HiveUtil.showNavigationBarKey, value: value);

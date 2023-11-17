@@ -5,15 +5,25 @@ import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+import 'package:provider/provider.dart';
 
 import '../Providers/global_provider.dart';
 import '../Providers/provider_manager.dart';
 import '../Utils/hive_util.dart';
+import '../Utils/uri_util.dart';
 import '../Widgets/Custom/salomon_bottom_bar.dart';
 import '../Widgets/Item/item_builder.dart';
+import '../Widgets/Scaffold/my_scaffold.dart';
 import '../generated/l10n.dart';
 import 'Lock/pin_verify_screen.dart';
-import 'Setting/setting_screen.dart';
+import 'Setting/about_setting_screen.dart';
+import 'Setting/backup_setting_screen.dart';
+import 'Setting/experiment_setting_screen.dart';
+import 'Setting/extension_setting_screen.dart';
+import 'Setting/general_setting_screen.dart';
+import 'Setting/global_setting_screen.dart';
+import 'Setting/operation_setting_screen.dart';
+import 'Setting/service_setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,20 +34,26 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => MainScreenState();
 }
 
-class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
+class MainScreenState extends State<MainScreen>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   List<Widget> _pageList = [];
   List<SalomonBottomBarItem> _navigationBarItemList = [];
   Timer? _timer;
-  int _selectedIndex = 0;
-  bool _isInVerify = false;
+  int _bottomBarSelectedIndex = 0;
   bool _showNavigationBar = ProviderManager.globalProvider.showNavigationBar;
-  final _pageController = PageController();
   late bool isDark;
   IconData? themeModeIcon;
+  bool isDrawerOpen = false;
+  final _pageController = PageController(keepPage: true);
+  late final AnimationController _drawerAnimationController;
 
   @override
   void initState() {
     super.initState();
+    _drawerAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 246),
+    );
     WidgetsBinding.instance.addObserver(this);
     if (HiveUtil.getBool(
         key: HiveUtil.enableSafeModeKey, defaultValue: false)) {
@@ -79,92 +95,261 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void onBottomNavigationBarItemTap(int index) {
     _pageController.jumpToPage(index);
     setState(() {
-      _selectedIndex = index;
+      _bottomBarSelectedIndex = index;
     });
   }
 
   void goPinVerify() {
-    if (HiveUtil.shouldAutoLock() && !_isInVerify) {
+    if (HiveUtil.shouldAutoLock()) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => PinVerifyScreen(
-            onSuccess: () {
-              _isInVerify = false;
-            },
+            onSuccess: () {},
             isModal: true,
           ),
         ),
       );
-      _isInVerify = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     initData();
-    return _showNavigationBar
-        ? Scaffold(
-            bottomNavigationBar: SalomonBottomBar(
+    return MyScaffold(
+      onDrawerChanged: (isOpened) {
+        ProviderManager.globalProvider.isDrawerOpen = isOpened;
+      },
+      // drawerEdgeDragWidth: MediaQuery.of(context).size.width,
+      body: ScaleTransition(
+        scale: Tween<double>(begin: 1.0, end: 0.95)
+            .animate(_drawerAnimationController),
+        child: Selector<GlobalProvider, bool>(
+          selector: (context, globalProvider) => globalProvider.isDrawerOpen,
+          builder: (context, isSidebarOpen, _) => PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: _pageList,
+          ),
+        ),
+      ),
+      drawer: _drawer(),
+      bottomNavigationBar: _showNavigationBar
+          ? SalomonBottomBar(
               margin: const EdgeInsets.all(10),
               items: _navigationBarItemList,
-              currentIndex: _selectedIndex,
+              currentIndex: _bottomBarSelectedIndex,
               backgroundColor: Theme.of(context).canvasColor,
               selectedItemColor: Theme.of(context).primaryColor,
               onTap: onBottomNavigationBarItemTap,
+            )
+          : null,
+      customAnimationController: _drawerAnimationController,
+    );
+  }
+
+  Widget _drawer() {
+    return Drawer(
+      width: MediaQuery.of(context).size.width * 0.8,
+      elevation: 0.0,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      child: ScrollConfiguration(
+        behavior: NoShadowScrollBehavior(),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.top,
+                  ),
+                  Container(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    child: Column(
+                      children: [
+                        ItemBuilder.buildCaptionItem(
+                            context: context, title: S.current.content),
+                        ..._contentEntries(),
+                        const SizedBox(height: 10),
+                        ItemBuilder.buildCaptionItem(
+                            context: context, title: S.current.basicSetting),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          title: S.current.generalSetting,
+                          showLeading: true,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const GeneralSettingScreen()));
+                          },
+                          leading: Icons.settings_outlined,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          showLeading: true,
+                          title: S.current.globalSetting,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const GlobalSettingScreen()));
+                          },
+                          leading: Icons.settings_applications_outlined,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          title: S.current.operationSetting,
+                          showLeading: true,
+                          bottomRadius: true,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const OperationSettingScreen()));
+                          },
+                          leading: Icons.touch_app_outlined,
+                        ),
+                        const SizedBox(height: 10),
+                        ItemBuilder.buildCaptionItem(
+                            context: context, title: S.current.advancedSetting),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          title: S.current.serviceSetting,
+                          showLeading: true,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const ServiceSettingScreen()));
+                          },
+                          leading: Icons.business_center_outlined,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          title: S.current.backupSetting,
+                          showLeading: true,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const BackupSettingScreen()));
+                          },
+                          leading: Icons.backup_outlined,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          title: S.current.extensionSetting,
+                          showLeading: true,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const ExtensionSettingScreen()));
+                          },
+                          leading: Icons.extension_outlined,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          showLeading: true,
+                          title: S.current.experimentSetting,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const ExperimentSettingScreen()));
+                          },
+                          bottomRadius: true,
+                          leading: Icons.outlined_flag_rounded,
+                        ),
+                        const SizedBox(height: 10),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          title: S.current.help,
+                          topRadius: true,
+                          showLeading: true,
+                          onTap: () {
+                            UriUtil.launchUrlUri(
+                                "https://rssreader.cloudchewie.com/help");
+                          },
+                          leading: Icons.help_outline_rounded,
+                        ),
+                        ItemBuilder.buildEntryItem(
+                          context: context,
+                          title: S.current.about,
+                          bottomRadius: true,
+                          showLeading: true,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const AboutSettingScreen()));
+                          },
+                          leading: Icons.info_outline_rounded,
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
-            body: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: _pageList,
-            ),
-            drawer: _drawer(),
-          )
-        : Scaffold(
-            backgroundColor: Colors.transparent,
-            body: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: _pageList,
-            ),
-            drawer: _drawer(),
-          );
-  }
-
-  void cancleTimer() {
-    if (_timer != null) {
-      _timer!.cancel();
-    }
-  }
-
-  void setTimer() {
-    _timer = Timer(
-        Duration(minutes: ProviderManager.globalProvider.autoLockTime),
-        goPinVerify);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.resumed:
-        cancleTimer();
-        break;
-      case AppLifecycleState.paused:
-        setTimer();
-        break;
-      case AppLifecycleState.detached:
-        break;
-      case AppLifecycleState.hidden:
-        break;
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
+            // Container(
+            //   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+            //   decoration: BoxDecoration(
+            //     color: Theme.of(context).canvasColor,
+            //     boxShadow: <BoxShadow>[
+            //       BoxShadow(
+            //         color: Theme.of(context).shadowColor.withAlpha(70),
+            //         offset: const Offset(-16, 14),
+            //         blurRadius: 18,
+            //         spreadRadius: 0,
+            //       ),
+            //     ],
+            //   ),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.start,
+            //     mainAxisSize: MainAxisSize.max,
+            //     children: [
+            //       IconButton(
+            //         splashColor: Colors.transparent,
+            //         highlightColor: Colors.transparent,
+            //         onPressed: () {
+            //           Navigator.push(
+            //               context,
+            //               CupertinoPageRoute(
+            //                   builder: (context) => const SettingScreen()));
+            //         },
+            //         icon: const Icon(Icons.settings_outlined, size: 23),
+            //       ),
+            //       IconButton(
+            //         splashColor: Colors.transparent,
+            //         highlightColor: Colors.transparent,
+            //         onPressed: () {
+            //           ProviderManager.globalProvider.themeMode =
+            //               isDark ? ActiveThemeMode.light : ActiveThemeMode.dark;
+            //           refreshDarkState();
+            //         },
+            //         icon: Icon(themeModeIcon, size: 23),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    );
   }
 
   List<Widget> _contentEntries() {
@@ -218,85 +403,39 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     });
   }
 
-  Widget _toolbar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).canvasColor,
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withAlpha(70),
-            offset: const Offset(-16, 14),
-            blurRadius: 18,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                      builder: (context) => const SettingScreen()));
-            },
-            icon: const Icon(Icons.settings_outlined, size: 23),
-          ),
-          IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onPressed: () {
-              ProviderManager.globalProvider.themeMode =
-                  isDark ? ActiveThemeMode.light : ActiveThemeMode.dark;
-              refreshDarkState();
-            },
-            icon: Icon(themeModeIcon, size: 23),
-          ),
-        ],
-      ),
-    );
+  void cancleTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
   }
 
-  Widget _drawer() {
-    return Drawer(
-      width: MediaQuery.of(context).size.width * 0.8,
-      elevation: 0.0,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      child: ScrollConfiguration(
-        behavior: NoShadowScrollBehavior(),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).padding.top,
-                  ),
-                  Container(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    child: Column(
-                      children: [
-                        ItemBuilder.buildCaptionItem(
-                            context: context, title: S.current.content),
-                        ..._contentEntries(),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                ],
-              ),
-            ),
-            _toolbar(),
-          ],
-        ),
-      ),
-    );
+  void setTimer() {
+    _timer = Timer(
+        Duration(minutes: ProviderManager.globalProvider.autoLockTime),
+        goPinVerify);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.resumed:
+        cancleTimer();
+        break;
+      case AppLifecycleState.paused:
+        setTimer();
+        break;
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.hidden:
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }

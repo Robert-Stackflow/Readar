@@ -22,9 +22,9 @@ class GReaderServiceHandler extends ServiceHandler {
   static const _tagStarred = "user/-/state/com.google/starred";
   static final _authRegex = RegExp(r"Auth=(\S+)");
 
-  FeedService feedService = FeedService("hhh", FeedServiceType.TheOldReader);
+  FeedService feedService;
 
-  GReaderServiceHandler();
+  GReaderServiceHandler(this.feedService);
 
   @override
   void removeService() {

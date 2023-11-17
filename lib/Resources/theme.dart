@@ -27,6 +27,7 @@ class AppTheme {
         selectionHandleColor: MyColors.app_main,
       ),
       textTheme: TextTheme(
+        labelSmall: isDarkMode ? MyStyles.labelSmallDark : MyStyles.labelSmall,
         titleSmall: isDarkMode ? MyStyles.captionDark : MyStyles.caption,
         titleMedium: isDarkMode ? MyStyles.titleDark : MyStyles.title,
         bodySmall: isDarkMode ? MyStyles.bodySmallDark : MyStyles.bodySmall,

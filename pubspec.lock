@@ -25,6 +25,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.2.0"
+  animated_custom_dropdown:
+    dependency: "direct main"
+    description:
+      name: animated_custom_dropdown
+      sha256: "5d651fd00c770c32ef7c98978d19b9d8c0a9ebc6e305974af05c1e1a03692289"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.0"
   animated_text_kit:
     dependency: "direct main"
     description:

@@ -40,7 +40,7 @@ class ItemBuilder {
   }) {
     return AppBar(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      elevation: 0,
+      elevation: 0.3,
       leadingWidth: 30,
       leading: Container(
         margin: const EdgeInsets.only(left: 5),

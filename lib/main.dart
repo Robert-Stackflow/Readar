@@ -105,7 +105,7 @@ class MyApp extends StatelessWidget {
             } else if (locale != null && supportedLocales.contains(locale)) {
               return locale;
             } else {
-              return const Locale("en");
+              return Localizations.localeOf(context);
             }
           },
           home: WillPopScope(

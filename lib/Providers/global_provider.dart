@@ -1,5 +1,5 @@
 import 'package:cloudreader/Models/feed_service.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
 import '../Models/feed.dart';
@@ -23,6 +23,17 @@ class GlobalProvider with ChangeNotifier {
       _showNavigationBar = value;
       notifyListeners();
       HiveUtil.setShowNavigationBar(value);
+    }
+  }
+
+  bool _isDrawerOpen = false;
+
+  bool get isDrawerOpen => _isDrawerOpen;
+
+  set isDrawerOpen(bool value) {
+    if (value != _isDrawerOpen) {
+      _isDrawerOpen = value;
+      notifyListeners();
     }
   }
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../Providers/provider_manager.dart';
 import '../../Widgets/Item/item_builder.dart';
 
 class ReadLaterScreen extends StatefulWidget {
@@ -15,7 +16,10 @@ class ReadLaterScreen extends StatefulWidget {
 }
 
 class _ReadLaterScreenState extends State<ReadLaterScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     if (Platform.isAndroid) {
@@ -29,6 +33,7 @@ class _ReadLaterScreenState extends State<ReadLaterScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: _buildAppBar(),
       body: Container(),
@@ -54,6 +59,7 @@ class _ReadLaterScreenState extends State<ReadLaterScreen>
       onLeadingTap: () {
         if (_isNavigationBarEntry()) {
           Scaffold.of(context).openDrawer();
+          ProviderManager.globalProvider.isDrawerOpen = true;
         } else {
           Navigator.of(context).pop();
         }

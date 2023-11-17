@@ -41,4 +41,10 @@ class FeedServiceDao {
       return null;
     }
   }
+
+  static Future<List<FeedService>> queryAll() async {
+    List<Map<String, Object?>> result =
+        await ProviderManager.db.query(tableName);
+    return result.map((e) => FeedService.fromJson(e)).toList();
+  }
 }

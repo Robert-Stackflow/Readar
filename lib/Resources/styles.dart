@@ -44,6 +44,20 @@ class MyStyles {
       color: MyColors.dark_text,
       textBaseline: TextBaseline.alphabetic);
 
+  static const TextStyle labelSmallDark = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+    letterSpacing: 0.1,
+    color: MyColors.dark_text_gray,
+  );
+
+  static const TextStyle labelSmall = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+    letterSpacing: 0.1,
+    color: MyColors.text_gray,
+  );
+
   static const TextStyle captionDark = TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: 13,
