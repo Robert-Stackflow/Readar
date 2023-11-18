@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'feed_setting.dart';
 
 ///
-/// Feed class, including ID, link, icon, name and other elements
+/// 订阅源
 ///
 class Feed {
   int? id;
@@ -12,6 +12,7 @@ class Feed {
   String url;
   String? iconUrl;
   String name;
+  int unReadCount;
   FeedSetting? feedSetting;
   SyncStatus? lastPullStatus;
   DateTime? lastPullTime;
@@ -25,6 +26,7 @@ class Feed {
     this.name, {
     this.id,
     required this.serviceId,
+    this.unReadCount = 0,
     this.feedSetting,
     this.lastPullTime,
     this.lastPullStatus,
@@ -44,6 +46,7 @@ class Feed {
     this.url,
     this.iconUrl,
     this.name,
+    this.unReadCount,
     this.latestArticleTime,
     this.latestArticleTitle,
     this.lastPullStatus,
@@ -60,6 +63,7 @@ class Feed {
       url,
       iconUrl,
       name,
+      unReadCount,
       latestArticleTime,
       latestArticleTitle,
       lastPullStatus,
@@ -76,6 +80,7 @@ class Feed {
         'url': url,
         'iconUrl': iconUrl,
         'name': name,
+        "unReadCount": unReadCount,
         'feedSetting':
             feedSetting != null ? jsonEncode(feedSetting!.toJson()) : null,
         'lastPullStatus': lastPullStatus?.index,
@@ -91,6 +96,7 @@ class Feed {
         map['name'] as String,
         id: map['id'] as int,
         serviceId: map['serviceId'] as int,
+        unReadCount: map['unReadCount'] as int,
         feedSetting: map['feedSetting'] == null
             ? null
             : FeedSetting.fromJson(jsonDecode(map['feedSetting'])),

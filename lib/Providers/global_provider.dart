@@ -1,10 +1,9 @@
-import 'package:cloudreader/Models/feed_service.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
-import '../Models/feed.dart';
 import '../Models/nav_entry.dart';
 import '../Utils/hive_util.dart';
+import '../Widgets/Scaffold/my_scaffold.dart';
 import '../generated/l10n.dart';
 
 enum ActiveThemeMode {
@@ -14,6 +13,19 @@ enum ActiveThemeMode {
 }
 
 class GlobalProvider with ChangeNotifier {
+  GlobalKey<MyScaffoldState> homeScaffoldKey = GlobalKey();
+
+  bool _shouldInterceptBack = false;
+
+  bool get shouldInterceptBack => _shouldInterceptBack;
+
+  set shouldInterceptBack(bool value) {
+    if (value != _shouldInterceptBack) {
+      _shouldInterceptBack = value;
+      notifyListeners();
+    }
+  }
+
   bool _showNavigationBar = HiveUtil.showNavigationBar();
 
   bool get showNavigationBar => _showNavigationBar;
@@ -144,27 +156,5 @@ class GlobalProvider with ChangeNotifier {
 
   set syncOnStart(bool value) {
     _syncOnStart = value;
-  }
-
-  FeedService? _currentFeedService;
-
-  FeedService? get currentFeedService => _currentFeedService;
-
-  set currentFeedService(FeedService? value) {
-    if (value != _currentFeedService) {
-      _currentFeedService = value;
-      notifyListeners();
-    }
-  }
-
-  Feed? _currentFeed;
-
-  Feed? get currentFeed => _currentFeed;
-
-  set currentFeed(Feed? value) {
-    if (value != _currentFeed) {
-      _currentFeed = value;
-      notifyListeners();
-    }
   }
 }

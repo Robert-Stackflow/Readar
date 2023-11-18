@@ -103,6 +103,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                           },
                           context: context,
                           title: S.current.chooseLanguage,
+                          onCloseTap: () => Navigator.pop(context),
                         ),
                       );
                     },
@@ -131,6 +132,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                           },
                           context: context,
                           title: S.current.chooseThemeMode,
+                          onCloseTap: () => Navigator.pop(context),
                         ),
                       );
                     },

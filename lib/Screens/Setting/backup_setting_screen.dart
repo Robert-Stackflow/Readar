@@ -33,30 +33,6 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
               shrinkWrap: true,
               children: [
                 const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: "本地备份与恢复"),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "导出配置为zip文件",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "从zip文件导入配置",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "导出订阅源为OPML文件",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "从OPML文件导入订阅源",
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "云端备份设置"),
                 ItemBuilder.buildRadioItem(
                   context: context,
@@ -84,7 +60,8 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   bottomRadius: true,
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(context: context, title: "自动备份设置"),
+                ItemBuilder.buildCaptionItem(
+                    context: context, title: "云端自动备份设置"),
                 ItemBuilder.buildRadioItem(
                   context: context,
                   title: "启用自动备份",
@@ -124,6 +101,29 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   context: context,
                   title: "从云端拉取备份",
                   description: "上次拉取时间：2023-11-11 20:10:09",
+                  bottomRadius: true,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 10),
+                ItemBuilder.buildCaptionItem(context: context, title: "本地备份"),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "备份至zip文件",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "从zip文件导入备份",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "导出订阅源为OPML文件",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "从OPML文件导入订阅源",
                   bottomRadius: true,
                   onTap: () {},
                 ),

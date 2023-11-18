@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'feed_setting.dart';
 
 ///
-/// Feed Service class
+/// 插件服务
 ///
 class ExtensionService {
   int id;

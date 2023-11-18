@@ -3,34 +3,33 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:cloudreader/Database/Dao/feed_dao.dart';
-import 'package:cloudreader/Database/Dao/feed_service_dao.dart';
-import 'package:cloudreader/Models/feed_service.dart';
+import 'package:cloudreader/Database/create_table_sql.dart';
+import 'package:cloudreader/Database/feed_dao.dart';
+import 'package:cloudreader/Database/rss_service_dao.dart';
+import 'package:cloudreader/Models/rss_service.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:tuple/tuple.dart';
 
-import '../Models/feed.dart';
-import '../Models/rss_item.dart';
-import '../Providers/provider_manager.dart';
-import '../Utils/iprint.dart';
-import 'service_handler.dart';
+import '../../Handler/rss_service_handler.dart';
+import '../../Models/feed.dart';
+import '../../Models/rss_item.dart';
+import '../../Providers/provider_manager.dart';
+import '../../Utils/iprint.dart';
 
-class GReaderServiceHandler extends ServiceHandler {
+class GoogleReaderRssServiceHandler extends RssServiceHandler {
   static const _tagAll = "user/-/state/com.google/reading-list";
   static const _tagHasRead = "user/-/state/com.google/read";
   static const _tagStarred = "user/-/state/com.google/starred";
   static final _authRegex = RegExp(r"Auth=(\S+)");
 
-  FeedService feedService;
+  RssService feedService;
 
-  GReaderServiceHandler(this.feedService);
+  GoogleReaderRssServiceHandler(this.feedService);
 
   @override
   void removeService() {
-    super.removeService();
-    FeedServiceDao.delete(feedService);
-    ProviderManager.serviceHandler = null;
+    RssServiceDao.delete(feedService);
   }
 
   @override
@@ -112,7 +111,7 @@ class GReaderServiceHandler extends ServiceHandler {
   }
 
   @override
-  Future<List<RSSItem>> fetchItems() async {
+  Future<List<RssItem>> fetchItems() async {
     List rawItems = [];
     List fetchedItems;
     String? continuation;
@@ -155,7 +154,7 @@ class GReaderServiceHandler extends ServiceHandler {
           int.parse(rawItems[0]["crawlTimeMsec"]));
     }
     //解析到RSSItem对象
-    List<RSSItem> parsedItems = [];
+    List<RssItem> parsedItems = [];
     for (var i in rawItems) {
       final dom = parse(i["summary"]["content"]);
       if (feedService.params != null &&
@@ -166,7 +165,7 @@ class GReaderServiceHandler extends ServiceHandler {
           dom.body!.firstChild!.remove();
         }
       }
-      final item = RSSItem(
+      final item = RssItem(
         iid: i["id"],
         feedFid: i["origin"]["streamId"],
         title: i["title"],
@@ -234,7 +233,7 @@ class GReaderServiceHandler extends ServiceHandler {
       predicates
           .add("date ${before ? "<=" : ">="} ${date.millisecondsSinceEpoch}");
       final rows = await ProviderManager.db.query(
-        "items",
+        CreateTableSql.rssItems.tableName,
         columns: ["iid"],
         where: predicates.join(" AND "),
         whereArgs: sids.toList(),
@@ -251,8 +250,9 @@ class GReaderServiceHandler extends ServiceHandler {
       if (refs.isNotEmpty) _editTag(refs.join("&i="), _tagHasRead);
     } else {
       if (sids.isEmpty) {
-        sids = Set.from(
-            ProviderManager.feedsProvider.getFeeds().map((s) => s.fid));
+        sids = Set.from(ProviderManager.rssProvider.currentRssHandler
+            .getFeeds()
+            .map((s) => s.fid));
       }
       for (var sid in sids) {
         final body = {"s": sid};
@@ -262,22 +262,22 @@ class GReaderServiceHandler extends ServiceHandler {
   }
 
   @override
-  Future<void> markRead(RSSItem item) async {
+  Future<void> markRead(RssItem item) async {
     await _editTag(item.iid, _tagHasRead);
   }
 
   @override
-  Future<void> markUnread(RSSItem item) async {
+  Future<void> markUnread(RssItem item) async {
     await _editTag(item.iid, _tagHasRead, add: false);
   }
 
   @override
-  Future<void> star(RSSItem item) async {
+  Future<void> star(RssItem item) async {
     await _editTag(item.iid, _tagStarred);
   }
 
   @override
-  Future<void> unstar(RSSItem item) async {
+  Future<void> unstar(RssItem item) async {
     await _editTag(item.iid, _tagStarred, add: false);
   }
 

@@ -58,7 +58,8 @@ class _ReadLaterScreenState extends State<ReadLaterScreen>
           : Icons.arrow_back_rounded,
       onLeadingTap: () {
         if (_isNavigationBarEntry()) {
-          Scaffold.of(context).openDrawer();
+          ProviderManager.globalProvider.homeScaffoldKey.currentState
+              ?.openDrawer();
           ProviderManager.globalProvider.isDrawerOpen = true;
         } else {
           Navigator.of(context).pop();

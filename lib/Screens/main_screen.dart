@@ -52,6 +52,7 @@ class MainScreenState extends State<MainScreen>
     super.initState();
     _drawerAnimationController = AnimationController(
       vsync: this,
+      value: ProviderManager.globalProvider.isDrawerOpen ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 246),
     );
     WidgetsBinding.instance.addObserver(this);
@@ -117,12 +118,13 @@ class MainScreenState extends State<MainScreen>
   Widget build(BuildContext context) {
     initData();
     return MyScaffold(
+      key: ProviderManager.globalProvider.homeScaffoldKey,
       onDrawerChanged: (isOpened) {
         ProviderManager.globalProvider.isDrawerOpen = isOpened;
       },
       // drawerEdgeDragWidth: MediaQuery.of(context).size.width,
       body: ScaleTransition(
-        scale: Tween<double>(begin: 1.0, end: 0.95)
+        scale: Tween<double>(begin: 1.0, end: 0.98)
             .animate(_drawerAnimationController),
         child: Selector<GlobalProvider, bool>(
           selector: (context, globalProvider) => globalProvider.isDrawerOpen,
@@ -178,6 +180,7 @@ class MainScreenState extends State<MainScreen>
                         ItemBuilder.buildEntryItem(
                           context: context,
                           title: S.current.generalSetting,
+                          padding: 15,
                           showLeading: true,
                           onTap: () {
                             Navigator.push(
@@ -192,6 +195,7 @@ class MainScreenState extends State<MainScreen>
                           context: context,
                           showLeading: true,
                           title: S.current.globalSetting,
+                          padding: 15,
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -206,6 +210,7 @@ class MainScreenState extends State<MainScreen>
                           title: S.current.operationSetting,
                           showLeading: true,
                           bottomRadius: true,
+                          padding: 15,
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -222,6 +227,7 @@ class MainScreenState extends State<MainScreen>
                           context: context,
                           title: S.current.serviceSetting,
                           showLeading: true,
+                          padding: 15,
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -235,6 +241,7 @@ class MainScreenState extends State<MainScreen>
                           context: context,
                           title: S.current.backupSetting,
                           showLeading: true,
+                          padding: 15,
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -248,6 +255,7 @@ class MainScreenState extends State<MainScreen>
                           context: context,
                           title: S.current.extensionSetting,
                           showLeading: true,
+                          padding: 15,
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -261,6 +269,7 @@ class MainScreenState extends State<MainScreen>
                           context: context,
                           showLeading: true,
                           title: S.current.experimentSetting,
+                          padding: 15,
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -277,6 +286,7 @@ class MainScreenState extends State<MainScreen>
                           title: S.current.help,
                           topRadius: true,
                           showLeading: true,
+                          padding: 15,
                           onTap: () {
                             UriUtil.launchUrlUri(
                                 "https://rssreader.cloudchewie.com/help");
@@ -288,6 +298,7 @@ class MainScreenState extends State<MainScreen>
                           title: S.current.about,
                           bottomRadius: true,
                           showLeading: true,
+                          padding: 15,
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -359,32 +370,34 @@ class MainScreenState extends State<MainScreen>
             : NavEntry.getNavs();
     List<Widget> widgets = [];
     for (NavEntry entry in sideBarEntries) {
-      widgets.add(ItemBuilder.buildEntryItem(
-        context: context,
-        title: NavEntry.getLabel(entry.id),
-        showLeading: true,
-        padding: 15,
-        bottomRadius: sideBarEntries.last == entry,
-        onTap: () {
-          if (_showNavigationBar) {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => NavEntry.getPage(entry.id),
-                settings: RouteSettings(
-                    name: "isNavigationBarEntry", arguments: entry.visible),
-              ),
-            );
-          } else {
-            setState(() {
-              if (mounted) {
-                _pageController.jumpToPage(sideBarEntries.indexOf(entry));
-              }
-            });
-            Navigator.of(context).pop();
-          }
-        },
-        leading: NavEntry.getIcon(entry.id),
-      ));
+      widgets.add(
+        ItemBuilder.buildEntryItem(
+          context: context,
+          title: NavEntry.getLabel(entry.id),
+          showLeading: true,
+          padding: 15,
+          bottomRadius: sideBarEntries.last == entry,
+          onTap: () {
+            if (_showNavigationBar) {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => NavEntry.getPage(entry.id),
+                  settings: RouteSettings(
+                      name: "isNavigationBarEntry", arguments: entry.visible),
+                ),
+              );
+            } else {
+              setState(() {
+                if (mounted) {
+                  _pageController.jumpToPage(sideBarEntries.indexOf(entry));
+                }
+              });
+              Navigator.of(context).pop();
+            }
+          },
+          leading: NavEntry.getIcon(entry.id),
+        ),
+      );
     }
     return widgets;
   }

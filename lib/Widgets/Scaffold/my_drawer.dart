@@ -485,7 +485,6 @@ class MyDrawerControllerState extends State<MyDrawerController>
     super.initState();
     if (widget.customAnimationController != null) {
       _controller = widget.customAnimationController!;
-      _controller.value = widget.isDrawerOpen ? 1.0 : 0.0;
     } else {
       _controller = AnimationController(
         value: widget.isDrawerOpen ? 1.0 : 0.0,

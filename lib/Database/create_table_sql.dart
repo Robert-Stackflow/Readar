@@ -1,8 +1,9 @@
 enum CreateTableSql {
-  feedService("feedService", '''
-        CREATE TABLE feedService (
+  rssService("rssService", '''
+        CREATE TABLE rssService (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         endpoint TEXT NOT NULL,
+        name TEXT NOT NULL,
         feedServiceType INTEGER NOT NULL,
         username TEXT,
         password TEXT,
@@ -28,6 +29,7 @@ enum CreateTableSql {
         url TEXT NOT NULL,
         name TEXT NOT NULL,
         iconUrl TEXT,
+        unReadCount INTEGER NOT NULL,
         feedSetting TEXT,
         lastPullStatus INTEGER,
         lastPullTime INTEGER,
@@ -37,10 +39,10 @@ enum CreateTableSql {
       );
     ''',
   ),
-  items(
-    "items",
+  rssItems(
+    "rssItems",
     '''
-      CREATE TABLE items (
+      CREATE TABLE rssItems (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         iid TEXT NOT NULL,
         feedId INTEGER NOT NULL,

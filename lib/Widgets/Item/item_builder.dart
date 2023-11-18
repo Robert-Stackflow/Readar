@@ -12,6 +12,7 @@ class ItemBuilder {
     return AppBar(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       elevation: 0,
+      scrolledUnderElevation: 0,
       leadingWidth: 30,
       leading: Container(
         margin: const EdgeInsets.only(left: 5),
@@ -40,7 +41,8 @@ class ItemBuilder {
   }) {
     return AppBar(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      elevation: 0.3,
+      elevation: 0,
+      scrolledUnderElevation: 0,
       leadingWidth: 30,
       leading: Container(
         margin: const EdgeInsets.only(left: 5),
@@ -265,7 +267,7 @@ class ItemBuilder {
       onTap: null,
       leading: leading,
       trailing: trailing,
-      padding: 15,
+      padding: 10,
       isCaption: true,
     );
   }

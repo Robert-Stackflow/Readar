@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'feed_setting.dart';
 
 ///
-/// Feed Service class
+/// 云盘备份服务
 ///
-class CloudService {
+class BackupService {
   int id;
   String endpoint;
   String? username;
@@ -18,7 +18,7 @@ class CloudService {
   DateTime? lastPushTime;
   Map<String, Object?>? params;
 
-  CloudService(
+  BackupService(
     this.endpoint, {
     required this.id,
     this.username,
@@ -32,7 +32,7 @@ class CloudService {
     this.params,
   });
 
-  CloudService._privateConstructor(
+  BackupService._privateConstructor(
     this.id,
     this.endpoint,
     this.username,
@@ -46,8 +46,8 @@ class CloudService {
     this.params,
   );
 
-  CloudService clone() {
-    return CloudService._privateConstructor(
+  BackupService clone() {
+    return BackupService._privateConstructor(
       id,
       endpoint,
       username,
@@ -76,7 +76,7 @@ class CloudService {
         'params': jsonEncode(params),
       };
 
-  factory CloudService.fromJson(Map<String, dynamic> map) => CloudService(
+  factory BackupService.fromJson(Map<String, dynamic> map) => BackupService(
         map['endpoint'] as String,
         id: map['id'] as int,
         username: map['username'] as String?,

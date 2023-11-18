@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 ///
-/// RSS item class, including title, original link, release date, article content, snippets and other elements
+/// RSS文章条目
 ///
-class RSSItem {
+class RssItem {
   int? id;
   String iid;
   int feedId;
@@ -21,7 +21,7 @@ class RSSItem {
   DateTime? starTime;
   Map<String, Object?>? params;
 
-  RSSItem({
+  RssItem({
     this.id,
     required this.iid,
     required this.feedId,
@@ -40,7 +40,7 @@ class RSSItem {
     this.params,
   });
 
-  RSSItem._privateConstructor(
+  RssItem._privateConstructor(
     this.id,
     this.iid,
     this.feedId,
@@ -59,8 +59,8 @@ class RSSItem {
     this.params,
   );
 
-  RSSItem clone() {
-    return RSSItem._privateConstructor(
+  RssItem clone() {
+    return RssItem._privateConstructor(
       id,
       iid,
       feedId,
@@ -99,7 +99,7 @@ class RSSItem {
         'params': jsonEncode(params),
       };
 
-  factory RSSItem.fromJson(Map<String, dynamic> map) => RSSItem(
+  factory RssItem.fromJson(Map<String, dynamic> map) => RssItem(
         id: map['id'] as int,
         iid: map['iid'] as String,
         feedId: map['feedId'] as int,

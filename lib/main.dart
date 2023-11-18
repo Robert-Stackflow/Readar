@@ -16,15 +16,11 @@ import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Screens/Setting/setting_screen.dart';
-import 'package:cloudreader/Utils/hive_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Channel/android_back_desktop.dart';
 import 'Providers/provider_manager.dart';
 import 'Screens/Lock/pin_verify_screen.dart';
 import 'Screens/Navigation/article_screen.dart';
@@ -35,14 +31,11 @@ import 'Screens/Setting/backup_service_setting_screen.dart';
 import 'Screens/Setting/general_setting_screen.dart';
 import 'Screens/Setting/service_setting_screen.dart';
 import 'Screens/main_screen.dart';
-import 'Utils/store.dart';
 import 'generated/l10n.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initHive();
-  Store.sp = await SharedPreferences.getInstance();
-  ProviderManager.init();
+  await ProviderManager.init();
   runApp(const MyApp());
   if (Platform.isAndroid) {
     SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
@@ -50,16 +43,6 @@ Future<void> main() async {
         statusBarIconBrightness: Brightness.dark);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
-}
-
-Future<void> initHive() async {
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    await Hive.initFlutter(HiveUtil.database);
-  } else {
-    await Hive.initFlutter();
-  }
-  await HiveUtil.openHiveBox(HiveUtil.settingsBox);
-  await HiveUtil.openHiveBox(HiveUtil.servicesBox);
 }
 
 class MyApp extends StatelessWidget {
@@ -70,12 +53,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: ProviderManager.globalProvider),
-        ChangeNotifierProvider.value(
-            value: ProviderManager.feedContentProvider),
-        ChangeNotifierProvider.value(value: ProviderManager.feedsProvider),
-        ChangeNotifierProvider.value(value: ProviderManager.groupsProvider),
-        ChangeNotifierProvider.value(value: ProviderManager.itemsProvider),
-        ChangeNotifierProvider.value(value: ProviderManager.syncProvider),
+        ChangeNotifierProvider.value(value: ProviderManager.rssProvider),
       ],
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
@@ -110,14 +88,20 @@ class MyApp extends StatelessWidget {
           },
           home: WillPopScope(
             onWillPop: () async {
-              AndroidBackDesktopChannel.backToDesktop();
-              return false;
+              // AndroidBackDesktopChannel.backToDesktop();
+              // return false;
+              if (ProviderManager.globalProvider.shouldInterceptBack) {
+                ProviderManager.globalProvider.shouldInterceptBack = false;
+                return false;
+              }
+              return true;
             },
             child: const MainScreen(),
           ),
           builder: (context, widget) {
             return MediaQuery(
-              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: TextScaler.noScaling),
               child: widget!,
             );
           },

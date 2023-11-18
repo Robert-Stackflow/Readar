@@ -236,6 +236,7 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
                             },
                             context: context,
                             title: "选择自动锁定时机",
+                            onCloseTap: () => Navigator.pop(context),
                           ),
                         );
                       },

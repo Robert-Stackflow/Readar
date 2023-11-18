@@ -25,9 +25,9 @@ class DatabaseManager {
   }
 
   static Future<void> _onCreate(Database db, int version) async {
-    await db.execute(CreateTableSql.feedService.sql);
+    await db.execute(CreateTableSql.rssService.sql);
     await db.execute(CreateTableSql.feed.sql);
-    await db.execute(CreateTableSql.items.sql);
+    await db.execute(CreateTableSql.rssItems.sql);
     // await db.execute('''
     //   CREATE TABLE sources (
     //     sid TEXT PRIMARY KEY,

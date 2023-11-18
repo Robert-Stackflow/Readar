@@ -1,19 +1,20 @@
+import 'package:cloudreader/Database/create_table_sql.dart';
 import 'package:cloudreader/Models/rss_item.dart';
 import 'package:tuple/tuple.dart';
 
 import '../Providers/provider_manager.dart';
 
 ///
-/// Filter type, including all, unread, read, starred, unstarred, and saved
+/// 过滤类型：全部、未读、已读、已标星标、未标星标、已保存
 ///
 enum FilterType { all, unread, read, starred, unstarred, saved }
 
 const loadLimit = 50;
 
 ///
-/// Feed content class, used when actually loading a feed
+/// 订阅源内容，当真正加载某个订阅源时使用
 ///
-class FeedContent {
+class RssItemList {
   bool initialized = false;
   bool loading = false;
   bool allLoaded = false;
@@ -22,7 +23,7 @@ class FeedContent {
   FilterType filterType;
   String search = "";
 
-  FeedContent({
+  RssItemList({
     required this.sids,
     this.filterType = FilterType.all,
   }) {
@@ -52,7 +53,7 @@ class FeedContent {
     return Tuple2(where.join(" AND "), whereArgs);
   }
 
-  bool testItem(RSSItem item) {
+  bool testItem(RssItem item) {
     if (sids.isNotEmpty && !sids.contains(item.feedFid)) return false;
     if (filterType == FilterType.unread && item.hasRead) return false;
     if (filterType == FilterType.starred && !item.starred) return false;
@@ -70,20 +71,20 @@ class FeedContent {
     loading = true;
     var predicates = _getPredicates();
     var items = (await ProviderManager.db.query(
-      "items",
+      CreateTableSql.rssItems.tableName,
       orderBy: "date DESC",
       limit: loadLimit,
       where: predicates.item1,
       whereArgs: predicates.item2,
     ))
-        .map((m) => RSSItem.fromJson(m))
+        .map((m) => RssItem.fromJson(m))
         .toList();
     allLoaded = items.length < loadLimit;
-    ProviderManager.itemsProvider.mappingItems(items);
+    ProviderManager.rssProvider.currentRssHandler.mappingItems(items);
     iids = items.map((i) => i.iid).toList();
     loading = false;
     initialized = true;
-    ProviderManager.feedContentProvider.broadcast();
+    ProviderManager.rssProvider.broadcast();
   }
 
   Future<void> loadMore() async {
@@ -91,25 +92,26 @@ class FeedContent {
     loading = true;
     var predicates = _getPredicates();
     var offset = iids
-        .map((iid) => ProviderManager.itemsProvider.getItem(iid))
+        .map(
+            (iid) => ProviderManager.rssProvider.currentRssHandler.getItem(iid))
         .fold(0, (c, i) => c + (testItem(i) ? 1 : 0));
     var items = (await ProviderManager.db.query(
-      "items",
+      CreateTableSql.rssItems.tableName,
       orderBy: "date DESC",
       limit: loadLimit,
       offset: offset,
       where: predicates.item1,
       whereArgs: predicates.item2,
     ))
-        .map((m) => RSSItem.fromJson(m))
+        .map((m) => RssItem.fromJson(m))
         .toList();
     if (items.length < loadLimit) {
       allLoaded = true;
     }
-    ProviderManager.itemsProvider.mappingItems(items);
+    ProviderManager.rssProvider.currentRssHandler.mappingItems(items);
     iids.addAll(items.map((i) => i.iid));
     loading = false;
-    ProviderManager.feedContentProvider.broadcast();
+    ProviderManager.rssProvider.broadcast();
   }
 
   Future<void> setFilter(FilterType filter) async {

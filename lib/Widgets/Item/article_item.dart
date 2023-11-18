@@ -1,22 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloudreader/Utils/uri_util.dart';
 import 'package:cloudreader/Widgets/Item/time_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tuple/tuple.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../Models/feed.dart';
 import '../../Models/feed_setting.dart';
 import '../../Models/rss_item.dart';
-import '../../Providers/feed_content_provider.dart';
 import '../../Providers/provider_manager.dart';
+import '../../Providers/rss_provider.dart';
 import '../../Screens/Content/article_detail_screen.dart';
 import 'dismissible_background.dart';
 import 'favicon.dart';
 
 class ArticleItem extends StatefulWidget {
-  final RSSItem item;
+  final RssItem item;
   final Feed feed;
   final Function openActionSheet;
   final bool topMargin;
@@ -36,10 +36,11 @@ class ArticleItemState extends State<ArticleItem> {
       return route.isFirst;
     });
     if (!widget.item.hasRead) {
-      ProviderManager.itemsProvider.updateItem(widget.item.iid, read: true);
+      ProviderManager.rssProvider.currentRssHandler
+          .updateItem(widget.item.iid, read: true);
     }
     if (widget.feed.feedSetting?.crawlType == CrawlType.external) {
-      launch(widget.item.url, forceSafariVC: false, forceWebView: false);
+      UriUtil.launchUrlUri(widget.item.url);
     } else {
       var isSource = Navigator.of(context).canPop();
       if (ArticleDetailScreen.state.currentWidget != null) {
@@ -107,12 +108,12 @@ class ArticleItemState extends State<ArticleItem> {
     switch (option) {
       case ItemSwipeOption.toggleRead:
         await Future.delayed(const Duration(milliseconds: 200));
-        ProviderManager.itemsProvider
+        ProviderManager.rssProvider.currentRssHandler
             .updateItem(widget.item.iid, read: !widget.item.hasRead);
         break;
       case ItemSwipeOption.toggleStar:
         await Future.delayed(const Duration(milliseconds: 200));
-        ProviderManager.itemsProvider
+        ProviderManager.rssProvider.currentRssHandler
             .updateItem(widget.item.iid, starred: !widget.item.starred);
         break;
       case ItemSwipeOption.share:
@@ -122,9 +123,10 @@ class ArticleItemState extends State<ArticleItem> {
         break;
       case ItemSwipeOption.openExternal:
         if (!widget.item.hasRead) {
-          ProviderManager.itemsProvider.updateItem(widget.item.iid, read: true);
+          ProviderManager.rssProvider.currentRssHandler
+              .updateItem(widget.item.iid, read: true);
         }
-        launch(widget.item.url, forceSafariVC: false, forceWebView: false);
+        UriUtil.launchUrlUri(widget.item.url);
         break;
     }
   }
@@ -132,9 +134,9 @@ class ArticleItemState extends State<ArticleItem> {
   Future<bool> _onDismiss(DismissDirection direction) async {
     HapticFeedback.mediumImpact();
     if (direction == DismissDirection.startToEnd) {
-      _performSwipeAction(ProviderManager.feedContentProvider.swipeR);
+      _performSwipeAction(ProviderManager.rssProvider.swipeR);
     } else {
-      _performSwipeAction(ProviderManager.feedContentProvider.swipeL);
+      _performSwipeAction(ProviderManager.rssProvider.swipeL);
     }
     return false;
   }
@@ -152,7 +154,7 @@ class ArticleItemState extends State<ArticleItem> {
     final _titleStyle = TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,
-      color: ProviderManager.feedContentProvider.dimRead && widget.item.hasRead
+      color: ProviderManager.rssProvider.dimRead && widget.item.hasRead
           ? CupertinoColors.secondaryLabel.resolveFrom(context)
           : CupertinoColors.label.resolveFrom(context),
     );
@@ -172,8 +174,7 @@ class ArticleItemState extends State<ArticleItem> {
             overflow: TextOverflow.ellipsis,
           )),
           Row(children: [
-            if (!ProviderManager.feedContentProvider.dimRead &&
-                !widget.item.hasRead)
+            if (!ProviderManager.rssProvider.dimRead && !widget.item.hasRead)
               _unreadIndicator,
             if (widget.item.starred) _starredIndicator,
             TimeText(widget.item.date, style: _descStyle),
@@ -189,7 +190,7 @@ class ArticleItemState extends State<ArticleItem> {
           widget.item.title,
           style: _titleStyle,
         ),
-        if (ProviderManager.feedContentProvider.showSnippet &&
+        if (ProviderManager.rssProvider.showSnippet &&
             widget.item.snippet.isNotEmpty)
           Text(
             widget.item.snippet,
@@ -246,7 +247,7 @@ class ArticleItemState extends State<ArticleItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             itemTexts,
-                            if (ProviderManager.feedContentProvider.showThumb &&
+                            if (ProviderManager.rssProvider.showThumb &&
                                 widget.item.thumb != null)
                               Padding(
                                 padding: const EdgeInsets.only(left: 4),
@@ -283,13 +284,11 @@ class ArticleItemState extends State<ArticleItem> {
     return Dismissible(
       key: Key("D-${widget.item.iid}"),
       background: DismissibleBackground(
-        _getDismissIcon(ProviderManager.feedContentProvider.swipeR) ??
-            Icons.add,
+        _getDismissIcon(ProviderManager.rssProvider.swipeR) ?? Icons.add,
         true,
       ),
       secondaryBackground: DismissibleBackground(
-        _getDismissIcon(ProviderManager.feedContentProvider.swipeL) ??
-            Icons.add,
+        _getDismissIcon(ProviderManager.rssProvider.swipeL) ?? Icons.add,
         false,
       ),
       dismissThresholds: _dismissThresholds,

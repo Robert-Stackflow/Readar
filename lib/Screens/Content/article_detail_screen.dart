@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cloudreader/Providers/feed_content_provider.dart';
+import 'package:cloudreader/Providers/rss_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,8 +15,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../../Models/feed.dart';
 import '../../Models/feed_setting.dart';
 import '../../Models/rss_item.dart';
-import '../../Providers/feeds_provider.dart';
-import '../../Providers/items_provider.dart';
 import '../../Providers/provider_manager.dart';
 import '../../Utils/store.dart';
 import '../../Widgets/Item/toolbar.dart';
@@ -45,8 +43,8 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
   late bool isSourceFeed;
 
   void loadNewItem(String id, {bool? isSource}) {
-    if (!ProviderManager.itemsProvider.getItem(id).hasRead) {
-      ProviderManager.itemsProvider.updateItem(id, read: true);
+    if (!ProviderManager.rssProvider.currentRssHandler.getItem(id).hasRead) {
+      ProviderManager.rssProvider.currentRssHandler.updateItem(id, read: true);
     }
     setState(() {
       iid = id;
@@ -69,7 +67,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
     }
   }
 
-  void _loadHtml(RSSItem item, Feed source, {loadFull = false}) async {
+  void _loadHtml(RssItem item, Feed source, {loadFull = false}) async {
     var localUrl =
         "http://${ProviderManager.address}:${ProviderManager.port}/article/article.html";
     var currId = requestId;
@@ -131,7 +129,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
     });
   }
 
-  void _loadOpenTarget(RSSItem item, Feed source) {
+  void _loadOpenTarget(RssItem item, Feed source) {
     setState(() {
       requestId += 1;
       loaded = ArticleLoadState.loading;
@@ -150,7 +148,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
         _controller.loadUrl(item.url);
         break;
       case null:
-      // TODO: Handle this case.
+        break;
     }
   }
 
@@ -177,10 +175,10 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
         semanticLabel: "加载网页",
       ),
     };
-    return Selector2<ItemsProvider, FeedsProvider, Tuple2<RSSItem, Feed>>(
-      selector: (context, itemsProvider, feedsProvider) {
-        var item = itemsProvider.getItem(iid);
-        var source = feedsProvider.getFeed(item.feedFid);
+    return Selector<RssProvider, Tuple2<RssItem, Feed>>(
+      selector: (context, rssProvider) {
+        var item = rssProvider.currentRssHandler.getItem(iid);
+        var source = rssProvider.currentRssHandler.getFeed(item.feedFid);
         return Tuple2(item, source);
       },
       builder: (context, tuple, child) {
@@ -236,7 +234,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
               groupValue: _target?.index,
             ),
           ),
-          child: Consumer<FeedContentProvider>(
+          child: Consumer<RssProvider>(
             child: body,
             builder: (context, feedContentProvider, child) {
               final feed = isSourceFeed
@@ -252,7 +250,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     semanticLabel: item.hasRead ? "标为未读" : "标为已读",
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      ProviderManager.itemsProvider
+                      ProviderManager.rssProvider.currentRssHandler
                           .updateItem(item.iid, read: !item.hasRead);
                     },
                   ),
@@ -263,7 +261,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     semanticLabel: item.starred ? S.of(context).star : "取消星标",
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      ProviderManager.itemsProvider
+                      ProviderManager.rssProvider.currentRssHandler
                           .updateItem(item.iid, starred: !item.starred);
                     },
                   ),

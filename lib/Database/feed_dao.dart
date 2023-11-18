@@ -26,6 +26,23 @@ class FeedDao {
         .delete(tableName, where: 'id = ?', whereArgs: [feed.id]);
   }
 
+  static Future<void> deleteAll(List<String> fids) async {
+    final batch = ProviderManager.db.batch();
+    for (var fid in fids) {
+      batch.delete(
+        CreateTableSql.rssItems.tableName,
+        where: "feedFid = ?",
+        whereArgs: [fid],
+      );
+      batch.delete(
+        CreateTableSql.feed.tableName,
+        where: "fid = ?",
+        whereArgs: [fid],
+      );
+    }
+    await batch.commit(noResult: true);
+  }
+
   static Future<void> update(Feed feed) async {
     await ProviderManager.db.update(tableName, feed.toJson());
   }

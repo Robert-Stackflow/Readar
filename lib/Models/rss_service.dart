@@ -2,40 +2,44 @@ import 'dart:convert';
 
 import 'feed_setting.dart';
 
-enum FeedServiceType {
-  Inoreader("Inoreader", [
+///
+/// Rss服务类型
+///
+enum RssServiceType {
+  inoreader("Inoreader", [
     "https://www.inoreader.com",
     "https://www.innoreader.com",
     "https://jp.inoreader.com",
   ]),
-  Feedbin("Feedbin", [
+  feedbin("Feedbin", [
     "https://api.feedbin.me/v2",
     "https://api.feedbin.com/v2",
   ]),
-  FeedHQ("FeedHQ", [""]),
-  TheOldReader("TheOldReader", ["https://theoldreader.com"]),
-  BazQuxReader("BazQuxReader", ["https://bazqux.com"]),
-  FeedWrangler("FeedWrangler", [""]),
-  NewsBlur("NewsBlur", [""]),
-  FeverAPI("FeverAPI", [""]),
-  FreshRssAPI("FreshRssAPI", [""]),
-  GoogleReaderAPI("GoogleReaderAPI", [""]),
-  Miniflux("Miniflux", [""]),
-  NextcloudNewsAPI("NextcloudNewsAPI", [""]);
+  feedHQ("FeedHQ", [""]),
+  theOldReader("TheOldReader", ["https://theoldreader.com"]),
+  bazQuxReader("BazQuxReader", ["https://bazqux.com"]),
+  feedWrangler("FeedWrangler", [""]),
+  newsBlur("NewsBlur", [""]),
+  feverAPI("FeverAPI", [""]),
+  freshRssAPI("FreshRssAPI", [""]),
+  googleReaderAPI("GoogleReaderAPI", [""]),
+  miniflux("Miniflux", [""]),
+  nextcloudNewsAPI("NextcloudNewsAPI", [""]);
 
-  const FeedServiceType(this.name, this.endpoint);
+  const RssServiceType(this.name, this.endpoint);
 
   final String name;
   final List<String> endpoint;
 }
 
 ///
-/// Feed Service class
+/// Rss服务
 ///
-class FeedService {
+class RssService {
   int? id;
   String endpoint;
-  FeedServiceType feedServiceType;
+  String name;
+  RssServiceType feedServiceType;
   String? username;
   String? password;
   String? appId;
@@ -49,8 +53,9 @@ class FeedService {
   String? lastedFetchedId;
   Map<String, Object?>? params;
 
-  FeedService(
+  RssService(
     this.endpoint,
+    this.name,
     this.feedServiceType, {
     this.id,
     this.username,
@@ -59,7 +64,7 @@ class FeedService {
     this.appKey,
     this.authorization,
     this.fetchLimit = 500,
-    this.pullOnStartUp = false,
+    this.pullOnStartUp = true,
     this.lastSyncStatus,
     this.lastSyncTime,
     this.lastedFetchedId,
@@ -67,9 +72,10 @@ class FeedService {
     this.params,
   });
 
-  FeedService._privateConstructor(
+  RssService._privateConstructor(
     this.id,
     this.endpoint,
+    this.name,
     this.feedServiceType,
     this.username,
     this.password,
@@ -85,10 +91,11 @@ class FeedService {
     this.params,
   );
 
-  FeedService clone() {
-    return FeedService._privateConstructor(
+  RssService clone() {
+    return RssService._privateConstructor(
       id,
       endpoint,
+      name,
       feedServiceType,
       username,
       password,
@@ -108,6 +115,7 @@ class FeedService {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'endpoint': endpoint,
+        "name": name,
         'feedServiceType': feedServiceType.index,
         'username': username,
         'password': password,
@@ -123,9 +131,10 @@ class FeedService {
         'params': jsonEncode(params),
       };
 
-  factory FeedService.fromJson(Map<String, dynamic> map) => FeedService(
+  factory RssService.fromJson(Map<String, dynamic> map) => RssService(
         map['endpoint'] as String,
-        FeedServiceType.values[map['feedServiceType']],
+        map['name'] as String,
+        RssServiceType.values[map['feedServiceType']],
         id: map['id'] as int?,
         username: map['username'] as String?,
         password: map['password'] as String?,

@@ -52,6 +52,7 @@ dependencies:
   cached_network_image: ^3.2.1
   jaguar_flutter_asset: ^3.0.0
   # 工具
+  intl:
   html: ^0.15.0
   tuple: ^2.0.0
   lpinyin: ^2.0.3

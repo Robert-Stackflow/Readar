@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:lpinyin/lpinyin.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -76,6 +77,45 @@ abstract class Utils {
       return ap.compareTo(bp);
     } catch (exp) {
       return a.compareTo(b);
+    }
+  }
+
+  ///
+  /// 获取某个网站的图标
+  ///
+  static Future<String?> fetchFeedFavicon(String url) async {
+    try {
+      url = url.split("/").getRange(0, 3).join("/");
+      var uri = Uri.parse(url);
+      var result = await http.get(uri);
+      if (result.statusCode == 200) {
+        var htmlStr = result.body;
+        var dom = parse(htmlStr);
+        var links = dom.getElementsByTagName("link");
+        for (var link in links) {
+          var rel = link.attributes["rel"];
+          if ((rel == "icon" || rel == "shortcut icon") &&
+              link.attributes.containsKey("href")) {
+            var href = link.attributes["href"]!;
+            var parsedUrl = Uri.parse(url);
+            if (href.startsWith("//")) {
+              return "${parsedUrl.scheme}:$href";
+            } else if (href.startsWith("/")) {
+              return url + href;
+            } else {
+              return href;
+            }
+          }
+        }
+      }
+      url = "$url/favicon.ico";
+      if (await Utils.validateFavicon(url)) {
+        return url;
+      } else {
+        return null;
+      }
+    } catch (exp) {
+      return null;
     }
   }
 }

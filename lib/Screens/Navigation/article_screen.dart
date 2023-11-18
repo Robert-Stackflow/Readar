@@ -1,7 +1,9 @@
 import 'dart:io';
 
-import 'package:cloudreader/Database/Dao/feed_service_dao.dart';
-import 'package:cloudreader/Models/feed_service.dart';
+import 'package:cloudreader/Database/feed_dao.dart';
+import 'package:cloudreader/Models/rss_service.dart';
+import 'package:cloudreader/Providers/rss_provider.dart';
+import 'package:cloudreader/Resources/gaps.dart';
 import 'package:cloudreader/Widgets/Item/item_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +13,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../Models/feed.dart';
-import '../../Models/feed_content.dart';
 import '../../Models/rss_item.dart';
-import '../../Providers/feeds_provider.dart';
-import '../../Providers/items_provider.dart';
+import '../../Models/rss_item_list.dart';
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
 import '../../Widgets/Dropdown/dropdown_menu.dart';
@@ -46,10 +46,10 @@ class _ArticleScreenState extends State<ArticleScreen>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   DateTime? _lastLoadedMoreTime;
   late RefreshController _refreshController;
-  List<FeedService> _feedServices = [];
   final DropdownMenuController _dropdownMenuController =
       DropdownMenuController();
   late final AnimationController _dropdownAnimationController;
+  List<Feed> _currentFeedList = [];
 
   @override
   void initState() {
@@ -70,10 +70,18 @@ class _ArticleScreenState extends State<ArticleScreen>
       upperBound: 0.5,
     );
     _dropdownMenuController.addListener(() {
+      ProviderManager.globalProvider.shouldInterceptBack =
+          _dropdownMenuController.isShow;
       if (_dropdownMenuController.isShow) {
         _dropdownAnimationController.forward();
       } else {
         _dropdownAnimationController.reverse();
+      }
+    });
+    ProviderManager.globalProvider.addListener(() {
+      if (ProviderManager.globalProvider.shouldInterceptBack == false &&
+          _dropdownMenuController.isShow) {
+        _dropdownMenuController.hide();
       }
     });
   }
@@ -84,10 +92,10 @@ class _ArticleScreenState extends State<ArticleScreen>
     super.dispose();
   }
 
-  FeedContent getFeed() {
+  RssItemList getFeed() {
     return ModalRoute.of(context)?.settings.arguments != null
-        ? ProviderManager.feedContentProvider.source
-        : ProviderManager.feedContentProvider.all;
+        ? ProviderManager.rssProvider.source
+        : ProviderManager.rssProvider.all;
   }
 
   void _onRefresh() async {
@@ -142,11 +150,11 @@ class _ArticleScreenState extends State<ArticleScreen>
     super.build(context);
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Stack(
-        children: [
-          ScrollConfiguration(
-            behavior: NoShadowScrollBehavior(),
-            child: SmartRefresher(
+      body: ScrollConfiguration(
+        behavior: NoShadowScrollBehavior(),
+        child: Stack(
+          children: [
+            SmartRefresher(
               enablePullDown: true,
               enablePullUp: true,
               header: MaterialClassicHeader(
@@ -178,29 +186,105 @@ class _ArticleScreenState extends State<ArticleScreen>
               onLoading: _onLoading,
               child: _buildList(),
             ),
-          ),
-          DropDownMenu(
-            controller: _dropdownMenuController,
-            animationMilliseconds: 300,
-            // maskColor: Theme.of(context).shadowColor.withOpacity(0.1),
-            dropdownMenuChanging: (isShow, index) {},
-            dropdownMenuChanged: (isShow, index) {},
-            menus: [
-              DropdownMenuBuilder(
-                dropDownHeight: 40 * 8.0,
-                dropDownWidget: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(10),
+            DropDownMenu(
+              controller: _dropdownMenuController,
+              animationMilliseconds: 300,
+              dropdownMenuChanging: (isShow, index) {},
+              dropdownMenuChanged: (isShow, index) {},
+              menus: [
+                DropdownMenuBuilder(
+                  dropDownHeight: 40 * 8.0,
+                  dropDownWidget: Container(
+                    color: Theme.of(context).canvasColor,
+                    child: Selector<RssProvider, List<RssService>>(
+                      selector: (context, rssProvider) =>
+                          rssProvider.rssServices,
+                      builder: (context, rssServices, _) =>
+                          rssServices.isNotEmpty
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _buildFeedServiceList(rssServices),
+                                    MyGaps.verticleDivider,
+                                    _buildFeedList(),
+                                  ],
+                                )
+                              : _buildFeedServceNull(),
                     ),
                   ),
-                  height: 100,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeedServceNull() {
+    return Container(
+      alignment: Alignment.center,
+      child: Text("暂无订阅源，请从本地导入或添加RSS服务",
+          style: Theme.of(context).textTheme.titleLarge),
+    );
+  }
+
+  Widget _buildFeedServiceList(List<RssService> feedServices) {
+    return SizedBox(
+      width: 100,
+      child: ListView.builder(
+        itemCount: feedServices.length,
+        itemBuilder: (content, index) {
+          return Material(
+            child: Ink(
+              decoration: BoxDecoration(color: Theme.of(context).canvasColor),
+              child: InkWell(
+                onTap: () {
+                  FeedDao.queryByServiceId(feedServices[index].id!)
+                      .then((value) => {
+                            setState(() {
+                              _currentFeedList = value;
+                            })
+                          });
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: Text(
+                    feedServices[index].name,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFeedList() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _currentFeedList.length,
+        itemBuilder: (content, index) {
+          return Material(
+            child: Ink(
+              decoration: BoxDecoration(color: Theme.of(context).canvasColor),
+              child: InkWell(
+                onTap: () {},
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Text(
+                    _currentFeedList[index].name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -210,11 +294,11 @@ class _ArticleScreenState extends State<ArticleScreen>
     return ListView.builder(
       itemCount: feed.iids.length,
       itemBuilder: (content, index) {
-        return Selector2<ItemsProvider, FeedsProvider, Tuple2<RSSItem, Feed>>(
-          selector: (context, itemsProvider, sourcesProvider) {
-            var item = itemsProvider.getItem(feed.iids[index]);
-            var source = sourcesProvider.getFeed(item.feedFid);
-            return Tuple2(item, source);
+        return Selector<RssProvider, Tuple2<RssItem, Feed>>(
+          selector: (context, rssProvider) {
+            var item = rssProvider.currentRssHandler.getItem(feed.iids[index]);
+            return Tuple2(
+                item, rssProvider.currentRssHandler.getFeed(item.feedFid));
           },
           builder: (context, tuple, child) => ArticleItem(
               tuple.item1, tuple.item2, (_) {},
@@ -235,8 +319,6 @@ class _ArticleScreenState extends State<ArticleScreen>
   }
 
   AppBar _buildAppBar() {
-    FeedServiceDao.queryAll()
-        .then((value) => {if (mounted) setState(() => _feedServices = value)});
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()
@@ -244,7 +326,8 @@ class _ArticleScreenState extends State<ArticleScreen>
           : Icons.arrow_back_rounded,
       onLeadingTap: () {
         if (_isNavigationBarEntry()) {
-          Scaffold.of(context).openDrawer();
+          ProviderManager.globalProvider.homeScaffoldKey.currentState
+              ?.openDrawer();
           ProviderManager.globalProvider.isDrawerOpen = true;
         } else {
           Navigator.of(context).pop();
