@@ -13,16 +13,26 @@ import '../Providers/provider_manager.dart';
 import '../Utils/iprint.dart';
 import '../Utils/utils.dart';
 
-class RssHandler {
+///
+/// 具体管理某个RSS服务，包含同步订阅源、获取/更新文章条目等操作
+///
+class RssServiceManager {
+  /// RSS服务对象
   RssService rssService;
+
+  /// RSS服务处理类
   late RssServiceHandler rssServiceHandler;
 
-  bool syncing = false;
+  /// 服务是否正在同步
+  bool serviceSyncing = false;
 
-  RssHandler(this.rssService) {
+  RssServiceManager(this.rssService) {
     rssServiceHandler = GoogleReaderRssServiceHandler(rssService);
   }
 
+  ///
+  /// 初始化管理类：读取数据库中存储的订阅源并同步服务
+  ///
   Future<void> init({bool forceSync = false}) async {
     FeedDao.queryByServiceId(rssService.id!).then((value) async {
       for (Feed feed in value) {
@@ -31,57 +41,129 @@ class RssHandler {
       await updateAllUnreadCount();
     });
     if (forceSync || rssService.pullOnStartUp) {
-      await syncWithService();
+      await syncService();
     }
   }
 
-  Future<void> removeService() async {
-    if (syncing) return;
-    syncing = true;
-    var sids = getFeeds().map((s) => s.fid).toList();
-    await deleteFeeds(sids);
-    rssServiceHandler.removeService();
-    syncing = false;
-  }
-
-  Future<void> syncWithService() async {
-    if (syncing) return;
-    syncing = true;
+  ///
+  /// 同步服务
+  ///
+  Future<void> syncService() async {
+    if (serviceSyncing) return;
+    serviceSyncing = true;
     try {
       await rssServiceHandler.authenticate();
-      IPrint.debug("authed");
       await syncFeeds();
-      IPrint.debug("synced Feeds");
       await syncItems();
-      IPrint.debug("synced Items");
       await fetchItems();
-      IPrint.debug("fetched Items");
       rssService.lastSyncStatus = SyncStatus.success;
+      IPrint.debug("同步成功");
     } catch (exp) {
       rssService.lastSyncStatus = SyncStatus.fail;
+      IPrint.debug("同步失败");
     }
     rssService.lastSyncTime = DateTime.now();
-    syncing = false;
+    serviceSyncing = false;
   }
 
-  //订阅源相关变量
-  final Map<String, Feed> _fidToFeedMap = {};
-  final Map<String, Feed> _deletedSidToFeedMap = {};
+  ///
+  /// 移除服务
+  ///
+  Future<void> removeService() async {
+    if (serviceSyncing) return;
+    serviceSyncing = true;
+    var feeds = getFeeds().map((s) => s.fid).toList();
+    await deleteFeeds(feeds);
+    rssServiceHandler.removeService();
+    serviceSyncing = false;
+  }
 
-  //文章条目相关变量
-  final Map<String, RssItem> _idToItemMap = {};
+  /// 订阅源FID到订阅源对象的映射
+  final Map<String, Feed> _fidToFeedMap = {};
+
+  /// 已删除的订阅源FID到订阅源对象的映射
+  final Map<String, Feed> _deletedFidToFeedMap = {};
+
+  /// 文章IID到文章对象的映射
+  final Map<String, RssItem> _iidToItemMap = {};
 
   bool containsFeed(String id) => _fidToFeedMap.containsKey(id);
 
-  Feed getFeed(String id) => _fidToFeedMap[id] ?? _deletedSidToFeedMap[id]!;
+  Feed getFeed(String id) => _fidToFeedMap[id] ?? _deletedFidToFeedMap[id]!;
 
-  Iterable<Feed> getFeeds() => _fidToFeedMap.values;
+  List<Feed> getFeeds() => _fidToFeedMap.values.toList();
 
-  bool containsItem(String id) => _idToItemMap.containsKey(id);
+  bool containsItem(String id) => _iidToItemMap.containsKey(id);
 
-  RssItem getItem(String id) => _idToItemMap[id]!;
+  RssItem getItem(String id) => _iidToItemMap[id]!;
 
-  Iterable<RssItem> getItems() => _idToItemMap.values;
+  List<RssItem> getItems() => _iidToItemMap.values.toList();
+
+  ///
+  /// 添加订阅源
+  ///
+  /// [feed] 待添加订阅源
+  ///
+  /// [force] 是否强制添加
+  ///
+  Future<void> insertFeed(Feed feed, {force = false}) async {
+    if (_deletedFidToFeedMap.containsKey(feed.fid) && !force) return;
+    _fidToFeedMap[feed.fid] = feed;
+    await FeedDao.insert(feed);
+    await FeedDao.queryByFid(feed.fid).then((value) async {
+      _fidToFeedMap[value.fid] = value;
+    });
+  }
+
+  ///
+  /// 添加一系列订阅源
+  ///
+  /// [feeds] 待添加订阅源列表
+  ///
+  /// [force] 是否强制添加
+  ///
+  Future<void> insertFeeds(Iterable<Feed> feeds, {force = false}) async {
+    List<Feed> batchedFeeds = [];
+    for (var feed in feeds) {
+      if (_deletedFidToFeedMap.containsKey(feed.fid) && !force) continue;
+      _fidToFeedMap[feed.fid] = feed;
+      feed.serviceId = rssService.id!;
+      batchedFeeds.add(feed);
+    }
+    await FeedDao.insertAll(batchedFeeds).then((value) {
+      for (var (index, feed) in feeds.indexed) {
+        _fidToFeedMap[feed.fid]?.id = value[index] as int?;
+      }
+    });
+  }
+
+  ///
+  /// 同步订阅源
+  ///
+  Future<void> syncFeeds() async {
+    final feedsAndGroupsTuple = await rssServiceHandler.fetchFeedsAndGroups();
+    final feeds = feedsAndGroupsTuple.item1;
+    var oldSids = Set<String>.from(_fidToFeedMap.keys);
+    List<Feed> newFeeds = [];
+    for (var feed in feeds) {
+      if (oldSids.contains(feed.fid)) {
+        oldSids.remove(feed.fid);
+      } else {
+        newFeeds.add(feed);
+      }
+    }
+    await insertFeeds(newFeeds, force: true);
+    await deleteFeeds(oldSids);
+    // ProviderManager.groupsProvider.groups = feedsAndGroupsTuple.item2;
+    fetchFeedFavicons();
+  }
+
+  ///
+  /// 更新某订阅源的未读条数
+  ///
+  void updateUnreadCount(String fid, int diff) {
+    _fidToFeedMap[fid]!.unReadCount = _fidToFeedMap[fid]!.unReadCount + diff;
+  }
 
   ///
   /// 更新所有订阅源的未读条数
@@ -93,17 +175,143 @@ class RssHandler {
       _fidToFeedMap[feed.fid] = cloned;
       cloned.unReadCount = 0;
     }
-    IPrint.debug(rows);
     for (var row in rows) {
       _fidToFeedMap[row["feedFid"]]!.unReadCount = row["COUNT(iid)"]!;
     }
   }
 
   ///
-  /// 更新某订阅源的未读条数
+  /// 删除订阅源
   ///
-  void updateUnreadCount(String fid, int diff) {
-    _fidToFeedMap[fid]!.unReadCount = _fidToFeedMap[fid]!.unReadCount + diff;
+  /// [fids] 待删除订阅源的FID列表
+  ///
+  Future<void> deleteFeeds(Iterable<String> fids) async {
+    List<String> batchedFids = [];
+    for (var fid in fids) {
+      if (!_fidToFeedMap.containsKey(fid)) continue;
+      batchedFids.add(fid);
+      _deletedFidToFeedMap[fid] = _fidToFeedMap[fid]!;
+      _fidToFeedMap.remove(fid);
+    }
+    await FeedDao.deleteAll(batchedFids);
+    // ProviderManager.feedContentProvider.initAll();
+  }
+
+  ///
+  /// 获取图标，在同步订阅源后调用
+  ///
+  Future<void> fetchFeedFavicons() async {
+    for (var fid in _fidToFeedMap.keys) {
+      if (_fidToFeedMap[fid]?.iconUrl == null) {
+        Utils.fetchFeedFavicon(_fidToFeedMap[fid]!.url).then((url) {
+          if (!_fidToFeedMap.containsKey(fid)) return;
+          var feed = _fidToFeedMap[fid]!.clone();
+          feed.iconUrl = url;
+          insertFeed(feed);
+        });
+      }
+    }
+  }
+
+  ///
+  /// 映射Item
+  ///
+  void mappingItems(Iterable<RssItem> items) {
+    for (var item in items) {
+      _iidToItemMap[item.iid] = item;
+    }
+  }
+
+  ///
+  /// 更新某个文章条目
+  ///
+  Future<void> updateItem(
+    String iid, {
+    Batch? batch,
+    bool? read,
+    bool? starred,
+    local = false,
+  }) async {
+    Map<String, dynamic> updateMap = {};
+    if (_iidToItemMap.containsKey(iid)) {
+      final item = _iidToItemMap[iid]!.clone();
+      if (read != null) {
+        item.hasRead = read;
+        if (!local) {
+          if (read) {
+            rssServiceHandler.markRead(item);
+          } else {
+            rssServiceHandler.markUnread(item);
+          }
+        }
+        updateUnreadCount(item.feedFid, read ? -1 : 1);
+      }
+      if (starred != null) {
+        item.starred = starred;
+        if (!local) {
+          if (starred) {
+            rssServiceHandler.star(item);
+          } else {
+            rssServiceHandler.unstar(item);
+          }
+        }
+      }
+      _iidToItemMap[iid] = item;
+    }
+    if (read != null) updateMap["hasRead"] = read ? 1 : 0;
+    if (starred != null) updateMap["starred"] = starred ? 1 : 0;
+    if (batch != null) {
+      batch.update(CreateTableSql.rssItems.tableName, updateMap,
+          where: "iid = ?", whereArgs: [iid]);
+    } else {
+      await ProviderManager.db.update(
+          CreateTableSql.rssItems.tableName, updateMap,
+          where: "iid = ?", whereArgs: [iid]);
+    }
+  }
+
+  Future<void> syncItems() async {
+    final tuple = await rssServiceHandler.syncItems();
+    final unreadIds = tuple.item1;
+    final starredIds = tuple.item2;
+    final rows = await ProviderManager.db.query(
+      CreateTableSql.rssItems.tableName,
+      columns: ["iid", "hasRead", "starred"],
+      where: "hasRead = 0 OR starred = 1",
+    );
+    final batch = ProviderManager.db.batch();
+    for (var row in rows) {
+      final id = row["iid"];
+      if (row["hasRead"] == 0 && !unreadIds.remove(id)) {
+        await updateItem(id as String, read: true, batch: batch, local: true);
+      }
+      if (row["starred"] == 1 && !starredIds.remove(id)) {
+        await updateItem(id as String,
+            starred: false, batch: batch, local: true);
+      }
+    }
+    for (var unread in unreadIds) {
+      await updateItem(unread, read: false, batch: batch, local: true);
+    }
+    for (var starred in starredIds) {
+      await updateItem(starred, starred: true, batch: batch, local: true);
+    }
+
+    await batch.commit(noResult: true);
+    updateAllUnreadCount();
+  }
+
+  Future<void> fetchItems() async {
+    final items = await rssServiceHandler.fetchItems();
+    List<RssItem> batchedItems = [];
+    for (var item in items) {
+      if (!containsFeed(item.feedFid)) continue;
+      _iidToItemMap[item.iid] = item;
+      batchedItems.add(item);
+    }
+    RssItemDao.insertAll(batchedItems);
+    mergeFetchedItems(items);
+    // ProviderManager.feedContentProvider.mergeFetchedItems(items);
   }
 
   ///
@@ -140,142 +348,6 @@ class RssHandler {
   }
 
   ///
-  /// 添加订阅源
-  ///
-  /// [feed] 待添加订阅源
-  ///
-  /// [force] 是否强制添加
-  ///
-  Future<void> insertFeed(Feed feed, {force = false}) async {
-    if (_deletedSidToFeedMap.containsKey(feed.fid) && !force) return;
-    _fidToFeedMap[feed.fid] = feed;
-    await FeedDao.insert(feed);
-  }
-
-  ///
-  /// 添加一系列订阅源
-  ///
-  /// [feeds] 待添加订阅源列表
-  ///
-  /// [force] 是否强制添加
-  ///
-  Future<void> insertFeeds(Iterable<Feed> feeds, {force = false}) async {
-    List<Feed> batchedFeeds = [];
-    for (var feed in feeds) {
-      if (_deletedSidToFeedMap.containsKey(feed.fid) && !force) continue;
-      _fidToFeedMap[feed.fid] = feed;
-      feed.serviceId = rssService.id!;
-      batchedFeeds.add(feed);
-    }
-    await FeedDao.insertAll(batchedFeeds);
-  }
-
-  Future<void> syncFeeds() async {
-    final feedsAndGroupsTuple = await rssServiceHandler.fetchFeedsAndGroups();
-    final feeds = feedsAndGroupsTuple.item1;
-    var oldSids = Set<String>.from(_fidToFeedMap.keys);
-    List<Feed> newFeeds = [];
-    for (var feed in feeds) {
-      if (oldSids.contains(feed.fid)) {
-        oldSids.remove(feed.fid);
-      } else {
-        newFeeds.add(feed);
-      }
-    }
-    await insertFeeds(newFeeds, force: true);
-    await deleteFeeds(oldSids);
-    // ProviderManager.groupsProvider.groups = feedsAndGroupsTuple.item2;
-    fetchFeedFavicons();
-  }
-
-  ///
-  /// 删除订阅源
-  ///
-  /// [fids] 待删除订阅源的FID列表
-  ///
-  Future<void> deleteFeeds(Iterable<String> fids) async {
-    List<String> batchedFids = [];
-    for (var fid in fids) {
-      if (!_fidToFeedMap.containsKey(fid)) continue;
-      batchedFids.add(fid);
-      _deletedSidToFeedMap[fid] = _fidToFeedMap[fid]!;
-      _fidToFeedMap.remove(fid);
-    }
-    await FeedDao.deleteAll(batchedFids);
-    // ProviderManager.feedContentProvider.initAll();
-  }
-
-  ///
-  /// 获取图标
-  ///
-  Future<void> fetchFeedFavicons() async {
-    for (var fid in _fidToFeedMap.keys) {
-      if (_fidToFeedMap[fid]?.iconUrl == null) {
-        Utils.fetchFeedFavicon(_fidToFeedMap[fid]!.url).then((url) {
-          if (!_fidToFeedMap.containsKey(fid)) return;
-          var feed = _fidToFeedMap[fid]!.clone();
-          feed.iconUrl = url;
-          insertFeed(feed);
-        });
-      }
-    }
-  }
-
-  void mappingItems(Iterable<RssItem> items) {
-    for (var item in items) {
-      _idToItemMap[item.iid] = item;
-    }
-  }
-
-  ///
-  /// 更新某个文章条目
-  ///
-  Future<void> updateItem(
-    String iid, {
-    Batch? batch,
-    bool? read,
-    bool? starred,
-    local = false,
-  }) async {
-    Map<String, dynamic> updateMap = {};
-    if (_idToItemMap.containsKey(iid)) {
-      final item = _idToItemMap[iid]!.clone();
-      if (read != null) {
-        item.hasRead = read;
-        if (!local) {
-          if (read) {
-            rssServiceHandler.markRead(item);
-          } else {
-            rssServiceHandler.markUnread(item);
-          }
-        }
-        updateUnreadCount(item.feedFid, read ? -1 : 1);
-      }
-      if (starred != null) {
-        item.starred = starred;
-        if (!local) {
-          if (starred) {
-            rssServiceHandler.star(item);
-          } else {
-            rssServiceHandler.unstar(item);
-          }
-        }
-      }
-      _idToItemMap[iid] = item;
-    }
-    if (read != null) updateMap["hasRead"] = read ? 1 : 0;
-    if (starred != null) updateMap["starred"] = starred ? 1 : 0;
-    if (batch != null) {
-      batch.update(CreateTableSql.rssItems.tableName, updateMap,
-          where: "iid = ?", whereArgs: [iid]);
-    } else {
-      await ProviderManager.db.update(
-          CreateTableSql.rssItems.tableName, updateMap,
-          where: "iid = ?", whereArgs: [iid]);
-    }
-  }
-
-  ///
   /// 全部标为已读
   ///
   Future<void> markAllRead(
@@ -297,58 +369,13 @@ class RssHandler {
       where: predicates.join(" AND "),
       whereArgs: sids.toList(),
     );
-    for (var item in _idToItemMap.values.toList()) {
+    for (var item in _iidToItemMap.values.toList()) {
       if (sids.isNotEmpty && !sids.contains(item.feedFid)) continue;
       if ((before
           ? item.date.compareTo(date) > 0
           : item.date.compareTo(date) < 0)) continue;
       item.hasRead = true;
     }
-    updateAllUnreadCount();
-  }
-
-  Future<void> fetchItems() async {
-    final items = await rssServiceHandler.fetchItems();
-    List<RssItem> batchedItems = [];
-    for (var item in items) {
-      if (!containsFeed(item.feedFid)) continue;
-      _idToItemMap[item.iid] = item;
-      batchedItems.add(item);
-    }
-    RssItemDao.insertAll(batchedItems);
-
-    mergeFetchedItems(items);
-    // ProviderManager.feedContentProvider.mergeFetchedItems(items);
-  }
-
-  Future<void> syncItems() async {
-    final tuple = await rssServiceHandler.syncItems();
-    final unreadIds = tuple.item1;
-    final starredIds = tuple.item2;
-    final rows = await ProviderManager.db.query(
-      CreateTableSql.rssItems.tableName,
-      columns: ["iid", "hasRead", "starred"],
-      where: "hasRead = 0 OR starred = 1",
-    );
-    final batch = ProviderManager.db.batch();
-    for (var row in rows) {
-      final id = row["iid"];
-      if (row["hasRead"] == 0 && !unreadIds.remove(id)) {
-        await updateItem(id as String, read: true, batch: batch, local: true);
-      }
-      if (row["starred"] == 1 && !starredIds.remove(id)) {
-        await updateItem(id as String,
-            starred: false, batch: batch, local: true);
-      }
-    }
-    for (var unread in unreadIds) {
-      await updateItem(unread, read: false, batch: batch, local: true);
-    }
-    for (var starred in starredIds) {
-      await updateItem(starred, starred: true, batch: batch, local: true);
-    }
-
-    await batch.commit(noResult: true);
     updateAllUnreadCount();
   }
 }

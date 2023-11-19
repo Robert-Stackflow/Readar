@@ -9,23 +9,39 @@ import 'create_table_sql.dart';
 class RssItemDao {
   static final String tableName = CreateTableSql.rssItems.tableName;
 
-  static Future<void> insert(RssItem item) async {
-    await ProviderManager.db.insert(tableName, item.toJson(),
+  static Future<int> insert(RssItem item) async {
+    return await ProviderManager.db.insert(tableName, item.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<void> insertAll(List<RssItem> items) async {
+  static Future<List<Object?>> insertAll(List<RssItem> items) async {
     Batch batch = ProviderManager.db.batch();
     for (RssItem item in items) {
       batch.insert(tableName, item.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
-    await batch.commit(noResult: true);
+    return await batch.commit();
+  }
+
+  static Future<List<RssItem>> query(
+      {required int? loadLimit,
+      required String where,
+      int offset = 0,
+      required List whereArgs}) async {
+    List<Map<String, Object?>> result = await ProviderManager.db.query(
+      tableName,
+      orderBy: "date DESC",
+      limit: loadLimit,
+      offset: offset,
+      where: where,
+      whereArgs: whereArgs,
+    );
+    return result.map((e) => RssItem.fromJson(e)).toList();
   }
 
   static Future<void> delete(RssItem item) async {
-    await ProviderManager.db
-        .delete(tableName, where: 'id = ?', whereArgs: [item.id]);
+    await ProviderManager.db.delete(tableName,
+        where: 'feedId = ? and url = ?', whereArgs: [item.feedId, item.url]);
   }
 
   static Future<void> update(RssItem item) async {

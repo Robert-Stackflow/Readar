@@ -43,7 +43,6 @@ enum CreateTableSql {
     "rssItems",
     '''
       CREATE TABLE rssItems (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
         iid TEXT NOT NULL,
         feedId INTEGER NOT NULL,
         feedFid TEXT NOT NULL,
@@ -58,7 +57,8 @@ enum CreateTableSql {
         starred INTEGER NOT NULL,
         readTime INTEGER,
         starTime INTEGER,
-        params TEXT
+        params TEXT,
+        PRIMARY KEY(feedId,url)
       );
     ''',
   );

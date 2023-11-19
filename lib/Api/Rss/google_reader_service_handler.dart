@@ -250,7 +250,7 @@ class GoogleReaderRssServiceHandler extends RssServiceHandler {
       if (refs.isNotEmpty) _editTag(refs.join("&i="), _tagHasRead);
     } else {
       if (sids.isEmpty) {
-        sids = Set.from(ProviderManager.rssProvider.currentRssHandler
+        sids = Set.from(ProviderManager.rssProvider.currentRssServiceManager
             .getFeeds()
             .map((s) => s.fid));
       }

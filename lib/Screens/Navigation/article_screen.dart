@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:cloudreader/Database/feed_dao.dart';
+import 'package:cloudreader/Models/rss_item_list.dart';
 import 'package:cloudreader/Models/rss_service.dart';
 import 'package:cloudreader/Providers/rss_provider.dart';
 import 'package:cloudreader/Resources/gaps.dart';
+import 'package:cloudreader/Utils/iprint.dart';
 import 'package:cloudreader/Widgets/Item/item_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../Models/feed.dart';
-import '../../Models/rss_item.dart';
-import '../../Models/rss_item_list.dart';
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
 import '../../Widgets/Dropdown/dropdown_menu.dart';
@@ -49,6 +48,7 @@ class _ArticleScreenState extends State<ArticleScreen>
   final DropdownMenuController _dropdownMenuController =
       DropdownMenuController();
   late final AnimationController _dropdownAnimationController;
+  late RssService? _currentRssService;
   List<Feed> _currentFeedList = [];
 
   @override
@@ -84,6 +84,17 @@ class _ArticleScreenState extends State<ArticleScreen>
         _dropdownMenuController.hide();
       }
     });
+    refreshCurrentRssService(
+        ProviderManager.rssProvider.currentRssServiceManager.rssService);
+  }
+
+  void refreshCurrentRssService(RssService? value) {
+    setState(() {
+      _currentRssService = value;
+      _currentFeedList = ProviderManager.rssProvider
+          .getRssServiceManager(_currentRssService)
+          .getFeeds();
+    });
   }
 
   @override
@@ -92,19 +103,13 @@ class _ArticleScreenState extends State<ArticleScreen>
     super.dispose();
   }
 
-  RssItemList getFeed() {
-    return ModalRoute.of(context)?.settings.arguments != null
-        ? ProviderManager.rssProvider.source
-        : ProviderManager.rssProvider.all;
-  }
-
   void _onRefresh() async {
     await Future.delayed(const Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async {
-    var feed = getFeed();
+    var feed = ProviderManager.rssProvider.currentRssItemList;
     if (feed.loading) {
       return;
     } else if (feed.allLoaded) {
@@ -112,7 +117,10 @@ class _ArticleScreenState extends State<ArticleScreen>
     } else if ((_lastLoadedMoreTime == null ||
         DateTime.now().difference(_lastLoadedMoreTime!).inSeconds > 1)) {
       _lastLoadedMoreTime = DateTime.now();
-      feed.loadMore().then((value) => _refreshController.loadComplete());
+      feed.loadMore().then((value) {
+        IPrint.debug("加载完毕");
+        _refreshController.loadComplete();
+      });
     }
   }
 
@@ -125,24 +133,6 @@ class _ArticleScreenState extends State<ArticleScreen>
         duration: const Duration(milliseconds: 300),
       );
     }
-  }
-
-  bool _onScroll(ScrollNotification scrollInfo) {
-    var feed = getFeed();
-    if (!ModalRoute.of(context)!.isCurrent ||
-        !feed.initialized ||
-        feed.loading ||
-        feed.allLoaded) {
-      return true;
-    }
-    if (scrollInfo.metrics.extentAfter == 0.0 &&
-        scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.8 &&
-        (_lastLoadedMoreTime == null ||
-            DateTime.now().difference(_lastLoadedMoreTime!).inSeconds > 1)) {
-      _lastLoadedMoreTime = DateTime.now();
-      feed.loadMore();
-    }
-    return false;
   }
 
   @override
@@ -184,7 +174,7 @@ class _ArticleScreenState extends State<ArticleScreen>
               controller: _refreshController,
               onRefresh: _onRefresh,
               onLoading: _onLoading,
-              child: _buildList(),
+              child: _buildRssItemList(),
             ),
             DropDownMenu(
               controller: _dropdownMenuController,
@@ -229,29 +219,24 @@ class _ArticleScreenState extends State<ArticleScreen>
     );
   }
 
-  Widget _buildFeedServiceList(List<RssService> feedServices) {
+  Widget _buildFeedServiceList(List<RssService> rssServices) {
     return SizedBox(
       width: 100,
       child: ListView.builder(
-        itemCount: feedServices.length,
+        itemCount: rssServices.length,
         itemBuilder: (content, index) {
           return Material(
             child: Ink(
               decoration: BoxDecoration(color: Theme.of(context).canvasColor),
               child: InkWell(
                 onTap: () {
-                  FeedDao.queryByServiceId(feedServices[index].id!)
-                      .then((value) => {
-                            setState(() {
-                              _currentFeedList = value;
-                            })
-                          });
+                  refreshCurrentRssService(rssServices[index]);
                 },
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: Text(
-                    feedServices[index].name,
+                    rssServices[index].name,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
@@ -272,7 +257,12 @@ class _ArticleScreenState extends State<ArticleScreen>
             child: Ink(
               decoration: BoxDecoration(color: Theme.of(context).canvasColor),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  ProviderManager.rssProvider
+                      .loadRssItemListByFid(_currentFeedList[index].fid);
+                  _dropdownMenuController.hide();
+                  _onScrollTop();
+                },
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -289,22 +279,22 @@ class _ArticleScreenState extends State<ArticleScreen>
     );
   }
 
-  Widget _buildList() {
-    var feed = getFeed();
-    return ListView.builder(
-      itemCount: feed.iids.length,
-      itemBuilder: (content, index) {
-        return Selector<RssProvider, Tuple2<RssItem, Feed>>(
-          selector: (context, rssProvider) {
-            var item = rssProvider.currentRssHandler.getItem(feed.iids[index]);
-            return Tuple2(
-                item, rssProvider.currentRssHandler.getFeed(item.feedFid));
-          },
-          builder: (context, tuple, child) => ArticleItem(
-              tuple.item1, tuple.item2, (_) {},
-              topMargin: index == 0),
-        );
-      },
+  Widget _buildRssItemList() {
+    return Selector<RssProvider, RssItemList>(
+      selector: (context, rssProvider) => rssProvider.currentRssItemList,
+      builder: (context, currentRssItemList, child) => ListView.builder(
+        itemCount: currentRssItemList.iids.length,
+        itemBuilder: (content, index) {
+          var item = ProviderManager.rssProvider.currentRssServiceManager
+              .getItem(currentRssItemList.iids[index]);
+          var tuple = Tuple2(
+              item,
+              ProviderManager.rssProvider.currentRssServiceManager
+                  .getFeed(item.feedFid));
+          return ArticleItem(tuple.item1, tuple.item2, (_) {},
+              topMargin: index == 0);
+        },
+      ),
     );
   }
 
@@ -404,4 +394,22 @@ class _ArticleScreenState extends State<ArticleScreen>
 
   @override
   bool get wantKeepAlive => true;
+
+  bool _onScroll(ScrollNotification scrollInfo) {
+    var feed = ProviderManager.rssProvider.currentRssItemList;
+    if (!ModalRoute.of(context)!.isCurrent ||
+        !feed.initialized ||
+        feed.loading ||
+        feed.allLoaded) {
+      return true;
+    }
+    if (scrollInfo.metrics.extentAfter == 0.0 &&
+        scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.8 &&
+        (_lastLoadedMoreTime == null ||
+            DateTime.now().difference(_lastLoadedMoreTime!).inSeconds > 1)) {
+      _lastLoadedMoreTime = DateTime.now();
+      feed.loadMore();
+    }
+    return false;
+  }
 }

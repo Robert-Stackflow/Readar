@@ -36,7 +36,7 @@ class ArticleItemState extends State<ArticleItem> {
       return route.isFirst;
     });
     if (!widget.item.hasRead) {
-      ProviderManager.rssProvider.currentRssHandler
+      ProviderManager.rssProvider.currentRssServiceManager
           .updateItem(widget.item.iid, read: true);
     }
     if (widget.feed.feedSetting?.crawlType == CrawlType.external) {
@@ -108,12 +108,12 @@ class ArticleItemState extends State<ArticleItem> {
     switch (option) {
       case ItemSwipeOption.toggleRead:
         await Future.delayed(const Duration(milliseconds: 200));
-        ProviderManager.rssProvider.currentRssHandler
+        ProviderManager.rssProvider.currentRssServiceManager
             .updateItem(widget.item.iid, read: !widget.item.hasRead);
         break;
       case ItemSwipeOption.toggleStar:
         await Future.delayed(const Duration(milliseconds: 200));
-        ProviderManager.rssProvider.currentRssHandler
+        ProviderManager.rssProvider.currentRssServiceManager
             .updateItem(widget.item.iid, starred: !widget.item.starred);
         break;
       case ItemSwipeOption.share:
@@ -123,7 +123,7 @@ class ArticleItemState extends State<ArticleItem> {
         break;
       case ItemSwipeOption.openExternal:
         if (!widget.item.hasRead) {
-          ProviderManager.rssProvider.currentRssHandler
+          ProviderManager.rssProvider.currentRssServiceManager
               .updateItem(widget.item.iid, read: true);
         }
         UriUtil.launchUrlUri(widget.item.url);
@@ -151,14 +151,14 @@ class ArticleItemState extends State<ArticleItem> {
       fontSize: 12,
       color: CupertinoColors.secondaryLabel.resolveFrom(context),
     );
-    final _titleStyle = TextStyle(
+    final titleStyle = TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,
-      color: ProviderManager.rssProvider.dimRead && widget.item.hasRead
+      color: widget.item.hasRead
           ? CupertinoColors.secondaryLabel.resolveFrom(context)
           : CupertinoColors.label.resolveFrom(context),
     );
-    final _snippetStyle = TextStyle(
+    final snippetStyle = TextStyle(
       fontSize: 16,
       color: CupertinoColors.secondaryLabel.resolveFrom(context),
     );
@@ -174,8 +174,7 @@ class ArticleItemState extends State<ArticleItem> {
             overflow: TextOverflow.ellipsis,
           )),
           Row(children: [
-            if (!ProviderManager.rssProvider.dimRead && !widget.item.hasRead)
-              _unreadIndicator,
+            if (!widget.item.hasRead) _unreadIndicator,
             if (widget.item.starred) _starredIndicator,
             TimeText(widget.item.date, style: _descStyle),
           ]),
@@ -188,13 +187,12 @@ class ArticleItemState extends State<ArticleItem> {
       children: [
         Text(
           widget.item.title,
-          style: _titleStyle,
+          style: titleStyle,
         ),
-        if (ProviderManager.rssProvider.showSnippet &&
-            widget.item.snippet.isNotEmpty)
+        if (widget.item.snippet.isNotEmpty)
           Text(
             widget.item.snippet,
-            style: _snippetStyle,
+            style: snippetStyle,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
@@ -247,8 +245,7 @@ class ArticleItemState extends State<ArticleItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             itemTexts,
-                            if (ProviderManager.rssProvider.showThumb &&
-                                widget.item.thumb != null)
+                            if (widget.item.thumb != null)
                               Padding(
                                 padding: const EdgeInsets.only(left: 4),
                                 child: ClipRRect(

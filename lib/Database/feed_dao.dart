@@ -7,18 +7,18 @@ import '../../Providers/provider_manager.dart';
 class FeedDao {
   static final String tableName = CreateTableSql.feed.tableName;
 
-  static Future<void> insert(Feed feed) async {
-    await ProviderManager.db.insert(tableName, feed.toJson(),
+  static Future<int> insert(Feed feed) async {
+    return await ProviderManager.db.insert(tableName, feed.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<void> insertAll(List<Feed> feeds) async {
+  static Future<List<Object?>> insertAll(List<Feed> feeds) async {
     Batch batch = ProviderManager.db.batch();
     for (Feed feed in feeds) {
       batch.insert(tableName, feed.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
-    await batch.commit(noResult: true);
+    return await batch.commit();
   }
 
   static Future<void> delete(Feed feed) async {

@@ -43,8 +43,11 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
   late bool isSourceFeed;
 
   void loadNewItem(String id, {bool? isSource}) {
-    if (!ProviderManager.rssProvider.currentRssHandler.getItem(id).hasRead) {
-      ProviderManager.rssProvider.currentRssHandler.updateItem(id, read: true);
+    if (!ProviderManager.rssProvider.currentRssServiceManager
+        .getItem(id)
+        .hasRead) {
+      ProviderManager.rssProvider.currentRssServiceManager
+          .updateItem(id, read: true);
     }
     setState(() {
       iid = id;
@@ -177,8 +180,8 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
     };
     return Selector<RssProvider, Tuple2<RssItem, Feed>>(
       selector: (context, rssProvider) {
-        var item = rssProvider.currentRssHandler.getItem(iid);
-        var source = rssProvider.currentRssHandler.getFeed(item.feedFid);
+        var item = rssProvider.currentRssServiceManager.getItem(iid);
+        var source = rssProvider.currentRssServiceManager.getFeed(item.feedFid);
         return Tuple2(item, source);
       },
       builder: (context, tuple, child) {
@@ -238,8 +241,8 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
             child: body,
             builder: (context, feedContentProvider, child) {
               final feed = isSourceFeed
-                  ? feedContentProvider.source
-                  : feedContentProvider.all;
+                  ? feedContentProvider.currentRssItemList
+                  : feedContentProvider.currentRssItemList;
               var idx = feed.iids.indexOf(iid);
               return CupertinoToolbar(
                 items: [
@@ -250,7 +253,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     semanticLabel: item.hasRead ? "标为未读" : "标为已读",
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      ProviderManager.rssProvider.currentRssHandler
+                      ProviderManager.rssProvider.currentRssServiceManager
                           .updateItem(item.iid, read: !item.hasRead);
                     },
                   ),
@@ -261,7 +264,7 @@ class ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     semanticLabel: item.starred ? S.of(context).star : "取消星标",
                     onPressed: () {
                       HapticFeedback.mediumImpact();
-                      ProviderManager.rssProvider.currentRssHandler
+                      ProviderManager.rssProvider.currentRssServiceManager
                           .updateItem(item.iid, starred: !item.starred);
                     },
                   ),

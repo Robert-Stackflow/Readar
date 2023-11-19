@@ -4,7 +4,6 @@ import 'dart:convert';
 /// RSS文章条目
 ///
 class RssItem {
-  int? id;
   String iid;
   int feedId;
   String feedFid;
@@ -22,7 +21,6 @@ class RssItem {
   Map<String, Object?>? params;
 
   RssItem({
-    this.id,
     required this.iid,
     required this.feedId,
     required this.feedFid,
@@ -41,7 +39,6 @@ class RssItem {
   });
 
   RssItem._privateConstructor(
-    this.id,
     this.iid,
     this.feedId,
     this.feedFid,
@@ -61,7 +58,6 @@ class RssItem {
 
   RssItem clone() {
     return RssItem._privateConstructor(
-      id,
       iid,
       feedId,
       feedFid,
@@ -81,7 +77,6 @@ class RssItem {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': id,
         'iid': iid,
         'feedId': feedId,
         'feedFid': feedFid,
@@ -100,7 +95,6 @@ class RssItem {
       };
 
   factory RssItem.fromJson(Map<String, dynamic> map) => RssItem(
-        id: map['id'] as int,
         iid: map['iid'] as String,
         feedId: map['feedId'] as int,
         feedFid: map['feedFid'] as String,

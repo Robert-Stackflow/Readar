@@ -7,8 +7,8 @@ import '../Models/rss_item.dart';
 enum SyncService { none, fever, feedbin, googleReader, inoreader }
 
 ///
-/// Service-related interface parent class.
-/// Define operation interfaces such as account authentication, obtaining feeds, obtaining articles, synchronizing articles, stars, and marking as read.
+/// RSS服务处理接口
+/// 定义登录认证、发送请求、获取订阅源、获取文章、更新文章状态等接口
 ///
 abstract class RssServiceHandler {
   ///

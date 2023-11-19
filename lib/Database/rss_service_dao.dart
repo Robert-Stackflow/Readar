@@ -1,4 +1,5 @@
 import 'package:cloudreader/Database/create_table_sql.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../Models/rss_service.dart';
 import '../../Providers/provider_manager.dart';
@@ -6,8 +7,18 @@ import '../../Providers/provider_manager.dart';
 class RssServiceDao {
   static final String tableName = CreateTableSql.rssService.tableName;
 
-  static Future<void> insert(RssService rssService) async {
-    await ProviderManager.db.insert(tableName, rssService.toJson());
+  static Future<int> insert(RssService rssService) async {
+    return await ProviderManager.db.insert(tableName, rssService.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static Future<List<Object?>> insertAll(List<RssService> rssServices) async {
+    Batch batch = ProviderManager.db.batch();
+    for (RssService item in rssServices) {
+      batch.insert(tableName, item.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    return await batch.commit();
   }
 
   static Future<void> deleteAll() async {

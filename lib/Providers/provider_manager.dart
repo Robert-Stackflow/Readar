@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloudreader/Database/database_manager.dart';
-import 'package:cloudreader/Handler/rss_handler.dart';
 import 'package:cloudreader/Providers/rss_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -11,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../Database/rss_service_dao.dart';
+import '../Handler/rss_service_manager.dart';
 import '../Models/rss_service.dart';
 import '../Utils/hive_util.dart';
 import '../Utils/store.dart';
@@ -48,16 +48,14 @@ abstract class ProviderManager {
     await insertData();
     await RssServiceDao.queryAll().then((value) async {
       rssProvider.rssServices = value;
-      List<RssHandler> tmpHandlers = [];
+      List<RssServiceManager> tmpHandlers = [];
       for (var rssService in value) {
-        var rssHandler = RssHandler(rssService);
+        var rssHandler = RssServiceManager(rssService);
         rssHandler.init();
         tmpHandlers.add(rssHandler);
       }
-      rssProvider.rssHandlers = tmpHandlers;
-      rssProvider.currentRssHandler = rssProvider.rssHandlers[0];
-      rssProvider.currentFeedService = rssProvider.rssServices[0];
-      await rssProvider.all.init();
+      rssProvider.rssServiceManagers = tmpHandlers;
+      rssProvider.currentRssServiceManager = rssProvider.rssServiceManagers[0];
     });
     server =
         Jaguar(address: ProviderManager.address, port: ProviderManager.port);
@@ -67,18 +65,39 @@ abstract class ProviderManager {
 
   static Future<void> insertData() async {
     await RssServiceDao.queryAll().then((value) async {
-      if (value.length <= 3) {
-        RssService feedService = RssService(
+      List<RssService> rssServices = [
+        RssService(
           "https://theoldreader.com",
           "Old Reader",
           RssServiceType.theOldReader,
+          id: 1,
           username: "yutuan.victory@gmail.com",
           password: "6Jv#f9g@cXNPs9z",
           fetchLimit: 500,
           params: {"useInt64": false},
-        );
-        await RssServiceDao.insert(feedService);
-      }
+        ),
+        // RssService(
+        //   "https://theoldreader.com",
+        //   "Old Reader",
+        //   RssServiceType.theOldReader,
+        //   id: 2,
+        //   username: "yutuan.victory@gmail.com",
+        //   password: "6Jv#f9g@cXNPs9z",
+        //   fetchLimit: 500,
+        //   params: {"useInt64": false},
+        // ),
+        // RssService(
+        //   "https://theoldreader.com",
+        //   "Old Reader",
+        //   RssServiceType.theOldReader,
+        //   id: 3,
+        //   username: "yutuan.victory@gmail.com",
+        //   password: "6Jv#f9g@cXNPs9z",
+        //   fetchLimit: 500,
+        //   params: {"useInt64": false},
+        // ),
+      ];
+      await RssServiceDao.insertAll(rssServices);
     });
   }
 

@@ -1,11 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
-import '../Handler/rss_handler.dart';
-import '../Models/feed.dart';
-import '../Models/rss_item.dart';
+import '../Handler/rss_service_manager.dart';
 import '../Models/rss_item_list.dart';
 import '../Models/rss_service.dart';
-import '../Utils/utils.dart';
 
 enum ItemSwipeOption {
   toggleRead,
@@ -15,68 +12,27 @@ enum ItemSwipeOption {
   openExternal,
 }
 
+///
+/// Rss状态管理
+///
 class RssProvider extends ChangeNotifier {
-  late List<RssHandler> rssHandlers;
+  /// 所有RSS服务对象
   late List<RssService> rssServices;
-  late RssHandler currentRssHandler;
 
-  RssService? _currentFeedService;
+  /// 所有RSS服务管理对象
+  late List<RssServiceManager> rssServiceManagers;
 
-  RssService? get currentFeedService => _currentFeedService;
+  /// 当前RSS服务管理对象
+  late RssServiceManager currentRssServiceManager;
 
-  set currentFeedService(RssService? value) {
-    if (value != _currentFeedService) {
-      _currentFeedService = value;
-      notifyListeners();
-    }
-  }
-
-  Feed? _currentFeed;
-
-  Feed? get currentFeed => _currentFeed;
-
-  set currentFeed(Feed? value) {
-    if (value != _currentFeed) {
-      _currentFeed = value;
-      notifyListeners();
-    }
-  }
-
-  RssItemList all = RssItemList(sids: {});
-  RssItemList source = RssItemList(sids: {});
+  /// 当前RSS文章列表
+  RssItemList currentRssItemList = RssItemList(fids: {});
 
   set rssService(List<RssService> value) {
     if (value != rssServices) {
       rssServices = value;
       notifyListeners();
     }
-  }
-
-  bool _showThumb = true;
-
-  bool get showThumb => _showThumb;
-
-  set showThumb(bool value) {
-    _showThumb = value;
-    notifyListeners();
-  }
-
-  bool _showSnippet = true;
-
-  bool get showSnippet => _showSnippet;
-
-  set showSnippet(bool value) {
-    _showSnippet = value;
-    notifyListeners();
-  }
-
-  bool _dimRead = false;
-
-  bool get dimRead => _dimRead;
-
-  set dimRead(bool value) {
-    _dimRead = value;
-    notifyListeners();
   }
 
   ItemSwipeOption _swipeR = ItemSwipeOption.values[0];
@@ -97,41 +53,58 @@ class RssProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void broadcast() {
+  ///
+  /// 加载指定订阅源的文章
+  ///
+  Future<void> loadRssItemListByFid(String fid) async {
+    Set<String> sidSet = {fid};
+    currentRssItemList = RssItemList(fids: sidSet);
+    await currentRssItemList.init();
     notifyListeners();
   }
 
-  Future<void> initSourcesFeed(Iterable<String> sids) async {
-    Set<String> sidSet = Set.from(sids);
-    source = RssItemList(sids: sidSet);
-    await source.init();
+  ///
+  /// 加载指定订阅源列表的文章
+  ///
+  Future<void> loadRssItemListByFids(Iterable<String> fids) async {
+    Set<String> sidSet = Set.from(fids);
+    currentRssItemList = RssItemList(fids: sidSet);
+    await currentRssItemList.init();
+    notifyListeners();
   }
 
-  void mergeFetchedItems(Iterable<RssItem> items) {
-    for (var feed in [all, source]) {
-      var lastDate = feed.iids.isNotEmpty
-          ? currentRssHandler.getItem(feed.iids.last).date
-          : null;
-      for (var item in items) {
-        if (!feed.testItem(item)) continue;
-        if (lastDate != null && item.date.isBefore(lastDate)) continue;
-        var idx = Utils.binarySearch(feed.iids, item.iid, (a, b) {
-          return currentRssHandler
-              .getItem(b)
-              .date
-              .compareTo(currentRssHandler.getItem(a).date);
-        });
-        feed.iids.insert(idx, item.iid);
+  ///
+  /// 根据Rss服务获取服务管理对象
+  ///
+  RssServiceManager getRssServiceManager(RssService? rssService) {
+    if (rssService == null) return currentRssServiceManager;
+    for (var manager in rssServiceManagers) {
+      if (manager.rssService == rssService) {
+        return manager;
       }
     }
-    notifyListeners();
+    return currentRssServiceManager;
   }
 
-  void initAll() {
-    for (var feed in [all, source]) {
-      feed.init();
-    }
-  }
+  // void mergeFetchedItems(Iterable<RssItem> items) {
+  //   for (var rssItemList in [currentRssItemList]) {
+  //     var lastDate = rssItemList.iids.isNotEmpty
+  //         ? currentRssServiceManager.getItem(rssItemList.iids.last).date
+  //         : null;
+  //     for (var item in items) {
+  //       if (!rssItemList.testItem(item)) continue;
+  //       if (lastDate != null && item.date.isBefore(lastDate)) continue;
+  //       var idx = Utils.binarySearch(rssItemList.iids, item.iid, (a, b) {
+  //         return currentRssServiceManager
+  //             .getItem(b)
+  //             .date
+  //             .compareTo(currentRssServiceManager.getItem(a).date);
+  //       });
+  //       rssItemList.iids.insert(idx, item.iid);
+  //     }
+  //   }
+  //   notifyListeners();
+  // }
 
   ///
   ///
@@ -156,7 +129,7 @@ class RssProvider extends ChangeNotifier {
   void updateUncategorized({force = false}) {
     if (uncategorized != null || force) {
       final sids = Set<String>.from(
-          currentRssHandler.getFeeds().map<String>((s) => s.fid));
+          currentRssServiceManager.getFeeds().map<String>((s) => s.fid));
       for (var group in _groups.values) {
         for (var sid in group) {
           sids.remove(sid);
