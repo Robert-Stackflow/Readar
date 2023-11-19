@@ -49,7 +49,7 @@ class _BackupServiceSettingScreenState extends State<BackupServiceSettingScreen>
                 ItemBuilder.buildCaptionItem(
                     context: context,
                     title:
-                        "以下服务可用于备份软件配置、订阅源、星标、稍后再读、阅读历史、集锦等内容，其中星标、稍后再读、阅读历史不会备份文章正文"),
+                        "以下服务可用于备份软件配置、订阅源、星标、稍后再读、阅读历史、集锦等内容，其中星标、稍后再读、阅读历史不会备份文章正文；当你设置云盘备份服务后，也可以选择将文章以PDF/EPUB/MOBI格式导出到云盘"),
                 ItemBuilder.buildRadioItem(
                   context: context,
                   value: false,

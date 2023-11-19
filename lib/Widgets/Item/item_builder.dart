@@ -2,59 +2,82 @@ import 'package:cloudreader/Resources/gaps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../Scaffold/my_appbar.dart';
+
 class ItemBuilder {
-  static AppBar buildSimpleAppBar({
+  static MyAppBar buildSimpleAppBar({
     String title = "",
     IconData leading = Icons.arrow_back_rounded,
     List<Widget>? actions,
     required BuildContext context,
   }) {
-    return AppBar(
+    return MyAppBar(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       elevation: 0,
       scrolledUnderElevation: 0,
-      leadingWidth: 30,
       leading: Container(
-        margin: const EdgeInsets.only(left: 5),
-        child: IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
+        margin: const EdgeInsets.only(left: 8),
+        child: buildIconButton(
+          context: context,
           icon: Icon(leading, color: IconTheme.of(context).color),
-          onPressed: () {
+          onTap: () {
             Navigator.pop(context);
           },
         ),
       ),
       title: title.isNotEmpty
-          ? Text(title, style: Theme.of(context).textTheme.titleMedium)
+          ? Container(
+              margin: const EdgeInsets.only(left: 5),
+              child:
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+            )
           : Container(),
       actions: actions,
     );
   }
 
-  static AppBar buildAppBar({
+  static MyAppBar buildAppBar({
     Widget? title,
     IconData leading = Icons.arrow_back_rounded,
     Function()? onLeadingTap,
     List<Widget>? actions,
     required BuildContext context,
   }) {
-    return AppBar(
+    return MyAppBar(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       elevation: 0,
       scrolledUnderElevation: 0,
-      leadingWidth: 30,
       leading: Container(
-        margin: const EdgeInsets.only(left: 5),
-        child: IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
+        margin: const EdgeInsets.only(left: 8),
+        child: buildIconButton(
+          context: context,
           icon: Icon(leading, color: IconTheme.of(context).color),
-          onPressed: onLeadingTap,
+          onTap: onLeadingTap,
         ),
       ),
       title: title,
       actions: actions,
+    );
+  }
+
+  static Widget buildIconButton({
+    required BuildContext context,
+    required Icon icon,
+    required Function()? onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      shape: const CircleBorder(),
+      clipBehavior: Clip.hardEdge,
+      child: Ink(
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            child: icon,
+          ),
+        ),
+      ),
     );
   }
 
@@ -72,76 +95,89 @@ class ItemBuilder {
     Function(bool?)? onChanged,
     required BuildContext context,
   }) {
-    return Ink(
-      decoration: BoxDecoration(
-        color: Theme.of(context).canvasColor,
-        shape: BoxShape.rectangle,
+    return Material(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
           bottom:
               bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
         ),
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.vertical(
+      child: Ink(
+        decoration: BoxDecoration(
+          color: Theme.of(context).canvasColor,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.vertical(
             top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
             bottom: bottomRadius
                 ? Radius.circular(radius)
-                : const Radius.circular(0)),
-        onTap: onTap,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(
-                  vertical: description.isNotEmpty ? 16 : 10, horizontal: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Visibility(
-                    visible: showLeading,
-                    child: Icon(leading,
-                        size: 20, color: IconTheme.of(context).color),
-                  ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        description.isNotEmpty
-                            ? Text(description,
-                                style: Theme.of(context).textTheme.titleSmall)
-                            : Container(),
-                      ],
+                : const Radius.circular(0),
+          ),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.vertical(
+              top: topRadius
+                  ? Radius.circular(radius)
+                  : const Radius.circular(0),
+              bottom: bottomRadius
+                  ? Radius.circular(radius)
+                  : const Radius.circular(0)),
+          onTap: onTap,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: description.isNotEmpty ? 16 : 10, horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Visibility(
+                      visible: showLeading,
+                      child: Icon(leading,
+                          size: 20, color: IconTheme.of(context).color),
                     ),
-                  ),
-                  Transform.scale(
-                    scale: 0.9,
-                    child: CupertinoSwitch(
-                      value: value,
-                      activeColor: Theme.of(context).primaryColor,
-                      onChanged: onChanged,
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          description.isNotEmpty
+                              ? Text(description,
+                                  style: Theme.of(context).textTheme.titleSmall)
+                              : Container(),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Theme.of(context).dividerColor,
-                    width: 0.5,
-                    style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
-                  ),
+                    Transform.scale(
+                      scale: 0.9,
+                      child: CupertinoSwitch(
+                        value: value,
+                        activeColor: Theme.of(context).primaryColor,
+                        onChanged: onChanged,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            )
-          ],
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Theme.of(context).dividerColor,
+                      width: 0.5,
+                      style:
+                          bottomRadius ? BorderStyle.none : BorderStyle.solid,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -162,84 +198,99 @@ class ItemBuilder {
     String description = "",
     Function()? onTap,
     double padding = 18,
+    bool dividerPadding = true,
     IconData trailing = Icons.keyboard_arrow_right_rounded,
   }) {
-    return Ink(
-      decoration: BoxDecoration(
-        color: backgroundColor ?? Theme.of(context).canvasColor,
-        shape: BoxShape.rectangle,
+    return Material(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
           bottom:
               bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
         ),
       ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.vertical(
-          top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
-          bottom:
-              bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
+      child: Ink(
+        decoration: BoxDecoration(
+          color: backgroundColor ?? Theme.of(context).canvasColor,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.vertical(
+            top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
+            bottom: bottomRadius
+                ? Radius.circular(radius)
+                : const Radius.circular(0),
+          ),
         ),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: padding, horizontal: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Visibility(
-                    visible: showLeading,
-                    child: Icon(leading, size: 20),
-                  ),
-                  showLeading
-                      ? const SizedBox(width: 10)
-                      : const SizedBox(width: 5),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: isCaption
-                              ? Theme.of(context).textTheme.titleSmall
-                              : Theme.of(context).textTheme.titleMedium,
-                        ),
-                        description.isNotEmpty
-                            ? Text(description,
-                                style: Theme.of(context).textTheme.titleSmall)
-                            : Container(),
-                      ],
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.vertical(
+            top: topRadius ? Radius.circular(radius) : const Radius.circular(0),
+            bottom: bottomRadius
+                ? Radius.circular(radius)
+                : const Radius.circular(0),
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding:
+                    EdgeInsets.symmetric(vertical: padding, horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Visibility(
+                      visible: showLeading,
+                      child: Icon(leading, size: 20),
                     ),
-                  ),
-                  isCaption ? MyGaps.empty : const SizedBox(width: 50),
-                  Text(
-                    tip,
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  const SizedBox(width: 5),
-                  Visibility(
-                    visible: showTrailing,
-                    child: Icon(trailing,
-                        size: 20,
-                        color: Theme.of(context).textTheme.titleSmall?.color),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: isCaption ? 0 : 10),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Theme.of(context).dividerColor,
-                    width: 0.5,
-                    style: bottomRadius ? BorderStyle.none : BorderStyle.solid,
-                  ),
+                    showLeading
+                        ? const SizedBox(width: 10)
+                        : const SizedBox(width: 5),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: isCaption
+                                ? Theme.of(context).textTheme.titleSmall
+                                : Theme.of(context).textTheme.titleMedium,
+                          ),
+                          description.isNotEmpty
+                              ? Text(description,
+                                  style: Theme.of(context).textTheme.titleSmall)
+                              : Container(),
+                        ],
+                      ),
+                    ),
+                    isCaption ? MyGaps.empty : const SizedBox(width: 50),
+                    Text(
+                      tip,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    const SizedBox(width: 5),
+                    Visibility(
+                      visible: showTrailing,
+                      child: Icon(trailing,
+                          size: 20,
+                          color: Theme.of(context).textTheme.titleSmall?.color),
+                    ),
+                  ],
                 ),
               ),
-            )
-          ],
+              Container(
+                margin:
+                    EdgeInsets.symmetric(horizontal: dividerPadding ? 10 : 0),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Theme.of(context).dividerColor,
+                      width: 0.5,
+                      style:
+                          bottomRadius ? BorderStyle.none : BorderStyle.solid,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -269,6 +320,7 @@ class ItemBuilder {
       trailing: trailing,
       padding: 10,
       isCaption: true,
+      dividerPadding: false,
     );
   }
 

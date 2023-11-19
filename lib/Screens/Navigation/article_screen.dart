@@ -19,6 +19,7 @@ import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
 import '../../Widgets/Dropdown/dropdown_menu.dart';
 import '../../Widgets/Dropdown/dropdown_menu_controller.dart';
 import '../../Widgets/Item/article_item.dart';
+import '../../Widgets/Scaffold/my_appbar.dart';
 
 class ScrollTopNotifier with ChangeNotifier {
   int index = 0;
@@ -308,7 +309,7 @@ class _ArticleScreenState extends State<ArticleScreen>
     }
   }
 
-  AppBar _buildAppBar() {
+  MyAppBar _buildAppBar() {
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()
@@ -367,26 +368,23 @@ class _ArticleScreenState extends State<ArticleScreen>
         ),
       ),
       actions: [
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon:
-              Icon(Icons.done_all_rounded, color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: Icon(Icons.search_rounded, color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: Icon(Icons.filter_list_rounded,
-              color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon: Icon(Icons.done_all_rounded,
+                color: IconTheme.of(context).color),
+            onTap: () {}),
+        const SizedBox(width: 5),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon:
+                Icon(Icons.search_rounded, color: IconTheme.of(context).color),
+            onTap: () {}),
+        const SizedBox(width: 5),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon: Icon(Icons.filter_list_rounded,
+                color: IconTheme.of(context).color),
+            onTap: () {}),
         const SizedBox(width: 5),
       ],
     );

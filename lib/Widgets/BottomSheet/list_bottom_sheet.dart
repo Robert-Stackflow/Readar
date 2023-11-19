@@ -52,22 +52,23 @@ class TileList extends StatelessWidget {
           ),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.titleLarge),
-                GestureDetector(
-                  onTap: onCloseTap,
-                  child: Icon(
-                    Icons.close_rounded,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 23,
-                  ),
-                ),
-              ],
-            ),
+            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   mainAxisSize: MainAxisSize.min,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Text(title, style: Theme.of(context).textTheme.titleLarge),
+            //     GestureDetector(
+            //       onTap: onCloseTap,
+            //       child: Icon(
+            //         Icons.close_rounded,
+            //         color: Theme.of(context).iconTheme.color,
+            //         size: 23,
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ),
         ),
         ...children,

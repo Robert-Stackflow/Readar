@@ -57,7 +57,19 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   title: "选择备份内容",
                   description: "已选择：软件配置、订阅源、星标、稍后再读、阅读历史、集锦",
                   onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "立即备份到云端",
+                  description: "上次备份时间：2023-11-11 20:10:09",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "从云端拉取备份",
+                  description: "上次拉取时间：2023-11-11 20:10:09",
                   bottomRadius: true,
+                  onTap: () {},
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
@@ -89,22 +101,6 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: "手动备份与恢复"),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "立即备份到云端",
-                  description: "上次备份时间：2023-11-11 20:10:09",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "从云端拉取备份",
-                  description: "上次拉取时间：2023-11-11 20:10:09",
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "本地备份"),
                 ItemBuilder.buildEntryItem(
                   context: context,
@@ -114,19 +110,20 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "从zip文件导入备份",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "导出订阅源为OPML文件",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "从OPML文件导入订阅源",
                   bottomRadius: true,
                   onTap: () {},
                 ),
+                // ItemBuilder.buildEntryItem(
+                //   context: context,
+                //   title: "导出订阅源为OPML文件",
+                //   onTap: () {},
+                // ),
+                // ItemBuilder.buildEntryItem(
+                //   context: context,
+                //   title: "从OPML文件导入订阅源",
+                //   bottomRadius: true,
+                //   onTap: () {},
+                // ),
                 const SizedBox(height: 10),
               ],
             ),

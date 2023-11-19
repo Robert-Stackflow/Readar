@@ -36,21 +36,25 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "向左短滑动",
+                  tip: "标记为星标",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "向左长滑动",
+                  tip: "分享文章",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "向右短滑动",
+                  tip: "标记为已读",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "向右长滑动",
+                  tip: "加入稍后读",
                   onTap: () {},
                   bottomRadius: true,
                 ),
@@ -72,14 +76,28 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
                   context: context,
                   title: "触底滑动",
                   description: "仅在视图选项为非上下滑动式时生效",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "音量键",
+                  tip: "切换文章",
                   bottomRadius: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "其他选项"),
-                ItemBuilder.buildEntryItem(
+                ItemBuilder.buildRadioItem(
                   context: context,
-                  title: "默认外部浏览器",
+                  title: "隐藏空的订阅源",
+                  value: false,
+                  onTap: () {},
+                ),
+                ItemBuilder.buildRadioItem(
+                  context: context,
+                  title: "仅在WiFi下加载图片",
+                  description: "图片将以占位符显示，你可以点击以加载",
+                  value: false,
                   onTap: () {},
                 ),
                 ItemBuilder.buildRadioItem(

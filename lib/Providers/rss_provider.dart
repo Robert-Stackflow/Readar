@@ -10,6 +10,8 @@ enum ItemSwipeOption {
   share,
   openMenu,
   openExternal,
+  // toggleReadLater,
+  // toggleTTS
 }
 
 ///

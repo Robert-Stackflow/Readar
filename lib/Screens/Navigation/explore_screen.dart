@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Item/item_builder.dart';
+import '../../Widgets/Scaffold/my_appbar.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -50,7 +51,7 @@ class _ExploreScreenState extends State<ExploreScreen>
     }
   }
 
-  AppBar _buildAppBar() {
+  MyAppBar _buildAppBar() {
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()
@@ -66,19 +67,23 @@ class _ExploreScreenState extends State<ExploreScreen>
         }
       },
       actions: [
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: Icon(Icons.search_rounded, color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: Icon(Icons.filter_list_rounded,
-              color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon: Icon(Icons.done_all_rounded,
+                color: IconTheme.of(context).color),
+            onTap: () {}),
+        const SizedBox(width: 5),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon:
+                Icon(Icons.search_rounded, color: IconTheme.of(context).color),
+            onTap: () {}),
+        const SizedBox(width: 5),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon: Icon(Icons.filter_list_rounded,
+                color: IconTheme.of(context).color),
+            onTap: () {}),
         const SizedBox(width: 5),
       ],
     );

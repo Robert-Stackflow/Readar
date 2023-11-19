@@ -108,39 +108,6 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: "下列插件可将文章保存为PDF/EUPB/MOBI格式"),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: false,
-                  title: "Dropbox",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: false,
-                  title: "Google Drive",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: false,
-                  title: "OneDrive",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: false,
-                  title: "坚果云",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "其他WebDAV服务",
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "建议新的插件",

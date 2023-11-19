@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Item/item_builder.dart';
+import '../../Widgets/Scaffold/my_appbar.dart';
 
 class ReadLaterScreen extends StatefulWidget {
   const ReadLaterScreen({super.key});
@@ -50,7 +51,7 @@ class _ReadLaterScreenState extends State<ReadLaterScreen>
     }
   }
 
-  AppBar _buildAppBar() {
+  MyAppBar _buildAppBar() {
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()
@@ -66,19 +67,17 @@ class _ReadLaterScreenState extends State<ReadLaterScreen>
         }
       },
       actions: [
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: Icon(Icons.search_rounded, color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: Icon(Icons.filter_list_rounded,
-              color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon:
+                Icon(Icons.search_rounded, color: IconTheme.of(context).color),
+            onTap: () {}),
+        const SizedBox(width: 5),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon: Icon(Icons.filter_list_rounded,
+                color: IconTheme.of(context).color),
+            onTap: () {}),
         const SizedBox(width: 5),
       ],
     );

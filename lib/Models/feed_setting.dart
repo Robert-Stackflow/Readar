@@ -64,6 +64,7 @@ class FeedSetting {
   CacheType? cacheImageTypeOnPull;
   CacheType? cacheWebTypeOnPull;
   CacheType? cacheWebTypeOnRead;
+  // BoolType? pullOnlyUnderWiFi;
   BoolType? pullOnStartUp;
   BoolType? showRelatedArticles;
   BoolType? showImageAlt;

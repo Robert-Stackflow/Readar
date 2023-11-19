@@ -13,9 +13,15 @@ class AppTheme {
   static ThemeData getTheme({required bool isDarkMode}) {
     return ThemeData(
       brightness: isDarkMode ? Brightness.dark : Brightness.light,
-      primaryColor: isDarkMode ? MyColors.dark_app_main : MyColors.app_main,
-      hintColor: isDarkMode ? MyColors.dark_app_main : MyColors.app_main,
-      indicatorColor: isDarkMode ? MyColors.dark_app_main : MyColors.app_main,
+      primaryColor: isDarkMode
+          ? MyColors.dark_default_primary_color
+          : MyColors.default_primary_color,
+      hintColor: isDarkMode
+          ? MyColors.dark_default_primary_color
+          : MyColors.default_primary_color,
+      indicatorColor: isDarkMode
+          ? MyColors.dark_default_primary_color
+          : MyColors.default_primary_color,
       shadowColor:
           isDarkMode ? MyColors.dark_shadow_color : MyColors.shadow_color,
       scaffoldBackgroundColor:
@@ -23,9 +29,13 @@ class AppTheme {
       canvasColor:
           isDarkMode ? MyColors.dark_material_bg : MyColors.material_bg,
       textSelectionTheme: TextSelectionThemeData(
-        selectionColor: MyColors.app_main.withAlpha(70),
-        selectionHandleColor: MyColors.app_main,
+        selectionColor: MyColors.default_primary_color.withAlpha(70),
+        selectionHandleColor: MyColors.default_primary_color,
       ),
+      splashColor:
+          isDarkMode ? MyColors.dark_splash_color : MyColors.splash_color,
+      highlightColor:
+          isDarkMode ? MyColors.dark_highlight_color : MyColors.highlight_color,
       textTheme: TextTheme(
         labelSmall: isDarkMode ? MyStyles.labelSmallDark : MyStyles.labelSmall,
         titleSmall: isDarkMode ? MyStyles.captionDark : MyStyles.caption,

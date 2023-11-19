@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Item/item_builder.dart';
+import '../../Widgets/Scaffold/my_appbar.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -49,7 +50,7 @@ class _FeedScreenState extends State<FeedScreen>
     }
   }
 
-  AppBar _buildAppBar() {
+  MyAppBar _buildAppBar() {
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()
@@ -65,26 +66,23 @@ class _FeedScreenState extends State<FeedScreen>
         }
       },
       actions: [
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon:
-              Icon(Icons.add_link_rounded, color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: Icon(Icons.search_rounded, color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
-        IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          icon: Icon(Icons.filter_list_rounded,
-              color: IconTheme.of(context).color),
-          onPressed: () {},
-        ),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon: Icon(Icons.add_link_rounded,
+                color: IconTheme.of(context).color),
+            onTap: () {}),
+        const SizedBox(width: 5),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon:
+                Icon(Icons.search_rounded, color: IconTheme.of(context).color),
+            onTap: () {}),
+        const SizedBox(width: 5),
+        ItemBuilder.buildIconButton(
+            context: context,
+            icon: Icon(Icons.filter_list_rounded,
+                color: IconTheme.of(context).color),
+            onTap: () {}),
         const SizedBox(width: 5),
       ],
     );

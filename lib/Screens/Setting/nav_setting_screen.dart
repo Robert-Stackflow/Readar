@@ -37,6 +37,13 @@ class _NavSettingScreenState extends State<NavSettingScreen>
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    initList();
+    updateNavBar();
+    super.didChangeDependencies();
+  }
+
   void initList() {
     List<NavEntry> navigationBarEntries = NavEntry.getNavigationBarEntries();
     List<NavEntry> sidebarEntries = NavEntry.getSidebarEntries();
@@ -135,6 +142,22 @@ class _NavSettingScreenState extends State<NavSettingScreen>
         appBar: ItemBuilder.buildSimpleAppBar(
           title: S.current.bottomNavigationBarSetting,
           context: context,
+          // actions: [
+          //   IconButton(
+          //     splashColor: Colors.transparent,
+          //     highlightColor: Colors.transparent,
+          //     icon: Icon(Icons.refresh_rounded,
+          //         color: IconTheme.of(context).color),
+          //     onPressed: () {
+          //       globalProvider.navEntries = NavEntry.defaultEntries;
+          //       setState(() {
+          //         initList();
+          //         updateNavBar();
+          //         IPrint.debug("text");
+          //       });
+          //     },
+          //   ),
+          // ],
         ),
         body: Container(
           margin: const EdgeInsets.only(left: 10, right: 10),
