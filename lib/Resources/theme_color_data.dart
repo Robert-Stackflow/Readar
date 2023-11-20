@@ -57,7 +57,7 @@ class ThemeColorData {
 
   static List<ThemeColorData> defaultLightThemes = [
     ThemeColorData(
-      name: "简洁白",
+      name: "默认浅色",
       primaryColor: const Color(0xFF009BFF),
       background: const Color(0xFFF7F8F9),
       appBarBackground: const Color(0xFFF7F8F9),
@@ -74,9 +74,10 @@ class ThemeColorData {
       dividerColor: const Color(0xFFF5F6F7),
     ),
   ];
+
   static List<ThemeColorData> defaultDarkThemes = [
     ThemeColorData(
-      name: "简洁白",
+      name: "默认深色",
       primaryColor: const Color(0xFF009BFF),
       background: const Color(0xFF121212),
       appBarBackground: const Color(0xFF121212),

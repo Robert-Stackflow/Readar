@@ -20,6 +20,7 @@ class _FeedScreenState extends State<FeedScreen>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+
   @override
   void initState() {
     if (Platform.isAndroid) {

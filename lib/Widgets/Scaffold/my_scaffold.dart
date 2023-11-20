@@ -1194,6 +1194,7 @@ class _FloatingActionButtonTransitionState
   late AnimationController _previousController;
   late Animation<double> _previousScaleAnimation;
   late Animation<double> _previousRotationAnimation;
+
   // The animations to run, considering the widget's fabMoveAnimation and the current/previous entrance/exit animations.
   late Animation<double> _currentScaleAnimation;
   late Animation<double> _extendedCurrentScaleAnimation;
@@ -3062,6 +3063,7 @@ class _DismissDrawerAction extends DismissAction {
 class ScaffoldFeatureController<T extends Widget, U> {
   const ScaffoldFeatureController._(
       this._widget, this._completer, this.close, this.setState);
+
   final T _widget;
   final Completer<U> _completer;
 
