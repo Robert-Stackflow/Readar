@@ -36,13 +36,13 @@ enum ArticleDetailVideoViewType { unspecified, hide, screenshot, video }
 /// 文章Mobilizer选项：跟随全局设置、Feedbin Parser、FeedMe、Google Web Light
 enum MobilizerType { unspecified, feedbinParser, feedMe, googleWebLight }
 
-/// 缓存选项：跟随全局设置、缓存、仅在非低电量下缓存、仅在WiFi下缓存、仅在非低电量且WiFi下缓存、不缓存
+/// 缓存选项：跟随全局设置、始终缓存、仅在充电时缓存、仅在WiFi下缓存、仅在充电且WiFi下缓存、不缓存
 enum CacheType {
   unspecified,
   enable,
-  onlyNotUnderLowBattery,
+  onlyUnderCharge,
   onlyUnderWiFi,
-  onlyNotUnderLowBatteryAndUnderWiFi,
+  onlyUnderChargeAndWiFi,
   disable
 }
 
@@ -64,8 +64,10 @@ class FeedSetting {
   CacheType? cacheImageTypeOnPull;
   CacheType? cacheWebTypeOnPull;
   CacheType? cacheWebTypeOnRead;
-  // BoolType? pullOnlyUnderWiFi;
+  CacheType? pullType;
   BoolType? pullOnStartUp;
+  BoolType? autoTranslate;
+  BoolType? showAiAbstract;
   BoolType? showRelatedArticles;
   BoolType? showImageAlt;
   BoolType? removeDuplicateArticles;
@@ -82,7 +84,10 @@ class FeedSetting {
     this.cacheImageTypeOnPull,
     this.cacheWebTypeOnPull,
     this.cacheWebTypeOnRead,
+    this.pullType,
     this.pullOnStartUp,
+    this.autoTranslate,
+    this.showAiAbstract,
     this.showRelatedArticles,
     this.showImageAlt,
     this.removeDuplicateArticles,
@@ -100,7 +105,10 @@ class FeedSetting {
         'cacheImageTypeOnPull': cacheImageTypeOnPull?.index,
         'cacheWebTypeOnPull': cacheWebTypeOnPull?.index,
         'cacheWebTypeOnRead': cacheWebTypeOnRead?.index,
+        'pullType': pullType?.index,
         'pullOnStartUp': pullOnStartUp?.index,
+        'autoTranslate': autoTranslate?.index,
+        'showAiAbstract': showAiAbstract?.index,
         'showRelatedArticles': showRelatedArticles?.index,
         'showImageAlt': showImageAlt?.index,
         'removeDuplicateArticles': removeDuplicateArticles?.index,
@@ -135,6 +143,9 @@ class FeedSetting {
             : null,
         cacheWebTypeOnRead: json['cacheWebTypeOnRead'] != null
             ? CacheType.values[json['cacheWebTypeOnRead']]
+            : null,
+        pullType: json['pullType'] != null
+            ? CacheType.values[json['pullType']]
             : null,
         pullOnStartUp: json['pullOnStartUp'] != null
             ? BoolType.values[json['pullOnStartUp']]

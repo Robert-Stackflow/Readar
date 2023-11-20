@@ -32,6 +32,14 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
               children: [
+                // const SizedBox(height: 10),
+                // ItemBuilder.buildCaptionItem(
+                //   context: context,
+                //   leading: Icons.info_outline_rounded,
+                //   showLeading: true,
+                //   title: "备份内容包括：软件配置、订阅源、星标、稍后再读、阅读历史、集锦",
+                //   bottomRadius: true,
+                // ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "云端备份设置"),
                 ItemBuilder.buildRadioItem(
@@ -51,12 +59,6 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                             builder: (context) =>
                                 const BackupServiceSettingScreen()));
                   },
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "选择备份内容",
-                  description: "已选择：软件配置、订阅源、星标、稍后再读、阅读历史、集锦",
-                  onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
@@ -86,17 +88,11 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   description: "已选择：软件配置更改后、订阅源更改后、插件设置更改后",
                   onTap: () {},
                 ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: "自动备份时覆盖已有备份",
-                  value: false,
-                  onTap: () {},
-                ),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "自动备份份数阈值",
+                  title: "备份份数阈值",
                   tip: "20份",
-                  description: "已有备份份数超过该阈值后，新备份将自动覆盖旧备份",
+                  description: "已有备份份数超过该阈值后，新备份将自动覆盖旧备份；当设置为1份时，即表示仅保留最新备份",
                   bottomRadius: true,
                   onTap: () {},
                 ),
@@ -104,12 +100,17 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                 ItemBuilder.buildCaptionItem(context: context, title: "本地备份"),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "备份至zip文件",
+                  title: "设置备份路径",
                   onTap: () {},
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: "从zip文件导入备份",
+                  title: "备份到本地",
+                  onTap: () {},
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "从本地导入备份",
                   bottomRadius: true,
                   onTap: () {},
                 ),
@@ -124,6 +125,24 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                 //   bottomRadius: true,
                 //   onTap: () {},
                 // ),
+                const SizedBox(height: 10),
+                ItemBuilder.buildCaptionItem(context: context, title: "其他选项"),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "设置备份密码",
+                  description:
+                      "本地密码用来对备份中的敏感信息（如服务的密码）加密和解密，如需在不同设备间同步，本地密码需一致",
+                  onTap: () {},
+                  showTrailing: false,
+                ),
+                ItemBuilder.buildEntryItem(
+                  context: context,
+                  title: "恢复忽略列表",
+                  description: "当从本地或云端恢复备份时不恢复的内容",
+                  onTap: () {},
+                  showTrailing: false,
+                  bottomRadius: true,
+                ),
                 const SizedBox(height: 10),
               ],
             ),

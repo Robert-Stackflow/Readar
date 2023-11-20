@@ -44,6 +44,7 @@ class DragAndDropBuilderParameters {
   final Widget? itemDivider;
   final double? itemDraggingWidth;
   final Decoration? itemDecorationWhileDragging;
+  final double? itemOpacityWhileDragging;
   final int listSizeAnimationDuration;
   final Widget? listGhost;
   final double listGhostOpacity;
@@ -83,6 +84,7 @@ class DragAndDropBuilderParameters {
     this.itemDivider,
     this.itemDraggingWidth,
     this.itemDecorationWhileDragging,
+    this.itemOpacityWhileDragging,
     this.listSizeAnimationDuration = 150,
     this.listGhostOpacity = 0.3,
     this.listGhost,

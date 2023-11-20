@@ -1,5 +1,4 @@
 import 'package:cloudreader/Resources/gaps.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Scaffold/my_appbar.dart';
@@ -73,7 +72,7 @@ class ItemBuilder {
         child: InkWell(
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.all(6),
+            padding: const EdgeInsets.all(8),
             child: icon,
           ),
         ),
@@ -93,8 +92,11 @@ class ItemBuilder {
     String description = "",
     Function()? onTap,
     Function(bool?)? onChanged,
+    double trailingLeftMargin = 5,
+    double padding = 15,
     required BuildContext context,
   }) {
+    assert(padding > 5);
     return Material(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
@@ -127,7 +129,9 @@ class ItemBuilder {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(
-                    vertical: description.isNotEmpty ? 16 : 10, horizontal: 10),
+                  vertical: description.isNotEmpty ? padding : padding - 5,
+                  horizontal: 10,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -152,11 +156,11 @@ class ItemBuilder {
                         ],
                       ),
                     ),
+                    SizedBox(width: trailingLeftMargin),
                     Transform.scale(
                       scale: 0.9,
-                      child: CupertinoSwitch(
+                      child: Switch(
                         value: value,
-                        activeColor: Theme.of(context).primaryColor,
                         onChanged: onChanged,
                       ),
                     ),
@@ -198,6 +202,7 @@ class ItemBuilder {
     String description = "",
     Function()? onTap,
     double padding = 18,
+    double trailingLeftMargin = 5,
     bool dividerPadding = true,
     IconData trailing = Icons.keyboard_arrow_right_rounded,
   }) {
@@ -260,12 +265,14 @@ class ItemBuilder {
                         ],
                       ),
                     ),
-                    isCaption ? MyGaps.empty : const SizedBox(width: 50),
+                    isCaption || tip.isEmpty
+                        ? MyGaps.empty
+                        : const SizedBox(width: 50),
                     Text(
                       tip,
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
-                    const SizedBox(width: 5),
+                    SizedBox(width: showTrailing ? trailingLeftMargin : 0),
                     Visibility(
                       visible: showTrailing,
                       child: Icon(trailing,

@@ -114,19 +114,6 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "AI摘要"),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: "AI摘要",
-                  value: true,
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: "启用Cloud Reader AI",
-                  description: "官方提供的AI服务，我们承诺不会泄露您的隐私",
-                  value: true,
-                  onTap: () {},
-                ),
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "第三方AI服务管理",
@@ -150,12 +137,6 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "翻译"),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: "启用翻译",
-                  value: true,
-                  onTap: () {},
-                ),
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "第三方翻译服务管理",

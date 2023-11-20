@@ -33,22 +33,24 @@ class MyGaps {
     child: VerticalDivider(),
   );
 
-  static Widget verticleDivider = Container(
-    decoration: const BoxDecoration(
-      border: Border(
-        left: BorderSide(
-          color: Colors.grey,
-          width: 0.1,
-          style: BorderStyle.solid,
-        ),
-        right: BorderSide(
-          color: Colors.grey,
-          width: 0.1,
-          style: BorderStyle.solid,
+  static Widget verticleDivider(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          left: BorderSide(
+            color: Theme.of(context).dividerColor,
+            width: 0.5,
+            style: BorderStyle.solid,
+          ),
+          right: BorderSide(
+            color: Theme.of(context).dividerColor,
+            width: 0.5,
+            style: BorderStyle.solid,
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 
   static const Widget empty = SizedBox.shrink();
 }

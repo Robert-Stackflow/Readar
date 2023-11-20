@@ -78,7 +78,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "content": MessageLookupByLibrary.simpleMessage("Content"),
         "contributor": MessageLookupByLibrary.simpleMessage("Contributor"),
         "crawlType":
-            MessageLookupByLibrary.simpleMessage("Article open option"),
+            MessageLookupByLibrary.simpleMessage("Article Crawl option"),
         "darkTheme": MessageLookupByLibrary.simpleMessage("Dark Theme"),
         "dragTip": MessageLookupByLibrary.simpleMessage(
             "Long press and drag an item here to move it to the end of the list."),
@@ -112,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "primaryColor": MessageLookupByLibrary.simpleMessage("Primary Color"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
         "privacySetting": MessageLookupByLibrary.simpleMessage("Privacy"),
+        "pullStrategy": MessageLookupByLibrary.simpleMessage("Pull Strategy"),
         "pullWhenStartUp":
             MessageLookupByLibrary.simpleMessage("Pull articles when starting"),
         "rate": MessageLookupByLibrary.simpleMessage("Rate Us"),

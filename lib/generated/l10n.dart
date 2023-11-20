@@ -640,10 +640,10 @@ class S {
     );
   }
 
-  /// `Article open option`
+  /// `Article Crawl option`
   String get crawlType {
     return Intl.message(
-      'Article open option',
+      'Article Crawl option',
       name: 'crawlType',
       desc: '',
       args: [],
@@ -775,6 +775,16 @@ class S {
     return Intl.message(
       'Cache articles when reading',
       name: 'cacheWebPageWhenReading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pull Strategy`
+  String get pullStrategy {
+    return Intl.message(
+      'Pull Strategy',
+      name: 'pullStrategy',
       desc: '',
       args: [],
     );

@@ -177,6 +177,9 @@ class DragAndDropLists extends StatefulWidget {
   /// The decoration surrounding an item while it is in the process of being dragged.
   final Decoration? itemDecorationWhileDragging;
 
+  /// The opacity of the item while it is in the process of being dragged.
+  final double? itemOpacityWhileDragging;
+
   /// A widget that will be displayed between each individual item.
   final Widget? itemDivider;
 
@@ -314,6 +317,7 @@ class DragAndDropLists extends StatefulWidget {
     this.itemSizeAnimationDurationMilliseconds = 150,
     this.itemDragOnLongPress = true,
     this.itemDecorationWhileDragging,
+    this.itemOpacityWhileDragging,
     this.itemDivider,
     this.listDraggingWidth,
     this.listTarget,
@@ -413,6 +417,7 @@ class DragAndDropListsState extends State<DragAndDropLists> {
       itemGhostOpacity: widget.itemGhostOpacity,
       itemDivider: widget.itemDivider,
       itemDecorationWhileDragging: widget.itemDecorationWhileDragging,
+      itemOpacityWhileDragging: widget.itemOpacityWhileDragging,
       verticalAlignment: widget.verticalAlignment,
       axis: widget.axis,
       itemGhost: widget.itemGhost,
@@ -732,18 +737,20 @@ class DragAndDropListsState extends State<DragAndDropLists> {
       var topLeftOffset = localToGlobal(rb, Offset.zero);
       var bottomRightOffset = localToGlobal(rb, size.bottomRight(Offset.zero));
 
-      if (widget.axis == Axis.vertical) {
-        newOffset = _scrollListVertical(topLeftOffset, bottomRightOffset);
-      } else {
-        var directionality = Directionality.of(context);
-        if (directionality == TextDirection.ltr) {
-          newOffset =
-              _scrollListHorizontalLtr(topLeftOffset, bottomRightOffset);
+      try {
+        if (widget.axis == Axis.vertical) {
+          newOffset = _scrollListVertical(topLeftOffset, bottomRightOffset);
         } else {
-          newOffset =
-              _scrollListHorizontalRtl(topLeftOffset, bottomRightOffset);
+          var directionality = Directionality.of(context);
+          if (directionality == TextDirection.ltr) {
+            newOffset =
+                _scrollListHorizontalLtr(topLeftOffset, bottomRightOffset);
+          } else {
+            newOffset =
+                _scrollListHorizontalRtl(topLeftOffset, bottomRightOffset);
+          }
         }
-      }
+      } catch (_) {}
 
       if (newOffset != null) {
         _scrolling = true;

@@ -14,28 +14,55 @@ class AppTheme {
     return ThemeData(
       brightness: isDarkMode ? Brightness.dark : Brightness.light,
       primaryColor: isDarkMode
-          ? MyColors.dark_default_primary_color
-          : MyColors.default_primary_color,
+          ? MyColors.defaultPrimaryColorDark
+          : MyColors.defaultPrimaryColor,
       hintColor: isDarkMode
-          ? MyColors.dark_default_primary_color
-          : MyColors.default_primary_color,
+          ? MyColors.defaultPrimaryColorDark
+          : MyColors.defaultPrimaryColor,
       indicatorColor: isDarkMode
-          ? MyColors.dark_default_primary_color
-          : MyColors.default_primary_color,
-      shadowColor:
-          isDarkMode ? MyColors.dark_shadow_color : MyColors.shadow_color,
+          ? MyColors.defaultPrimaryColorDark
+          : MyColors.defaultPrimaryColor,
       scaffoldBackgroundColor:
-          isDarkMode ? MyColors.dark_bg_color : MyColors.bg_color,
-      canvasColor:
-          isDarkMode ? MyColors.dark_material_bg : MyColors.material_bg,
-      textSelectionTheme: TextSelectionThemeData(
-        selectionColor: MyColors.default_primary_color.withAlpha(70),
-        selectionHandleColor: MyColors.default_primary_color,
-      ),
-      splashColor:
-          isDarkMode ? MyColors.dark_splash_color : MyColors.splash_color,
+          isDarkMode ? MyColors.backgroundDark : MyColors.background,
+      canvasColor: isDarkMode
+          ? MyColors.materialBackgroundDark
+          : MyColors.materialBackground,
+      dividerColor:
+          isDarkMode ? MyColors.dividerColorDark : MyColors.dividerColor,
+      shadowColor: isDarkMode ? MyColors.shadowColorDark : MyColors.shadowColor,
+      splashColor: isDarkMode ? MyColors.splashColorDark : MyColors.splashColor,
       highlightColor:
-          isDarkMode ? MyColors.dark_highlight_color : MyColors.highlight_color,
+          isDarkMode ? MyColors.highlightColorDark : MyColors.highlightColor,
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return isDarkMode
+                ? MyColors.materialBackgroundDark
+                : MyColors.materialBackground;
+          } else {
+            return isDarkMode
+                ? MyColors.textGrayColorDark
+                : MyColors.textGrayColor;
+          }
+        }),
+        trackColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return isDarkMode
+                ? MyColors.defaultPrimaryColorDark
+                : MyColors.defaultPrimaryColor;
+          } else {
+            return null;
+          }
+        }),
+      ),
+      iconTheme: IconThemeData(
+        size: 25,
+        color: isDarkMode ? MyColors.iconColorDark : MyColors.iconColor,
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        selectionColor: MyColors.defaultPrimaryColor.withAlpha(70),
+        selectionHandleColor: MyColors.defaultPrimaryColor,
+      ),
       textTheme: TextTheme(
         labelSmall: isDarkMode ? MyStyles.labelSmallDark : MyStyles.labelSmall,
         titleSmall: isDarkMode ? MyStyles.captionDark : MyStyles.caption,
@@ -45,19 +72,12 @@ class AppTheme {
         titleLarge: isDarkMode ? MyStyles.titleLargeDark : MyStyles.titleLarge,
         bodyLarge: isDarkMode ? MyStyles.textDark : MyStyles.text,
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        hintStyle: isDarkMode ? MyStyles.textHint14 : MyStyles.textDarkGray14,
-      ),
       appBarTheme: AppBarTheme(
         elevation: 0.0,
-        backgroundColor: isDarkMode ? MyColors.dark_appbar : MyColors.appbar,
+        backgroundColor: isDarkMode
+            ? MyColors.appBarBackgroundDark
+            : MyColors.appBarBackground,
       ),
-      errorColor: isDarkMode ? MyColors.dark_red : Colors.red,
-      iconTheme: IconThemeData(
-        size: 25,
-        color: isDarkMode ? MyColors.dark_icon_color : MyColors.icon_color,
-      ),
-      dividerColor: isDarkMode ? MyColors.dark_divider : MyColors.divider,
     );
   }
 

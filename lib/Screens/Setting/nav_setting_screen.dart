@@ -67,7 +67,7 @@ class _NavSettingScreenState extends State<NavSettingScreen>
             child: ItemBuilder.buildEntryItem(
               context: context,
               title: NavEntry.getLabel(navigationBarEntries[index].id),
-              trailing: Icons.dehaze_rounded,
+              showTrailing: false,
             ),
             data: navigationBarEntries[index],
           ),
@@ -88,7 +88,7 @@ class _NavSettingScreenState extends State<NavSettingScreen>
             child: ItemBuilder.buildEntryItem(
               context: context,
               title: NavEntry.getLabel(sidebarEntries[index].id),
-              trailing: Icons.dehaze_rounded,
+              showTrailing: false,
             ),
             data: sidebarEntries[index],
           ),
@@ -190,8 +190,23 @@ class _NavSettingScreenState extends State<NavSettingScreen>
                         listPadding: const EdgeInsets.only(bottom: 10),
                         onListReorder: (_, __) {},
                         lastItemTargetHeight: 0,
+                        lastListTargetSize: 60,
                         sliverList: true,
                         scrollController: _scrollController,
+                        itemDragOnLongPress: false,
+                        itemGhostOpacity: 0.3,
+                        itemOpacityWhileDragging: 0.7,
+                        itemDragHandle: DragHandle(
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.dehaze_rounded,
+                              size: 20,
+                              color:
+                                  Theme.of(context).textTheme.titleSmall?.color,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
                       )
                     : SliverToBoxAdapter(child: Container()),
               ],

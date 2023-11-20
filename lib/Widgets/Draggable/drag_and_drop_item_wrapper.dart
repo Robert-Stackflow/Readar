@@ -7,9 +7,8 @@ class DragAndDropItemWrapper extends StatefulWidget {
   final DragAndDropItem child;
   final DragAndDropBuilderParameters? parameters;
 
-  DragAndDropItemWrapper(
-      {required this.child, required this.parameters, Key? key})
-      : super(key: key);
+  const DragAndDropItemWrapper(
+      {required this.child, required this.parameters, super.key});
 
   @override
   State<StatefulWidget> createState() => _DragAndDropItemWrapper();
@@ -71,13 +70,17 @@ class _DragAndDropItemWrapper extends State<DragAndDropItemWrapper>
                   : null,
               feedback: Transform.translate(
                 offset: _feedbackContainerOffset(),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    decoration: widget.parameters!.itemDecorationWhileDragging,
-                    child: Directionality(
-                      textDirection: Directionality.of(context),
-                      child: feedback,
+                child: Opacity(
+                  opacity: widget.parameters!.itemOpacityWhileDragging ?? 1,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      decoration:
+                          widget.parameters!.itemDecorationWhileDragging,
+                      child: Directionality(
+                        textDirection: Directionality.of(context),
+                        child: feedback,
+                      ),
                     ),
                   ),
                 ),
@@ -124,13 +127,17 @@ class _DragAndDropItemWrapper extends State<DragAndDropItemWrapper>
             feedback: SizedBox(
               width:
                   widget.parameters!.itemDraggingWidth ?? _containerSize.width,
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  decoration: widget.parameters!.itemDecorationWhileDragging,
-                  child: Directionality(
-                      textDirection: Directionality.of(context),
-                      child: widget.child.feedbackWidget ?? widget.child.child),
+              child: Opacity(
+                opacity: widget.parameters!.itemOpacityWhileDragging ?? 1,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: widget.parameters!.itemDecorationWhileDragging,
+                    child: Directionality(
+                        textDirection: Directionality.of(context),
+                        child:
+                            widget.child.feedbackWidget ?? widget.child.child),
+                  ),
                 ),
               ),
             ),
@@ -154,13 +161,16 @@ class _DragAndDropItemWrapper extends State<DragAndDropItemWrapper>
             feedback: SizedBox(
               width:
                   widget.parameters!.itemDraggingWidth ?? _containerSize.width,
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  decoration: widget.parameters!.itemDecorationWhileDragging,
-                  child: Directionality(
-                    textDirection: Directionality.of(context),
-                    child: widget.child.feedbackWidget ?? widget.child.child,
+              child: Opacity(
+                opacity: widget.parameters!.itemOpacityWhileDragging ?? 1,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: widget.parameters!.itemDecorationWhileDragging,
+                    child: Directionality(
+                      textDirection: Directionality.of(context),
+                      child: widget.child.feedbackWidget ?? widget.child.child,
+                    ),
                   ),
                 ),
               ),
@@ -201,10 +211,10 @@ class _DragAndDropItemWrapper extends State<DragAndDropItemWrapper>
                   : Container(),
             ),
             Listener(
-              child: draggable,
               onPointerMove: _onPointerMove,
               onPointerDown: widget.parameters!.onPointerDown,
               onPointerUp: widget.parameters!.onPointerUp,
+              child: draggable,
             ),
           ],
         ),
@@ -216,9 +226,10 @@ class _DragAndDropItemWrapper extends State<DragAndDropItemWrapper>
             },
             onWillAccept: (incoming) {
               bool accept = true;
-              if (widget.parameters!.itemOnWillAccept != null)
+              if (widget.parameters!.itemOnWillAccept != null) {
                 accept = widget.parameters!.itemOnWillAccept!(
                     incoming, widget.child);
+              }
               if (accept && mounted) {
                 setState(() {
                   _hoveredDraggable = incoming;
@@ -236,8 +247,9 @@ class _DragAndDropItemWrapper extends State<DragAndDropItemWrapper>
             onAccept: (incoming) {
               if (mounted) {
                 setState(() {
-                  if (widget.parameters!.onItemReordered != null)
+                  if (widget.parameters!.onItemReordered != null) {
                     widget.parameters!.onItemReordered!(incoming, widget.child);
+                  }
                   _hoveredDraggable = null;
                 });
               }

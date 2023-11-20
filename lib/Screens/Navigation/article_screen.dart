@@ -196,7 +196,7 @@ class _ArticleScreenState extends State<ArticleScreen>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     _buildFeedServiceList(rssServices),
-                                    MyGaps.verticleDivider,
+                                    MyGaps.verticleDivider(context),
                                     _buildFeedList(),
                                   ],
                                 )
