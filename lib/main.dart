@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloudreader/Providers/global_provider.dart';
-import 'package:cloudreader/Resources/theme.dart';
 import 'package:cloudreader/Screens/Content/article_detail_screen.dart';
 import 'package:cloudreader/Screens/Lock/pin_change_screen.dart';
 import 'package:cloudreader/Screens/Navigation/explore_screen.dart';
@@ -58,16 +57,8 @@ class MyApp extends StatelessWidget {
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
           title: 'Cloud Reader',
-          theme: AppTheme.getTheme(
-            isDarkMode: (globalProvider.getBrightness() != null
-                ? globalProvider.getBrightness() == Brightness.dark
-                : false),
-          ),
-          darkTheme: AppTheme.getTheme(
-            isDarkMode: (globalProvider.getBrightness() != null
-                ? globalProvider.getBrightness() == Brightness.dark
-                : true),
-          ),
+          theme: globalProvider.lightTheme,
+          darkTheme: globalProvider.darkTheme,
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             S.delegate,

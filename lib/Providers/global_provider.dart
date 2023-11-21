@@ -15,6 +15,26 @@ enum ActiveThemeMode {
 class GlobalProvider with ChangeNotifier {
   GlobalKey<MyScaffoldState> homeScaffoldKey = GlobalKey();
 
+  ThemeData _lightTheme = HiveUtil.getLightTheme().toThemeData();
+
+  ThemeData get lightTheme => _lightTheme;
+
+  setLightTheme(int index) {
+    HiveUtil.setLightTheme(index);
+    _lightTheme = HiveUtil.getLightTheme().toThemeData();
+    notifyListeners();
+  }
+
+  ThemeData _darkTheme = HiveUtil.getDarkTheme().toThemeData();
+
+  ThemeData get darkTheme => _darkTheme;
+
+  setDarkTheme(int index) {
+    HiveUtil.setDarkTheme(index);
+    _darkTheme = HiveUtil.getDarkTheme().toThemeData();
+    notifyListeners();
+  }
+
   bool _shouldInterceptBack = false;
 
   bool get shouldInterceptBack => _shouldInterceptBack;

@@ -19,7 +19,6 @@ import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
 import '../../Widgets/Dropdown/dropdown_menu.dart';
 import '../../Widgets/Dropdown/dropdown_menu_controller.dart';
 import '../../Widgets/Item/article_item.dart';
-import '../../Widgets/Scaffold/my_appbar.dart';
 
 class ScrollTopNotifier with ChangeNotifier {
   int index = 0;
@@ -309,7 +308,7 @@ class _ArticleScreenState extends State<ArticleScreen>
     }
   }
 
-  MyAppBar _buildAppBar() {
+  PreferredSizeWidget _buildAppBar() {
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()

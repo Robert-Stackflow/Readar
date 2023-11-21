@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Item/item_builder.dart';
-import '../../Widgets/Scaffold/my_appbar.dart';
 
 class TTSScreen extends StatefulWidget {
   const TTSScreen({super.key});
@@ -51,7 +50,7 @@ class _TTSScreenState extends State<TTSScreen>
     }
   }
 
-  MyAppBar _buildAppBar() {
+  PreferredSizeWidget _buildAppBar() {
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()

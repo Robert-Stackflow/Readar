@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Item/item_builder.dart';
-import '../../Widgets/Scaffold/my_appbar.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -51,7 +50,7 @@ class _ExploreScreenState extends State<ExploreScreen>
     }
   }
 
-  MyAppBar _buildAppBar() {
+  PreferredSizeWidget _buildAppBar() {
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()

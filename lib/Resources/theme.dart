@@ -55,8 +55,21 @@ class AppTheme {
           }
         }),
       ),
+      radioTheme: RadioThemeData(
+        fillColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return isDarkMode
+                ? MyColors.defaultPrimaryColorDark
+                : MyColors.defaultPrimaryColor;
+          } else {
+            return isDarkMode
+                ? MyColors.materialBackgroundDark
+                : MyColors.materialBackground;
+          }
+        }),
+      ),
       iconTheme: IconThemeData(
-        size: 25,
+        size: 24,
         color: isDarkMode ? MyColors.iconColorDark : MyColors.iconColor,
       ),
       textSelectionTheme: TextSelectionThemeData(

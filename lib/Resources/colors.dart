@@ -37,6 +37,9 @@ class MyColors {
   static const Color appBarBackground = Color(0xFFF7F8F9);
   static const Color appBarBackgroundDark = Color(0xFF121212);
 
+  static const Color materialBackground = Color(0xFFFFFFFF);
+  static const Color materialBackgroundDark = Color(0xFF252525);
+
   static const Color splashColor = Color(0x44c8c8c8);
   static const Color splashColorDark = Color(0x20cccccc);
 
@@ -48,9 +51,6 @@ class MyColors {
 
   static const Color shadowColor = Color(0xFF666666);
   static const Color shadowColorDark = Color(0xFFFFFFFF);
-
-  static const Color materialBackground = Color(0xFFFFFFFF);
-  static const Color materialBackgroundDark = Color(0xFF252525);
 
   static const Color textColor = Color(0xFF333333);
   static const Color textColorDark = Color(0xFFB8B8B8);

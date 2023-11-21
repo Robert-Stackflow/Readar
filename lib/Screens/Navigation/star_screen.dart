@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Item/item_builder.dart';
-import '../../Widgets/Scaffold/my_appbar.dart';
 
 class StarScreen extends StatefulWidget {
   const StarScreen({super.key});
@@ -51,7 +50,7 @@ class _StarScreenState extends State<StarScreen>
     }
   }
 
-  MyAppBar _buildAppBar() {
+  PreferredSizeWidget _buildAppBar() {
     return ItemBuilder.buildAppBar(
       context: context,
       leading: _isNavigationBarEntry()

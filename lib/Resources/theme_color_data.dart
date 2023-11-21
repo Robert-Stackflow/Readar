@@ -1,3 +1,4 @@
+import 'package:cloudreader/Resources/colors.dart';
 import 'package:flutter/material.dart';
 
 class ThemeColorData {
@@ -57,7 +58,7 @@ class ThemeColorData {
 
   static List<ThemeColorData> defaultLightThemes = [
     ThemeColorData(
-      name: "默认浅色",
+      name: "极简白",
       primaryColor: const Color(0xFF009BFF),
       background: const Color(0xFFF7F8F9),
       appBarBackground: const Color(0xFFF7F8F9),
@@ -73,11 +74,28 @@ class ThemeColorData {
       buttonDisabledColor: const Color(0xFF96BBFA),
       dividerColor: const Color(0xFFF5F6F7),
     ),
+    // ThemeColorData(
+    //   name: "护眼",
+    //   primaryColor: const Color(0xFF11b667),
+    //   background: const Color(0xFFCCE8CF),
+    //   appBarBackground: const Color(0xFFCCE8CF),
+    //   splashColor: const Color(0x44c8c8c8),
+    //   highlightColor: const Color(0x44bcbcbc),
+    //   iconColor: const Color(0xFF333333),
+    //   shadowColor: const Color(0xFF666666),
+    //   materialBackground: const Color(0xFFFFFFFF),
+    //   textColor: const Color(0xFF333333),
+    //   textGrayColor: const Color(0xFF999999),
+    //   textDisabledColor: const Color(0xFFD4E2FA),
+    //   buttonTextColor: const Color(0xFFF2F2F2),
+    //   buttonDisabledColor: const Color(0xFF96BBFA),
+    //   dividerColor: const Color(0xFFF5F6F7),
+    // ),
   ];
 
   static List<ThemeColorData> defaultDarkThemes = [
     ThemeColorData(
-      name: "默认深色",
+      name: "极简黑",
       primaryColor: const Color(0xFF009BFF),
       background: const Color(0xFF121212),
       appBarBackground: const Color(0xFF121212),
@@ -86,6 +104,40 @@ class ThemeColorData {
       iconColor: const Color(0xFFB8B8B8),
       shadowColor: const Color(0xFFFFFFFF),
       materialBackground: const Color(0xFF252525),
+      textColor: const Color(0xFFB8B8B8),
+      textGrayColor: const Color(0xFF666666),
+      textDisabledColor: const Color(0xFFCEDBF2),
+      buttonTextColor: const Color(0xFFF2F2F2),
+      buttonDisabledColor: const Color(0xFF83A5E0),
+      dividerColor: const Color(0xFF393939),
+    ),
+    ThemeColorData(
+      name: "蓝铁",
+      primaryColor: const Color(0xFF61A3D7),
+      background: const Color(0xFF1B242F),
+      appBarBackground: const Color(0xFF23303f),
+      splashColor: const Color(0x20cccccc),
+      highlightColor: const Color(0x20cfcfcf),
+      iconColor: const Color(0xFFB8B8B8),
+      shadowColor: const Color(0xFFFFFFFF),
+      materialBackground: const Color(0xFF242E39),
+      textColor: const Color(0xFFB8B8B8),
+      textGrayColor: const Color(0xFF666666),
+      textDisabledColor: const Color(0xFFCEDBF2),
+      buttonTextColor: const Color(0xFFF2F2F2),
+      buttonDisabledColor: const Color(0xFF83A5E0),
+      dividerColor: const Color(0xFF393939),
+    ),
+    ThemeColorData(
+      name: "静谧之夜",
+      primaryColor: const Color(0xFF50A5DC),
+      background: const Color(0xFF181819),
+      appBarBackground: const Color(0xFF232326),
+      splashColor: const Color(0x20cccccc),
+      highlightColor: const Color(0x20cfcfcf),
+      iconColor: const Color(0xFFB8B8B8),
+      shadowColor: const Color(0xFFFFFFFF),
+      materialBackground: const Color(0xFF222223),
       textColor: const Color(0xFFB8B8B8),
       textGrayColor: const Color(0xFF666666),
       textDisabledColor: const Color(0xFFCEDBF2),
@@ -170,8 +222,17 @@ class ThemeColorData {
           }
         }),
       ),
+      radioTheme: RadioThemeData(
+        fillColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return primaryColor;
+          } else {
+            return materialBackground;
+          }
+        }),
+      ),
       iconTheme: IconThemeData(
-        size: 25,
+        size: 24,
         color: iconColor,
       ),
       textSelectionTheme: TextSelectionThemeData(
@@ -193,4 +254,46 @@ class ThemeColorData {
       ),
     );
   }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        "isDarkMode": isDarkMode ? 1 : 0,
+        "name": name,
+        "description": description,
+        "primaryColor": primaryColor.toHex(),
+        "background": background.toHex(),
+        "appBarBackground": appBarBackground.toHex(),
+        "splashColor": splashColor.toHex(),
+        "highlightColor": highlightColor.toHex(),
+        "iconColor": iconColor.toHex(),
+        "shadowColor": shadowColor.toHex(),
+        "materialBackground": materialBackground.toHex(),
+        "textColor": textColor.toHex(),
+        "textGrayColor": textGrayColor.toHex(),
+        "textDisabledColor": textDisabledColor.toHex(),
+        "buttonTextColor": buttonTextColor.toHex(),
+        "buttonDisabledColor": buttonDisabledColor.toHex(),
+        "dividerColor": dividerColor.toHex(),
+      };
+
+  factory ThemeColorData.fromJson(Map<String, dynamic> map) => ThemeColorData(
+        isDarkMode: map['isDarkMode'] == 0 ? false : true,
+        name: map['name'] as String,
+        description: map['description'] as String,
+        primaryColor: HexColor.fromHex(map['primaryColor'] as String),
+        background: HexColor.fromHex(map['background'] as String),
+        appBarBackground: HexColor.fromHex(map['appBarBackground'] as String),
+        splashColor: HexColor.fromHex(map['splashColor'] as String),
+        highlightColor: HexColor.fromHex(map['highlightColor'] as String),
+        iconColor: HexColor.fromHex(map['iconColor'] as String),
+        shadowColor: HexColor.fromHex(map['shadowColor'] as String),
+        materialBackground:
+            HexColor.fromHex(map['materialBackground'] as String),
+        textColor: HexColor.fromHex(map['textColor'] as String),
+        textGrayColor: HexColor.fromHex(map['textGrayColor'] as String),
+        textDisabledColor: HexColor.fromHex(map['textDisabledColor'] as String),
+        buttonTextColor: HexColor.fromHex(map['buttonTextColor'] as String),
+        buttonDisabledColor:
+            HexColor.fromHex(map['buttonDisabledColor'] as String),
+        dividerColor: HexColor.fromHex(map['dividerColor'] as String),
+      );
 }

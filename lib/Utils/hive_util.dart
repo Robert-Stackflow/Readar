@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cloudreader/Resources/theme_color_data.dart';
 import 'package:cloudreader/Utils/iprint.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -27,12 +28,13 @@ class HiveUtil {
 
   //Appearance
   static const String localeKey = "locale";
-  static const String lighthemeIdKey = "lighthemeId";
-  static const String darkThemeIdKey = "darkThemeId";
-  static const String themeModeKey = "themeMode";
-  static const String primaryColorIdKey = "primaryColorId";
+  static const String lighthemeIndexKey = "lighthemeIndex";
+  static const String darkThemeIndexKey = "darkThemeIndex";
+  static const String primaryColorIndexKey = "primaryColorIndex";
   static const String customPrimaryColorKey = "customPrimaryColor";
-  static const String customThemeListKey = "customThemeList";
+  static const String customLightThemeListKey = "customLightThemeList";
+  static const String customDarkThemeListKey = "customDarkThemeListKey";
+  static const String themeModeKey = "themeMode";
   static const String showNavigationBarKey = "showNavigationBar";
   static const String navEntriesKey = "navEntries";
   static const String articleLayoutKey = "articleLayout";
@@ -109,6 +111,102 @@ class HiveUtil {
 
   static void setShowNavigationBar(bool value) =>
       HiveUtil.put(key: HiveUtil.showNavigationBarKey, value: value);
+
+  static int getLightThemeIndex() {
+    int index =
+        HiveUtil.getInt(key: HiveUtil.lighthemeIndexKey, defaultValue: 0);
+    if (index > ThemeColorData.defaultLightThemes.length) {
+      String? json = HiveUtil.getString(key: HiveUtil.customLightThemeListKey);
+      if (json == null || json.isEmpty) {
+        setLightTheme(0);
+        return 0;
+      } else {
+        List<dynamic> list = jsonDecode(json);
+        if (index > ThemeColorData.defaultLightThemes.length + list.length) {
+          setLightTheme(0);
+          return 0;
+        } else {
+          return index;
+        }
+      }
+    } else {
+      return index;
+    }
+  }
+
+  static int getDarkThemeIndex() {
+    int index =
+        HiveUtil.getInt(key: HiveUtil.darkThemeIndexKey, defaultValue: 0);
+    if (index > ThemeColorData.defaultDarkThemes.length) {
+      String? json = HiveUtil.getString(key: HiveUtil.customDarkThemeListKey);
+      if (json == null || json.isEmpty) {
+        setDarkTheme(0);
+        return 0;
+      } else {
+        List<dynamic> list = jsonDecode(json);
+        if (index > ThemeColorData.defaultDarkThemes.length + list.length) {
+          setDarkTheme(0);
+          return 0;
+        } else {
+          return index;
+        }
+      }
+    } else {
+      return index;
+    }
+  }
+
+  static ThemeColorData getLightTheme() {
+    int index =
+        HiveUtil.getInt(key: HiveUtil.lighthemeIndexKey, defaultValue: 0);
+    if (index > ThemeColorData.defaultLightThemes.length) {
+      String? json = HiveUtil.getString(key: HiveUtil.customLightThemeListKey);
+      if (json == null || json.isEmpty) {
+        setLightTheme(0);
+        return ThemeColorData.defaultLightThemes[0];
+      } else {
+        List<dynamic> list = jsonDecode(json);
+        if (index > ThemeColorData.defaultLightThemes.length + list.length) {
+          setLightTheme(0);
+          return ThemeColorData.defaultLightThemes[0];
+        } else {
+          return ThemeColorData.fromJson(
+              list[index - ThemeColorData.defaultLightThemes.length]);
+        }
+      }
+    } else {
+      return ThemeColorData.defaultLightThemes[index];
+    }
+  }
+
+  static ThemeColorData getDarkTheme() {
+    int index =
+        HiveUtil.getInt(key: HiveUtil.darkThemeIndexKey, defaultValue: 0);
+    if (index > ThemeColorData.defaultDarkThemes.length) {
+      String? json = HiveUtil.getString(key: HiveUtil.customDarkThemeListKey);
+      if (json == null || json.isEmpty) {
+        setDarkTheme(0);
+        return ThemeColorData.defaultDarkThemes[0];
+      } else {
+        List<dynamic> list = jsonDecode(json);
+        if (index > ThemeColorData.defaultDarkThemes.length + list.length) {
+          setDarkTheme(0);
+          return ThemeColorData.defaultDarkThemes[0];
+        } else {
+          return ThemeColorData.fromJson(
+              list[index - ThemeColorData.defaultDarkThemes.length]);
+        }
+      }
+    } else {
+      return ThemeColorData.defaultDarkThemes[index];
+    }
+  }
+
+  static void setLightTheme(int index) =>
+      HiveUtil.put(key: HiveUtil.lighthemeIndexKey, value: index);
+
+  static void setDarkTheme(int index) =>
+      HiveUtil.put(key: HiveUtil.darkThemeIndexKey, value: index);
 
   static bool shouldAutoLock() =>
       HiveUtil.getBool(key: HiveUtil.enableGuesturePasswdKey) &&
