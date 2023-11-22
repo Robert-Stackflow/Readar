@@ -50,10 +50,10 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `Cloud Reader`
+  /// `Readar`
   String get appName {
     return Intl.message(
-      'Cloud Reader',
+      'Readar',
       name: 'appName',
       desc: '',
       args: [],
@@ -963,10 +963,8 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   @override
   bool isSupported(Locale locale) => _isSupported(locale);
-
   @override
   Future<S> load(Locale locale) => S.load(locale);
-
   @override
   bool shouldReload(AppLocalizationDelegate old) => false;
 

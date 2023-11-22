@@ -23,13 +23,12 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m0(maxShown) => "导航栏最多显示${maxShown}个入口";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("关于"),
         "advancedSetting": MessageLookupByLibrary.simpleMessage("高级设置"),
         "allEntriesHidddenTip":
             MessageLookupByLibrary.simpleMessage("所有入口均移至侧边栏，导航栏将不再显示"),
-        "appName": MessageLookupByLibrary.simpleMessage("Cloud Reader"),
+        "appName": MessageLookupByLibrary.simpleMessage("Readar"),
         "apprearanceSetting": MessageLookupByLibrary.simpleMessage("外观"),
         "article": MessageLookupByLibrary.simpleMessage("文章"),
         "articleDetailHeaderImageViewType":

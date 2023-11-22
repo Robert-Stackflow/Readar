@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
-          title: 'Cloud Reader',
+          title: 'Readar',
           theme: globalProvider.lightTheme,
           darkTheme: globalProvider.darkTheme,
           debugShowCheckedModeBanner: false,

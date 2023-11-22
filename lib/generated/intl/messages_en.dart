@@ -24,14 +24,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "The navigation bar can display at most ${maxShown} entries.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("About"),
         "advancedSetting":
             MessageLookupByLibrary.simpleMessage("Advanced Setting"),
         "allEntriesHidddenTip": MessageLookupByLibrary.simpleMessage(
             "All entries have been moved to the sidebar, and the navigation bar will no longer be displayed."),
-        "appName": MessageLookupByLibrary.simpleMessage("Cloud Reader"),
+        "appName": MessageLookupByLibrary.simpleMessage("Readar"),
         "apprearanceSetting":
             MessageLookupByLibrary.simpleMessage("Apprearance"),
         "article": MessageLookupByLibrary.simpleMessage("Articles"),
