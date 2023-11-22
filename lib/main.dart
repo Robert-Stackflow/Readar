@@ -35,6 +35,8 @@ import 'generated/l10n.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ProviderManager.init();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
   if (Platform.isAndroid) {
     SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
@@ -57,8 +59,14 @@ class MyApp extends StatelessWidget {
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
           title: 'Readar',
-          theme: globalProvider.lightTheme,
-          darkTheme: globalProvider.darkTheme,
+          theme: globalProvider.getBrightness() == null ||
+                  globalProvider.getBrightness() == Brightness.light
+              ? globalProvider.lightTheme
+              : globalProvider.darkTheme,
+          darkTheme: globalProvider.getBrightness() == null ||
+                  globalProvider.getBrightness() == Brightness.dark
+              ? globalProvider.darkTheme
+              : globalProvider.lightTheme,
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             S.delegate,
@@ -77,18 +85,7 @@ class MyApp extends StatelessWidget {
               return Localizations.localeOf(context);
             }
           },
-          home: WillPopScope(
-            onWillPop: () async {
-              // AndroidBackDesktopChannel.backToDesktop();
-              // return false;
-              if (ProviderManager.globalProvider.shouldInterceptBack) {
-                ProviderManager.globalProvider.shouldInterceptBack = false;
-                return false;
-              }
-              return true;
-            },
-            child: const MainScreen(),
-          ),
+          home: const MainScreen(),
           builder: (context, widget) {
             return MediaQuery(
               data: MediaQuery.of(context)
@@ -98,8 +95,7 @@ class MyApp extends StatelessWidget {
           },
           routes: {
             TTSScreen.routeName: (context) => const TTSScreen(),
-            ArticleScreen.routeName: (context) =>
-                ArticleScreen(ScrollTopNotifier()),
+            ArticleScreen.routeName: (context) => const ArticleScreen(),
             SettingScreen.routeName: (context) => const SettingScreen(),
             StarScreen.routeName: (context) => const StarScreen(),
             LibraryScreen.routeName: (context) => const LibraryScreen(),

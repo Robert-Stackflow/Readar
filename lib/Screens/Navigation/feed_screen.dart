@@ -69,19 +69,19 @@ class _FeedScreenState extends State<FeedScreen>
         ItemBuilder.buildIconButton(
             context: context,
             icon: Icon(Icons.add_link_rounded,
-                color: IconTheme.of(context).color),
+                color: Theme.of(context).iconTheme.color),
             onTap: () {}),
         const SizedBox(width: 5),
         ItemBuilder.buildIconButton(
             context: context,
-            icon:
-                Icon(Icons.search_rounded, color: IconTheme.of(context).color),
+            icon: Icon(Icons.search_rounded,
+                color: Theme.of(context).iconTheme.color),
             onTap: () {}),
         const SizedBox(width: 5),
         ItemBuilder.buildIconButton(
             context: context,
             icon: Icon(Icons.filter_list_rounded,
-                color: IconTheme.of(context).color),
+                color: Theme.of(context).iconTheme.color),
             onTap: () {}),
         const SizedBox(width: 5),
       ],

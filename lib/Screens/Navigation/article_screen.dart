@@ -1,12 +1,10 @@
 import 'dart:io';
 
-import 'package:cloudreader/Models/rss_item_list.dart';
 import 'package:cloudreader/Models/rss_service.dart';
+import 'package:cloudreader/Providers/global_provider.dart';
 import 'package:cloudreader/Providers/rss_provider.dart';
 import 'package:cloudreader/Resources/gaps.dart';
-import 'package:cloudreader/Utils/iprint.dart';
 import 'package:cloudreader/Widgets/Item/item_builder.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -16,24 +14,12 @@ import 'package:tuple/tuple.dart';
 import '../../Models/feed.dart';
 import '../../Providers/provider_manager.dart';
 import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
-import '../../Widgets/Dropdown/dropdown_menu.dart';
-import '../../Widgets/Dropdown/dropdown_menu_controller.dart';
 import '../../Widgets/Item/article_item.dart';
-
-class ScrollTopNotifier with ChangeNotifier {
-  int index = 0;
-
-  void onTap(int newIndex) {
-    var oldIndex = index;
-    index = newIndex;
-    if (newIndex == oldIndex) notifyListeners();
-  }
-}
+import '../../Widgets/Popup/dropdown_menu.dart';
+import '../../Widgets/Popup/ipopup.dart';
 
 class ArticleScreen extends StatefulWidget {
-  const ArticleScreen(this.scrollTopNotifier, {super.key});
-
-  final ScrollTopNotifier scrollTopNotifier;
+  const ArticleScreen({super.key});
 
   static const String routeName = "/nav/article";
 
@@ -45,11 +31,11 @@ class _ArticleScreenState extends State<ArticleScreen>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   DateTime? _lastLoadedMoreTime;
   late RefreshController _refreshController;
-  final DropdownMenuController _dropdownMenuController =
-      DropdownMenuController();
+  late PopController _dropdownController;
   late final AnimationController _dropdownAnimationController;
   late RssService? _currentRssService;
   List<Feed> _currentFeedList = [];
+  final GlobalKey _appbarKey = GlobalKey();
 
   @override
   void initState() {
@@ -60,7 +46,6 @@ class _ArticleScreenState extends State<ArticleScreen>
       SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     }
     super.initState();
-    widget.scrollTopNotifier.addListener(_onScrollTop);
     _refreshController = RefreshController(initialRefresh: false);
     _dropdownAnimationController = AnimationController(
       vsync: this,
@@ -69,24 +54,13 @@ class _ArticleScreenState extends State<ArticleScreen>
       lowerBound: 0,
       upperBound: 0.5,
     );
-    _dropdownMenuController.addListener(() {
-      ProviderManager.globalProvider.shouldInterceptBack =
-          _dropdownMenuController.isShow;
-      if (_dropdownMenuController.isShow) {
-        _dropdownAnimationController.forward();
-      } else {
-        _dropdownAnimationController.reverse();
-      }
-    });
-    ProviderManager.globalProvider.addListener(() {
-      if (ProviderManager.globalProvider.shouldInterceptBack == false &&
-          _dropdownMenuController.isShow) {
-        _dropdownMenuController.hide();
-      }
-    });
+    _dropdownController = PopController();
     refreshCurrentRssService(
         ProviderManager.rssProvider.currentRssServiceManager.rssService);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   void refreshCurrentRssService(RssService? value) {
     setState(() {
@@ -95,12 +69,6 @@ class _ArticleScreenState extends State<ArticleScreen>
           .getRssServiceManager(_currentRssService)
           .getFeeds();
     });
-  }
-
-  @override
-  void dispose() {
-    widget.scrollTopNotifier.removeListener(_onScrollTop);
-    super.dispose();
   }
 
   void _onRefresh() async {
@@ -118,20 +86,8 @@ class _ArticleScreenState extends State<ArticleScreen>
         DateTime.now().difference(_lastLoadedMoreTime!).inSeconds > 1)) {
       _lastLoadedMoreTime = DateTime.now();
       feed.loadMore().then((value) {
-        IPrint.debug("加载完毕");
         _refreshController.loadComplete();
       });
-    }
-  }
-
-  void _onScrollTop() {
-    var expectedCanPop = widget.scrollTopNotifier.index == 1;
-    if (expectedCanPop == Navigator.of(context).canPop()) {
-      PrimaryScrollController.of(context).animateTo(
-        0,
-        curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 300),
-      );
     }
   }
 
@@ -142,70 +98,20 @@ class _ArticleScreenState extends State<ArticleScreen>
       appBar: _buildAppBar(),
       body: ScrollConfiguration(
         behavior: NoShadowScrollBehavior(),
-        child: Stack(
-          children: [
-            SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: true,
-              header: MaterialClassicHeader(
-                backgroundColor: Theme.of(context).canvasColor,
-                color: Theme.of(context).primaryColor,
-              ),
-              footer: CustomFooter(
-                builder: (BuildContext context, LoadStatus? mode) {
-                  Widget body;
-                  if (mode == LoadStatus.idle) {
-                    body = const Text("pull up load");
-                  } else if (mode == LoadStatus.loading) {
-                    body = const CupertinoActivityIndicator();
-                  } else if (mode == LoadStatus.failed) {
-                    body = const Text("Load Failed!Click retry!");
-                  } else if (mode == LoadStatus.canLoading) {
-                    body = const Text("release to load more");
-                  } else {
-                    body = const Text("No more Data");
-                  }
-                  return SizedBox(
-                    height: 55.0,
-                    child: Center(child: body),
-                  );
-                },
-              ),
-              controller: _refreshController,
-              onRefresh: _onRefresh,
-              onLoading: _onLoading,
-              child: _buildRssItemList(),
+        child: Consumer2<GlobalProvider, RssProvider>(
+          builder: (context, globalProvider, rssProvider, child) =>
+              SmartRefresher(
+            enablePullDown: true,
+            enablePullUp: true,
+            header: MaterialClassicHeader(
+              backgroundColor: Theme.of(context).canvasColor,
+              color: Theme.of(context).primaryColor,
             ),
-            DropDownMenu(
-              controller: _dropdownMenuController,
-              animationMilliseconds: 300,
-              dropdownMenuChanging: (isShow, index) {},
-              dropdownMenuChanged: (isShow, index) {},
-              menus: [
-                DropdownMenuBuilder(
-                  dropDownHeight: 40 * 8.0,
-                  dropDownWidget: Container(
-                    color: Theme.of(context).canvasColor,
-                    child: Selector<RssProvider, List<RssService>>(
-                      selector: (context, rssProvider) =>
-                          rssProvider.rssServices,
-                      builder: (context, rssServices, _) =>
-                          rssServices.isNotEmpty
-                              ? Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    _buildFeedServiceList(rssServices),
-                                    MyGaps.verticleDivider(context),
-                                    _buildFeedList(),
-                                  ],
-                                )
-                              : _buildFeedServceNull(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            onLoading: _onLoading,
+            child: _buildRssItemList(rssProvider),
+          ),
         ),
       ),
     );
@@ -224,6 +130,7 @@ class _ArticleScreenState extends State<ArticleScreen>
       width: 100,
       child: ListView.builder(
         itemCount: rssServices.length,
+        padding: EdgeInsets.zero,
         itemBuilder: (content, index) {
           return Material(
             child: Ink(
@@ -252,7 +159,8 @@ class _ArticleScreenState extends State<ArticleScreen>
     return Expanded(
       child: ListView.builder(
         itemCount: _currentFeedList.length,
-        itemBuilder: (content, index) {
+        padding: EdgeInsets.zero,
+        itemBuilder: (context, index) {
           return Material(
             child: Ink(
               decoration: BoxDecoration(color: Theme.of(context).canvasColor),
@@ -260,12 +168,11 @@ class _ArticleScreenState extends State<ArticleScreen>
                 onTap: () {
                   ProviderManager.rssProvider
                       .loadRssItemListByFid(_currentFeedList[index].fid);
-                  _dropdownMenuController.hide();
-                  _onScrollTop();
+                  IPopup.pop(context);
                 },
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: Text(
                     _currentFeedList[index].name,
                     style: Theme.of(context).textTheme.titleMedium,
@@ -279,22 +186,19 @@ class _ArticleScreenState extends State<ArticleScreen>
     );
   }
 
-  Widget _buildRssItemList() {
-    return Selector<RssProvider, RssItemList>(
-      selector: (context, rssProvider) => rssProvider.currentRssItemList,
-      builder: (context, currentRssItemList, child) => ListView.builder(
-        itemCount: currentRssItemList.iids.length,
-        itemBuilder: (content, index) {
-          var item = ProviderManager.rssProvider.currentRssServiceManager
-              .getItem(currentRssItemList.iids[index]);
-          var tuple = Tuple2(
-              item,
-              ProviderManager.rssProvider.currentRssServiceManager
-                  .getFeed(item.feedFid));
-          return ArticleItem(tuple.item1, tuple.item2, (_) {},
-              topMargin: index == 0);
-        },
-      ),
+  Widget _buildRssItemList(RssProvider rssProvider) {
+    return ListView.builder(
+      itemCount: rssProvider.currentRssItemList.iids.length,
+      itemBuilder: (content, index) {
+        var item = ProviderManager.rssProvider.currentRssServiceManager
+            .getItem(rssProvider.currentRssItemList.iids[index]);
+        var tuple = Tuple2(
+            item,
+            ProviderManager.rssProvider.currentRssServiceManager
+                .getFeed(item.feedFid));
+        return ArticleItem(tuple.item1, tuple.item2, (_) {},
+            topMargin: index == 0);
+      },
     );
   }
 
@@ -310,6 +214,7 @@ class _ArticleScreenState extends State<ArticleScreen>
 
   PreferredSizeWidget _buildAppBar() {
     return ItemBuilder.buildAppBar(
+      key: _appbarKey,
       context: context,
       leading: _isNavigationBarEntry()
           ? Icons.menu_rounded
@@ -325,11 +230,7 @@ class _ArticleScreenState extends State<ArticleScreen>
       },
       title: GestureDetector(
         onTap: () {
-          if (_dropdownMenuController.isShow) {
-            _dropdownMenuController.hide();
-          } else {
-            _dropdownMenuController.show(0);
-          }
+          _showDropdownMenu();
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -370,43 +271,57 @@ class _ArticleScreenState extends State<ArticleScreen>
         ItemBuilder.buildIconButton(
             context: context,
             icon: Icon(Icons.done_all_rounded,
-                color: IconTheme.of(context).color),
+                color: Theme.of(context).iconTheme.color),
             onTap: () {}),
         const SizedBox(width: 5),
         ItemBuilder.buildIconButton(
             context: context,
-            icon:
-                Icon(Icons.search_rounded, color: IconTheme.of(context).color),
+            icon: Icon(Icons.search_rounded,
+                color: Theme.of(context).iconTheme.color),
             onTap: () {}),
         const SizedBox(width: 5),
         ItemBuilder.buildIconButton(
             context: context,
             icon: Icon(Icons.filter_list_rounded,
-                color: IconTheme.of(context).color),
+                color: Theme.of(context).iconTheme.color),
             onTap: () {}),
         const SizedBox(width: 5),
       ],
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
-
-  bool _onScroll(ScrollNotification scrollInfo) {
-    var feed = ProviderManager.rssProvider.currentRssItemList;
-    if (!ModalRoute.of(context)!.isCurrent ||
-        !feed.initialized ||
-        feed.loading ||
-        feed.allLoaded) {
-      return true;
-    }
-    if (scrollInfo.metrics.extentAfter == 0.0 &&
-        scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent * 0.8 &&
-        (_lastLoadedMoreTime == null ||
-            DateTime.now().difference(_lastLoadedMoreTime!).inSeconds > 1)) {
-      _lastLoadedMoreTime = DateTime.now();
-      feed.loadMore();
-    }
-    return false;
+  _showDropdownMenu() {
+    double height = MediaQuery.of(context).padding.top +
+        (_appbarKey.currentWidget as PreferredSizeWidget).preferredSize.height;
+    IPopup.show(
+      context,
+      DropDownMenu(
+        padding: EdgeInsets.only(top: height),
+        animationController: _dropdownAnimationController,
+        controller: _dropdownController,
+        child: GestureDetector(
+          onTap: () {},
+          child: Container(
+            color: Theme.of(context).canvasColor,
+            margin: EdgeInsets.only(top: height + 314.5),
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Selector<RssProvider, List<RssService>>(
+              selector: (context, rssProvider) => rssProvider.rssServices,
+              builder: (context, rssServices, _) => rssServices.isNotEmpty
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildFeedServiceList(rssServices),
+                        MyGaps.verticleDivider(context),
+                        _buildFeedList(),
+                      ],
+                    )
+                  : _buildFeedServceNull(),
+            ),
+          ),
+        ),
+      ),
+      offsetLT: Offset(0, height),
+    );
   }
 }

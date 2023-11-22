@@ -142,22 +142,6 @@ class _NavSettingScreenState extends State<NavSettingScreen>
         appBar: ItemBuilder.buildSimpleAppBar(
           title: S.current.bottomNavigationBarSetting,
           context: context,
-          // actions: [
-          //   IconButton(
-          //     splashColor: Colors.transparent,
-          //     highlightColor: Colors.transparent,
-          //     icon: Icon(Icons.refresh_rounded,
-          //         color: IconTheme.of(context).color),
-          //     onPressed: () {
-          //       globalProvider.navEntries = NavEntry.defaultEntries;
-          //       setState(() {
-          //         initList();
-          //         updateNavBar();
-          //         IPrint.debug("text");
-          //       });
-          //     },
-          //   ),
-          // ],
         ),
         body: Container(
           margin: const EdgeInsets.only(left: 10, right: 10),
@@ -197,16 +181,20 @@ class _NavSettingScreenState extends State<NavSettingScreen>
                         itemGhostOpacity: 0.3,
                         itemOpacityWhileDragging: 0.7,
                         itemDragHandle: DragHandle(
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.dehaze_rounded,
-                              size: 20,
-                              color:
-                                  Theme.of(context).textTheme.titleSmall?.color,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ),
+                            child: Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          child: ItemBuilder.buildIconButton(
+                              context: context,
+                              icon: Icon(
+                                Icons.dehaze_rounded,
+                                size: 20,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.color,
+                              ),
+                              onTap: () {}),
+                        )),
                       )
                     : SliverToBoxAdapter(child: Container()),
               ],

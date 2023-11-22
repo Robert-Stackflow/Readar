@@ -73,14 +73,6 @@ class _SelectThemeScreenState extends State<SelectThemeScreen>
                   bottomRadius: true,
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: S.current.primaryColor),
-                ItemBuilder.buildContainerItem(
-                  context: context,
-                  child: const SizedBox(height: 100),
-                  bottomRadius: true,
-                ),
-                const SizedBox(height: 10),
               ],
             ),
           ),
@@ -104,7 +96,7 @@ class _SelectThemeScreenState extends State<SelectThemeScreen>
             });
           }),
     );
-    list.add(ItemBuilder.buildEmptyThemeItem(context: context, onTap: null));
+    // list.add(ItemBuilder.buildEmptyThemeItem(context: context, onTap: null));
     return list;
   }
 
@@ -123,7 +115,7 @@ class _SelectThemeScreenState extends State<SelectThemeScreen>
             });
           }),
     );
-    list.add(ItemBuilder.buildEmptyThemeItem(context: context, onTap: null));
+    // list.add(ItemBuilder.buildEmptyThemeItem(context: context, onTap: null));
     return list;
   }
 }

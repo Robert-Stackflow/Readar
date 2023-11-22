@@ -1,25 +1,25 @@
 import 'package:cloudreader/Resources/gaps.dart';
 import 'package:cloudreader/Resources/theme_color_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../Scaffold/my_appbar.dart';
 
 class ItemBuilder {
   static PreferredSizeWidget buildSimpleAppBar({
     String title = "",
+    Key? key,
     IconData leading = Icons.arrow_back_rounded,
     List<Widget>? actions,
     required BuildContext context,
   }) {
     return MyAppBar(
-      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      elevation: 0,
-      scrolledUnderElevation: 0,
+      key: key,
       leading: Container(
         margin: const EdgeInsets.only(left: 8),
         child: buildIconButton(
           context: context,
-          icon: Icon(leading, color: IconTheme.of(context).color),
+          icon: Icon(leading, color: Theme.of(context).iconTheme.color),
           onTap: () {
             Navigator.pop(context);
           },
@@ -38,12 +38,14 @@ class ItemBuilder {
 
   static PreferredSizeWidget buildAppBar({
     Widget? title,
+    Key? key,
     IconData leading = Icons.arrow_back_rounded,
     Function()? onLeadingTap,
     List<Widget>? actions,
     required BuildContext context,
   }) {
     return MyAppBar(
+      key: key,
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       elevation: 0,
       scrolledUnderElevation: 0,
@@ -51,7 +53,7 @@ class ItemBuilder {
         margin: const EdgeInsets.only(left: 8),
         child: buildIconButton(
           context: context,
-          icon: Icon(leading, color: IconTheme.of(context).color),
+          icon: Icon(leading, color: Theme.of(context).iconTheme.color),
           onTap: onLeadingTap,
         ),
       ),
@@ -116,6 +118,28 @@ class ItemBuilder {
                 ? Radius.circular(radius)
                 : const Radius.circular(0),
           ),
+          border: ThemeColorData.isImmersive(context)
+              ? Border.merge(
+                  Border.symmetric(
+                    vertical: BorderSide(
+                      color: Theme.of(context).dividerColor,
+                      width: 0.5,
+                    ),
+                  ),
+                  Border(
+                    top: topRadius
+                        ? BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 0.5,
+                          )
+                        : BorderSide.none,
+                    bottom: BorderSide(
+                      color: Theme.of(context).dividerColor,
+                      width: 0.5,
+                    ),
+                  ),
+                )
+              : const Border(),
         ),
         child: InkWell(
           borderRadius: BorderRadius.vertical(
@@ -125,7 +149,10 @@ class ItemBuilder {
               bottom: bottomRadius
                   ? Radius.circular(radius)
                   : const Radius.circular(0)),
-          onTap: onTap,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            if (onTap != null) onTap();
+          },
           child: Column(
             children: [
               Container(
@@ -167,19 +194,23 @@ class ItemBuilder {
                   ],
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Theme.of(context).dividerColor,
-                      width: 0.5,
-                      style:
-                          bottomRadius ? BorderStyle.none : BorderStyle.solid,
+              ThemeColorData.isImmersive(context)
+                  ? MyGaps.empty
+                  : Container(
+                      height: 0,
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 0.5,
+                            style: bottomRadius
+                                ? BorderStyle.none
+                                : BorderStyle.solid,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )
             ],
           ),
         ),
@@ -224,6 +255,28 @@ class ItemBuilder {
                 ? Radius.circular(radius)
                 : const Radius.circular(0),
           ),
+          border: ThemeColorData.isImmersive(context)
+              ? Border.merge(
+                  Border.symmetric(
+                    vertical: BorderSide(
+                      color: Theme.of(context).dividerColor,
+                      width: 0.5,
+                    ),
+                  ),
+                  Border(
+                    top: topRadius
+                        ? BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 0.5,
+                          )
+                        : BorderSide.none,
+                    bottom: BorderSide(
+                      color: Theme.of(context).dividerColor,
+                      width: 0.5,
+                    ),
+                  ),
+                )
+              : const Border(),
         ),
         child: InkWell(
           onTap: onTap,
@@ -275,27 +328,34 @@ class ItemBuilder {
                     SizedBox(width: showTrailing ? trailingLeftMargin : 0),
                     Visibility(
                       visible: showTrailing,
-                      child: Icon(trailing,
-                          size: 20,
-                          color: Theme.of(context).textTheme.titleSmall?.color),
+                      child: Icon(
+                        trailing,
+                        size: 20,
+                        color:
+                            Theme.of(context).iconTheme.color?.withAlpha(127),
+                      ),
                     ),
                   ],
                 ),
               ),
-              Container(
-                margin:
-                    EdgeInsets.symmetric(horizontal: dividerPadding ? 10 : 0),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Theme.of(context).dividerColor,
-                      width: 0.5,
-                      style:
-                          bottomRadius ? BorderStyle.none : BorderStyle.solid,
+              ThemeColorData.isImmersive(context)
+                  ? MyGaps.empty
+                  : Container(
+                      height: 0,
+                      margin: EdgeInsets.symmetric(
+                          horizontal: dividerPadding ? 10 : 0),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 0.5,
+                            style: bottomRadius
+                                ? BorderStyle.none
+                                : BorderStyle.solid,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )
             ],
           ),
         ),
@@ -346,6 +406,22 @@ class ItemBuilder {
           bottom:
               bottomRadius ? Radius.circular(radius) : const Radius.circular(0),
         ),
+        border: ThemeColorData.isImmersive(context)
+            ? Border.merge(
+                Border.symmetric(
+                  vertical: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 0.5,
+                  ),
+                ),
+                Border(
+                  bottom: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 0.5,
+                  ),
+                ),
+              )
+            : const Border(),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -387,7 +463,7 @@ class ItemBuilder {
               color: themeColorData.background,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               border: Border.all(
-                color: Colors.transparent,
+                color: themeColorData.dividerColor,
                 style: BorderStyle.solid,
                 width: 0.6,
               ),
@@ -400,7 +476,6 @@ class ItemBuilder {
                 const SizedBox(height: 15),
                 Radio(
                   value: index,
-                  toggleable: true,
                   groupValue: groupIndex,
                   onChanged: onChanged,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -444,7 +519,7 @@ class ItemBuilder {
               border: Border.all(
                 color: Theme.of(context).dividerColor,
                 style: BorderStyle.solid,
-                width: 1,
+                width: 0.6,
               ),
             ),
             child: Column(
@@ -476,7 +551,7 @@ class ItemBuilder {
       width: 90,
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: themeColorData.materialBackground,
+        color: themeColorData.canvasBackground,
         borderRadius: const BorderRadius.all(Radius.circular(5)),
       ),
       child: Row(

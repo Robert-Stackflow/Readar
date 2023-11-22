@@ -73,7 +73,7 @@ class NavEntry {
   };
 
   static Map<String, Widget> idToPageMap = {
-    "article": ArticleScreen(ScrollTopNotifier()),
+    "article": const ArticleScreen(),
     "feed": const FeedScreen(),
     "star": const StarScreen(),
     "readLater": const ReadLaterScreen(),

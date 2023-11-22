@@ -35,17 +35,6 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool _shouldInterceptBack = false;
-
-  bool get shouldInterceptBack => _shouldInterceptBack;
-
-  set shouldInterceptBack(bool value) {
-    if (value != _shouldInterceptBack) {
-      _shouldInterceptBack = value;
-      notifyListeners();
-    }
-  }
-
   bool _showNavigationBar = HiveUtil.showNavigationBar();
 
   bool get showNavigationBar => _showNavigationBar;

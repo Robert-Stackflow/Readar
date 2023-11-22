@@ -28,9 +28,12 @@ class HiveUtil {
 
   //Appearance
   static const String localeKey = "locale";
-  static const String lighthemeIndexKey = "lighthemeIndex";
+  static const String lightThemeIndexKey = "lightThemeIndex";
   static const String darkThemeIndexKey = "darkThemeIndex";
-  static const String primaryColorIndexKey = "primaryColorIndex";
+  static const String lightThemePrimaryColorIndexKey =
+      "lightThemePrimaryColorIndex";
+  static const String darkThemePrimaryColorIndexKey =
+      "darkThemePrimaryColorIndex";
   static const String customPrimaryColorKey = "customPrimaryColor";
   static const String customLightThemeListKey = "customLightThemeList";
   static const String customDarkThemeListKey = "customDarkThemeListKey";
@@ -114,7 +117,7 @@ class HiveUtil {
 
   static int getLightThemeIndex() {
     int index =
-        HiveUtil.getInt(key: HiveUtil.lighthemeIndexKey, defaultValue: 0);
+        HiveUtil.getInt(key: HiveUtil.lightThemeIndexKey, defaultValue: 0);
     if (index > ThemeColorData.defaultLightThemes.length) {
       String? json = HiveUtil.getString(key: HiveUtil.customLightThemeListKey);
       if (json == null || json.isEmpty) {
@@ -158,7 +161,7 @@ class HiveUtil {
 
   static ThemeColorData getLightTheme() {
     int index =
-        HiveUtil.getInt(key: HiveUtil.lighthemeIndexKey, defaultValue: 0);
+        HiveUtil.getInt(key: HiveUtil.lightThemeIndexKey, defaultValue: 0);
     if (index > ThemeColorData.defaultLightThemes.length) {
       String? json = HiveUtil.getString(key: HiveUtil.customLightThemeListKey);
       if (json == null || json.isEmpty) {
@@ -203,7 +206,7 @@ class HiveUtil {
   }
 
   static void setLightTheme(int index) =>
-      HiveUtil.put(key: HiveUtil.lighthemeIndexKey, value: index);
+      HiveUtil.put(key: HiveUtil.lightThemeIndexKey, value: index);
 
   static void setDarkTheme(int index) =>
       HiveUtil.put(key: HiveUtil.darkThemeIndexKey, value: index);

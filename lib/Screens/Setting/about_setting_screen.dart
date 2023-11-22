@@ -45,6 +45,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
           behavior: NoShadowScrollBehavior(),
           child: ListView(
             children: [
+              const SizedBox(height: 20),
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
@@ -55,7 +56,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 16, bottom: 8),
+                margin: const EdgeInsets.only(top: 8),
                 alignment: Alignment.center,
                 child: Text(
                   appName,

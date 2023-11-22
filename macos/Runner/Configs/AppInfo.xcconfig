@@ -8,7 +8,7 @@
 PRODUCT_NAME = psychology
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.cloudchewie.rss
+PRODUCT_BUNDLE_IDENTIFIER = com.cloudchewie.readar
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 com.cloudchewie. All rights reserved.

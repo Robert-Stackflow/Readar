@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "The navigation bar can display at most ${maxShown} entries.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
+
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("About"),
         "advancedSetting":

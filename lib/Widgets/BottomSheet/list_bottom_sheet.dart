@@ -15,17 +15,19 @@ class TileList extends StatelessWidget {
     required this.title,
     required BuildContext context,
     super.key,
-  }) : children = options.map(
-          (t) => ItemBuilder.buildEntryItem(
-            title: t.item1,
-            trailing: Icons.done_rounded,
-            showTrailing: t.item2 == selected,
-            onTap: () {
-              onSelected(t.item2);
-            },
-            context: context,
-          ),
-        );
+  }) : children = options
+            .map(
+              (t) => ItemBuilder.buildEntryItem(
+                title: t.item1,
+                trailing: Icons.done_rounded,
+                showTrailing: t.item2 == selected,
+                onTap: () {
+                  onSelected(t.item2);
+                },
+                context: context,
+              ),
+            )
+            .toList();
 
   final Iterable<Widget> children;
   final String title;
@@ -39,36 +41,24 @@ class TileList extends StatelessWidget {
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
+            border: const Border(),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+          ),
+          child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+        ),
+        Container(
+          height: 0,
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
                 color: Theme.of(context).dividerColor,
-                width: 1,
+                width: 1.2,
                 style: BorderStyle.solid,
               ),
             ),
-            color: Theme.of(context).canvasColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   mainAxisSize: MainAxisSize.min,
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     Text(title, style: Theme.of(context).textTheme.titleLarge),
-            //     GestureDetector(
-            //       onTap: onCloseTap,
-            //       child: Icon(
-            //         Icons.close_rounded,
-            //         color: Theme.of(context).iconTheme.color,
-            //         size: 23,
-            //       ),
-            //     ),
-            //   ],
-            // ),
           ),
         ),
         ...children,
