@@ -38,8 +38,7 @@ class HiveUtil {
   static const String customLightThemeListKey = "customLightThemeList";
   static const String customDarkThemeListKey = "customDarkThemeListKey";
   static const String themeModeKey = "themeMode";
-  static const String showNavigationBarKey = "showNavigationBar";
-  static const String navEntriesKey = "navEntries";
+  static const String sidebarEntriesKey = "sidebarEntries";
   static const String articleLayoutKey = "articleLayout";
   static const String articleMetaKey = "articleMeta";
 
@@ -108,12 +107,6 @@ class HiveUtil {
   static void setThemeMode(ActiveThemeMode themeMode) {
     HiveUtil.put(key: HiveUtil.themeModeKey, value: themeMode.index);
   }
-
-  static bool showNavigationBar() =>
-      HiveUtil.getBool(key: HiveUtil.showNavigationBarKey, defaultValue: false);
-
-  static void setShowNavigationBar(bool value) =>
-      HiveUtil.put(key: HiveUtil.showNavigationBarKey, value: value);
 
   static int getLightThemeIndex() {
     int index =
@@ -218,9 +211,9 @@ class HiveUtil {
       HiveUtil.getBool(key: HiveUtil.autoLockKey);
 
   static List<NavEntry> getNavEntries() {
-    String? json = HiveUtil.getString(key: HiveUtil.navEntriesKey);
+    String? json = HiveUtil.getString(key: HiveUtil.sidebarEntriesKey);
     if (json == null || json.isEmpty) {
-      return NavEntry.defaultEntries;
+      return NavEntry.changableEntries;
     } else {
       List<dynamic> list = jsonDecode(json);
       return List<NavEntry>.from(
@@ -229,7 +222,7 @@ class HiveUtil {
   }
 
   static void setNavEntries(List<NavEntry> entries) =>
-      HiveUtil.put(key: HiveUtil.navEntriesKey, value: jsonEncode(entries));
+      HiveUtil.put(key: HiveUtil.sidebarEntriesKey, value: jsonEncode(entries));
 
   //Essential
 

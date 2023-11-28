@@ -35,18 +35,6 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool _showNavigationBar = HiveUtil.showNavigationBar();
-
-  bool get showNavigationBar => _showNavigationBar;
-
-  set showNavigationBar(bool value) {
-    if (value != _showNavigationBar) {
-      _showNavigationBar = value;
-      notifyListeners();
-      HiveUtil.setShowNavigationBar(value);
-    }
-  }
-
   bool _isDrawerOpen = false;
 
   bool get isDrawerOpen => _isDrawerOpen;

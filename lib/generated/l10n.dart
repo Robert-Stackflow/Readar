@@ -1,7 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -76,6 +75,16 @@ class S {
     return Intl.message(
       'Articles',
       name: 'article',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All Articles`
+  String get allArticle {
+    return Intl.message(
+      'All Articles',
+      name: 'allArticle',
       desc: '',
       args: [],
     );
@@ -561,71 +570,51 @@ class S {
     );
   }
 
-  /// `Navigation Bar Setting`
-  String get bottomNavigationBarSetting {
+  /// `侧边栏入口设置`
+  String get sideBarEntriesSetting {
     return Intl.message(
-      'Navigation Bar Setting',
-      name: 'bottomNavigationBarSetting',
+      '侧边栏入口设置',
+      name: 'sideBarEntriesSetting',
       desc: '',
       args: [],
     );
   }
 
-  /// `Show Navigation Bar`
-  String get showNavigationBar {
+  /// `显示的入口`
+  String get shownEntries {
     return Intl.message(
-      'Show Navigation Bar',
-      name: 'showNavigationBar',
+      '显示的入口',
+      name: 'shownEntries',
       desc: '',
       args: [],
     );
   }
 
-  /// `Entries displayed in navigation bar`
-  String get navigationBarEntries {
+  /// `隐藏的入口（将被移动到{library}页面中）`
+  String hiddenEntries(Object library) {
     return Intl.message(
-      'Entries displayed in navigation bar',
-      name: 'navigationBarEntries',
+      '隐藏的入口（将被移动到$library页面中）',
+      name: 'hiddenEntries',
+      desc: '',
+      args: [library],
+    );
+  }
+
+  /// `已显示所有入口`
+  String get allEntriesShownTip {
+    return Intl.message(
+      '已显示所有入口',
+      name: 'allEntriesShownTip',
       desc: '',
       args: [],
     );
   }
 
-  /// `Entries displayed in sidebar`
-  String get sidebarEntries {
+  /// `已隐藏所有入口`
+  String get allEntriesHiddenTip {
     return Intl.message(
-      'Entries displayed in sidebar',
-      name: 'sidebarEntries',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Navigation Bar Preview`
-  String get navigationBarPreview {
-    return Intl.message(
-      'Navigation Bar Preview',
-      name: 'navigationBarPreview',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `The navigation bar can display at most {maxShown} entries.`
-  String navigationBarMaxEntriesTip(Object maxShown) {
-    return Intl.message(
-      'The navigation bar can display at most $maxShown entries.',
-      name: 'navigationBarMaxEntriesTip',
-      desc: '',
-      args: [maxShown],
-    );
-  }
-
-  /// `All entries have been moved to the sidebar, and the navigation bar will no longer be displayed.`
-  String get allEntriesHidddenTip {
-    return Intl.message(
-      'All entries have been moved to the sidebar, and the navigation bar will no longer be displayed.',
-      name: 'allEntriesHidddenTip',
+      '已隐藏所有入口',
+      name: 'allEntriesHiddenTip',
       desc: '',
       args: [],
     );
@@ -964,10 +953,8 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   @override
   bool isSupported(Locale locale) => _isSupported(locale);
-
   @override
   Future<S> load(Locale locale) => S.load(locale);
-
   @override
   bool shouldReload(AppLocalizationDelegate old) => false;
 

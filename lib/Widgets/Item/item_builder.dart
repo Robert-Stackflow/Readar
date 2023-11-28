@@ -94,7 +94,6 @@ class ItemBuilder {
     required String title,
     String description = "",
     Function()? onTap,
-    Function(bool?)? onChanged,
     double trailingLeftMargin = 5,
     double padding = 15,
     required BuildContext context,
@@ -149,10 +148,6 @@ class ItemBuilder {
               bottom: bottomRadius
                   ? Radius.circular(radius)
                   : const Radius.circular(0)),
-          onTap: () {
-            HapticFeedback.lightImpact();
-            if (onTap != null) onTap();
-          },
           child: Column(
             children: [
               Container(
@@ -188,7 +183,10 @@ class ItemBuilder {
                       scale: 0.9,
                       child: Switch(
                         value: value,
-                        onChanged: onChanged,
+                        onChanged: (_) {
+                          HapticFeedback.lightImpact();
+                          if (onTap != null) onTap();
+                        },
                       ),
                     ),
                   ],

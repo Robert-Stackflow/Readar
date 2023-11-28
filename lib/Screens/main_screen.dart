@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloudreader/Models/nav_entry.dart';
+import 'package:cloudreader/Screens/Navigation/article_screen.dart';
 import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,20 +11,12 @@ import 'package:provider/provider.dart';
 import '../Providers/global_provider.dart';
 import '../Providers/provider_manager.dart';
 import '../Utils/hive_util.dart';
-import '../Utils/uri_util.dart';
-import '../Widgets/Custom/salomon_bottom_bar.dart';
 import '../Widgets/Item/item_builder.dart';
 import '../Widgets/Scaffold/my_scaffold.dart';
 import '../generated/l10n.dart';
 import 'Lock/pin_verify_screen.dart';
 import 'Setting/about_setting_screen.dart';
-import 'Setting/backup_setting_screen.dart';
-import 'Setting/experiment_setting_screen.dart';
-import 'Setting/extension_setting_screen.dart';
-import 'Setting/general_setting_screen.dart';
-import 'Setting/global_setting_screen.dart';
-import 'Setting/operation_setting_screen.dart';
-import 'Setting/service_setting_screen.dart';
+import 'Setting/setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -37,10 +30,8 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State<MainScreen>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   List<Widget> _pageList = [];
-  List<SalomonBottomBarItem> _navigationBarItemList = [];
+  List<NavEntry> _sideBarEntries = [];
   Timer? _timer;
-  int _bottomBarSelectedIndex = 0;
-  bool _showNavigationBar = ProviderManager.globalProvider.showNavigationBar;
   late bool isDark;
   IconData? themeModeIcon;
   bool isDrawerOpen = false;
@@ -73,31 +64,20 @@ class MainScreenState extends State<MainScreen>
   }
 
   void initData() {
-    _pageList = [];
-    _navigationBarItemList = [];
-    setState(() {
-      _showNavigationBar = ProviderManager.globalProvider.showNavigationBar &&
-          NavEntry.getNavigationBarEntries().isNotEmpty;
-      if (_showNavigationBar) {
-        for (NavEntry item in NavEntry.getNavigationBarEntries()) {
-          _navigationBarItemList.add(SalomonBottomBarItem(
-              icon: Icon(NavEntry.getIcon(item.id)),
-              title: Text(NavEntry.getLabel(item.id))));
-          _pageList.add(NavEntry.getPage(item.id));
-        }
-      } else {
-        for (NavEntry item in NavEntry.getNavs()) {
-          _pageList.add(NavEntry.getPage(item.id));
-        }
-      }
-    });
+    _pageList = [const ArticleScreen()];
+    _sideBarEntries = NavEntry.getShownEntries();
+    if (NavEntry.getHiddenEntries().isNotEmpty) {
+      _sideBarEntries.add(NavEntry.libraryEntry);
+    }
+    _sideBarEntries.addAll(NavEntry.defaultEntries);
+    for (NavEntry item in _sideBarEntries) {
+      _pageList.add(NavEntry.getPage(item.id));
+    }
+    setState(() {});
   }
 
   void onBottomNavigationBarItemTap(int index) {
     _pageController.jumpToPage(index);
-    setState(() {
-      _bottomBarSelectedIndex = index;
-    });
   }
 
   void goPinVerify() {
@@ -122,7 +102,7 @@ class MainScreenState extends State<MainScreen>
       onDrawerChanged: (isOpened) {
         ProviderManager.globalProvider.isDrawerOpen = isOpened;
       },
-      // drawerEdgeDragWidth: MediaQuery.of(context).size.width,
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width,
       body: ScaleTransition(
         scale: Tween<double>(begin: 1.0, end: 0.98)
             .animate(_drawerAnimationController),
@@ -136,16 +116,6 @@ class MainScreenState extends State<MainScreen>
         ),
       ),
       drawer: _drawer(),
-      bottomNavigationBar: _showNavigationBar
-          ? SalomonBottomBar(
-              margin: const EdgeInsets.all(10),
-              items: _navigationBarItemList,
-              currentIndex: _bottomBarSelectedIndex,
-              backgroundColor: Theme.of(context).canvasColor,
-              selectedItemColor: Theme.of(context).primaryColor,
-              onTap: onBottomNavigationBarItemTap,
-            )
-          : null,
       customAnimationController: _drawerAnimationController,
     );
   }
@@ -172,126 +142,27 @@ class MainScreenState extends State<MainScreen>
                     child: Column(
                       children: [
                         ItemBuilder.buildCaptionItem(
+                            context: context, title: S.current.article),
+                        ..._feedEntries(),
+                        const SizedBox(height: 10),
+                        ItemBuilder.buildCaptionItem(
                             context: context, title: S.current.content),
                         ..._contentEntries(),
                         const SizedBox(height: 10),
-                        ItemBuilder.buildCaptionItem(
-                            context: context, title: S.current.basicSetting),
                         ItemBuilder.buildEntryItem(
                           context: context,
-                          title: S.current.generalSetting,
+                          title: S.current.setting,
                           padding: 15,
-                          showLeading: true,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) =>
-                                        const GeneralSettingScreen()));
-                          },
-                          leading: Icons.settings_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          showLeading: true,
-                          title: S.current.globalSetting,
-                          padding: 15,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) =>
-                                        const GlobalSettingScreen()));
-                          },
-                          leading: Icons.settings_applications_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.operationSetting,
-                          showLeading: true,
-                          bottomRadius: true,
-                          padding: 15,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) =>
-                                        const OperationSettingScreen()));
-                          },
-                          leading: Icons.touch_app_outlined,
-                        ),
-                        const SizedBox(height: 10),
-                        ItemBuilder.buildCaptionItem(
-                            context: context, title: S.current.advancedSetting),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.serviceSetting,
-                          showLeading: true,
-                          padding: 15,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) =>
-                                        const ServiceSettingScreen()));
-                          },
-                          leading: Icons.business_center_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.backupSetting,
-                          showLeading: true,
-                          padding: 15,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) =>
-                                        const BackupSettingScreen()));
-                          },
-                          leading: Icons.backup_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.extensionSetting,
-                          showLeading: true,
-                          padding: 15,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) =>
-                                        const ExtensionSettingScreen()));
-                          },
-                          leading: Icons.extension_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          showLeading: true,
-                          title: S.current.experimentSetting,
-                          padding: 15,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) =>
-                                        const ExperimentSettingScreen()));
-                          },
-                          bottomRadius: true,
-                          leading: Icons.outlined_flag_rounded,
-                        ),
-                        const SizedBox(height: 10),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.help,
                           topRadius: true,
                           showLeading: true,
-                          padding: 15,
                           onTap: () {
-                            UriUtil.launchUrlUri(
-                                "https://rssreader.cloudchewie.com/help");
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const SettingScreen()));
                           },
-                          leading: Icons.help_outline_rounded,
+                          leading: Icons.settings_outlined,
                         ),
                         ItemBuilder.buildEntryItem(
                           context: context,
@@ -316,47 +187,6 @@ class MainScreenState extends State<MainScreen>
                 ],
               ),
             ),
-            // Container(
-            //   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-            //   decoration: BoxDecoration(
-            //     color: Theme.of(context).canvasColor,
-            //     boxShadow: <BoxShadow>[
-            //       BoxShadow(
-            //         color: Theme.of(context).shadowColor.withAlpha(70),
-            //         offset: const Offset(-16, 14),
-            //         blurRadius: 18,
-            //         spreadRadius: 0,
-            //       ),
-            //     ],
-            //   ),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     mainAxisSize: MainAxisSize.max,
-            //     children: [
-            //       IconButton(
-            //         splashColor: Colors.transparent,
-            //         highlightColor: Colors.transparent,
-            //         onPressed: () {
-            //           Navigator.push(
-            //               context,
-            //               CupertinoPageRoute(
-            //                   builder: (context) => const SettingScreen()));
-            //         },
-            //         icon: const Icon(Icons.settings_outlined, size: 23),
-            //       ),
-            //       IconButton(
-            //         splashColor: Colors.transparent,
-            //         highlightColor: Colors.transparent,
-            //         onPressed: () {
-            //           ProviderManager.globalProvider.themeMode =
-            //               isDark ? ActiveThemeMode.light : ActiveThemeMode.dark;
-            //           refreshDarkState();
-            //         },
-            //         icon: Icon(themeModeIcon, size: 23),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -364,41 +194,50 @@ class MainScreenState extends State<MainScreen>
   }
 
   List<Widget> _contentEntries() {
-    List<NavEntry> sideBarEntries =
-        ProviderManager.globalProvider.showNavigationBar
-            ? NavEntry.getSidebarEntries()
-            : NavEntry.getNavs();
     List<Widget> widgets = [];
-    for (NavEntry entry in sideBarEntries) {
+    for (NavEntry entry in _sideBarEntries) {
       widgets.add(
         ItemBuilder.buildEntryItem(
           context: context,
           title: NavEntry.getLabel(entry.id),
           showLeading: true,
           padding: 15,
-          bottomRadius: sideBarEntries.last == entry,
+          bottomRadius: _sideBarEntries.last == entry,
           onTap: () {
-            if (_showNavigationBar) {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) => NavEntry.getPage(entry.id),
-                  settings: RouteSettings(
-                      name: "isNavigationBarEntry", arguments: entry.visible),
-                ),
-              );
-            } else {
-              setState(() {
-                if (mounted) {
-                  _pageController.jumpToPage(sideBarEntries.indexOf(entry));
-                }
-              });
-              Navigator.of(context).pop();
-            }
+            setState(() {
+              if (mounted) {
+                _pageController.jumpToPage(_sideBarEntries.indexOf(entry) + 1);
+              }
+            });
+            Navigator.of(context).pop();
           },
           leading: NavEntry.getIcon(entry.id),
         ),
       );
     }
+    return widgets;
+  }
+
+  List<Widget> _feedEntries() {
+    List<Widget> widgets = [];
+    widgets.add(
+      ItemBuilder.buildEntryItem(
+        context: context,
+        title: S.current.allArticle,
+        showLeading: true,
+        padding: 15,
+        bottomRadius: true,
+        onTap: () {
+          setState(() {
+            if (mounted) {
+              _pageController.jumpToPage(0);
+            }
+          });
+          Navigator.of(context).pop();
+        },
+        leading: Icons.feed_outlined,
+      ),
+    );
     return widgets;
   }
 

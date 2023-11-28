@@ -20,15 +20,15 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'zh_CN';
 
-  static String m0(maxShown) => "导航栏最多显示${maxShown}个入口";
+  static String m0(library) => "隐藏的入口（将被移动到${library}页面中）";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("关于"),
         "advancedSetting": MessageLookupByLibrary.simpleMessage("高级设置"),
-        "allEntriesHidddenTip":
-            MessageLookupByLibrary.simpleMessage("所有入口均移至侧边栏，导航栏将不再显示"),
+        "allArticle": MessageLookupByLibrary.simpleMessage("全部文章"),
+        "allEntriesHiddenTip": MessageLookupByLibrary.simpleMessage("已隐藏所有入口"),
+        "allEntriesShownTip": MessageLookupByLibrary.simpleMessage("已显示所有入口"),
         "appName": MessageLookupByLibrary.simpleMessage("Readar"),
         "apprearanceSetting": MessageLookupByLibrary.simpleMessage("外观"),
         "article": MessageLookupByLibrary.simpleMessage("文章"),
@@ -47,8 +47,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("滚动时自动标记为已读"),
         "backupSetting": MessageLookupByLibrary.simpleMessage("备份"),
         "basicSetting": MessageLookupByLibrary.simpleMessage("基本设置"),
-        "bottomNavigationBarSetting":
-            MessageLookupByLibrary.simpleMessage("导航栏设置"),
         "bugReport": MessageLookupByLibrary.simpleMessage("报告BUG"),
         "cacheImageWhenPull": MessageLookupByLibrary.simpleMessage("拉取时缓存图片"),
         "cacheWebPageWhenPull": MessageLookupByLibrary.simpleMessage("拉取时缓存文章"),
@@ -79,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "githubRepo": MessageLookupByLibrary.simpleMessage("Github仓库"),
         "globalSetting": MessageLookupByLibrary.simpleMessage("全局"),
         "help": MessageLookupByLibrary.simpleMessage("使用指南"),
+        "hiddenEntries": m0,
         "highlights": MessageLookupByLibrary.simpleMessage("集锦"),
         "history": MessageLookupByLibrary.simpleMessage("阅读历史"),
         "hotLinks": MessageLookupByLibrary.simpleMessage("热门链接"),
@@ -88,10 +87,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "lightTheme": MessageLookupByLibrary.simpleMessage("浅色模式"),
         "linkedList": MessageLookupByLibrary.simpleMessage("含多个链接的文章"),
         "mobilizerType": MessageLookupByLibrary.simpleMessage("Mobilizer"),
-        "navigationBarEntries":
-            MessageLookupByLibrary.simpleMessage("显示在导航栏的入口"),
-        "navigationBarMaxEntriesTip": m0,
-        "navigationBarPreview": MessageLookupByLibrary.simpleMessage("导航栏预览"),
         "officialWebsite": MessageLookupByLibrary.simpleMessage("官方网站"),
         "operationSetting": MessageLookupByLibrary.simpleMessage("操作"),
         "participateInTranslation":
@@ -109,8 +104,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "selectTheme": MessageLookupByLibrary.simpleMessage("选择主题"),
         "serviceSetting": MessageLookupByLibrary.simpleMessage("服务"),
         "setting": MessageLookupByLibrary.simpleMessage("设置"),
-        "showNavigationBar": MessageLookupByLibrary.simpleMessage("显示导航栏"),
-        "sidebarEntries": MessageLookupByLibrary.simpleMessage("显示在侧边栏的入口"),
+        "shownEntries": MessageLookupByLibrary.simpleMessage("显示的入口"),
+        "sideBarEntriesSetting":
+            MessageLookupByLibrary.simpleMessage("侧边栏入口设置"),
         "star": MessageLookupByLibrary.simpleMessage("星标"),
         "statistics": MessageLookupByLibrary.simpleMessage("统计"),
         "telegramGroup": MessageLookupByLibrary.simpleMessage("Telegram频道"),

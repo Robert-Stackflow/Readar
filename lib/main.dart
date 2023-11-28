@@ -8,10 +8,9 @@ import 'package:cloudreader/Screens/Navigation/read_later_screen.dart';
 import 'package:cloudreader/Screens/Navigation/star_screen.dart';
 import 'package:cloudreader/Screens/Navigation/tts_screen.dart';
 import 'package:cloudreader/Screens/Setting/backup_setting_screen.dart';
+import 'package:cloudreader/Screens/Setting/entry_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/experiment_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/extension_setting_screen.dart';
-import 'package:cloudreader/Screens/Setting/global_setting_screen.dart';
-import 'package:cloudreader/Screens/Setting/nav_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/operation_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Screens/Setting/setting_screen.dart';
@@ -28,6 +27,7 @@ import 'Screens/Navigation/library_screen.dart';
 import 'Screens/Setting/about_setting_screen.dart';
 import 'Screens/Setting/backup_service_setting_screen.dart';
 import 'Screens/Setting/general_setting_screen.dart';
+import 'Screens/Setting/global_setting_screen.dart';
 import 'Screens/Setting/service_setting_screen.dart';
 import 'Screens/main_screen.dart';
 import 'generated/l10n.dart';
@@ -102,7 +102,8 @@ class MyApp extends StatelessWidget {
             ExploreScreen.routeName: (context) => const ExploreScreen(),
             PinChangeScreen.routeName: (context) => const PinChangeScreen(),
             ReadLaterScreen.routeName: (context) => const ReadLaterScreen(),
-            NavSettingScreen.routeName: (context) => const NavSettingScreen(),
+            EntrySettingScreen.routeName: (context) =>
+                const EntrySettingScreen(),
             SelectThemeScreen.routeName: (context) => const SelectThemeScreen(),
             ArticleDetailScreen.routeName: (context) => ArticleDetailScreen(),
             ExperimentSettingScreen.routeName: (context) =>

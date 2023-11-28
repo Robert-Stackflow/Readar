@@ -1,31 +1,28 @@
 import 'package:cloudreader/Models/nav_entry.dart';
 import 'package:cloudreader/Providers/global_provider.dart';
 import 'package:cloudreader/Providers/provider_manager.dart';
-import 'package:cloudreader/Utils/itoast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../Widgets/Custom/no_shadow_scroll_behavior.dart';
-import '../../Widgets/Custom/salomon_bottom_bar.dart';
 import '../../Widgets/Draggable/drag_and_drop_lists.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
-class NavSettingScreen extends StatefulWidget {
-  const NavSettingScreen({super.key});
+class EntrySettingScreen extends StatefulWidget {
+  const EntrySettingScreen({super.key});
 
-  static const String routeName = "/setting/nav";
+  static const String routeName = "/setting/entry";
 
   @override
-  State<NavSettingScreen> createState() => _NavSettingScreenState();
+  State<EntrySettingScreen> createState() => _EntrySettingScreenState();
 }
 
-class _NavSettingScreenState extends State<NavSettingScreen>
+class _EntrySettingScreenState extends State<EntrySettingScreen>
     with TickerProviderStateMixin {
   List<DragAndDropList> _contents = [];
-  List<SalomonBottomBarItem> _navigationBarItemList = [];
-  int _selectedIndex = 0;
-  bool _navHasItem = true;
+  bool _allShown = false;
+  bool _allHidden = false;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -45,16 +42,16 @@ class _NavSettingScreenState extends State<NavSettingScreen>
   }
 
   void initList() {
-    List<NavEntry> navigationBarEntries = NavEntry.getNavigationBarEntries();
-    List<NavEntry> sidebarEntries = NavEntry.getSidebarEntries();
+    List<NavEntry> shownEntries = NavEntry.getShownEntries();
+    List<NavEntry> hiddenEntries = NavEntry.getHiddenEntries();
     _contents = <DragAndDropList>[
       DragAndDropList(
         canDrag: false,
         header: ItemBuilder.buildCaptionItem(
             context: context,
-            title: _navHasItem
-                ? S.current.navigationBarEntries
-                : S.current.allEntriesHidddenTip),
+            title: _allHidden
+                ? S.current.allEntriesHiddenTip
+                : S.current.shownEntries),
         lastTarget: ItemBuilder.buildCaptionItem(
             context: context,
             title: S.current.dragTip,
@@ -62,35 +59,39 @@ class _NavSettingScreenState extends State<NavSettingScreen>
             bottomRadius: true),
         contentsWhenEmpty: Container(),
         children: List.generate(
-          navigationBarEntries.length,
+          shownEntries.length,
           (index) => DragAndDropItem(
             child: ItemBuilder.buildEntryItem(
               context: context,
-              title: NavEntry.getLabel(navigationBarEntries[index].id),
+              title: NavEntry.getLabel(shownEntries[index].id),
               showTrailing: false,
             ),
-            data: navigationBarEntries[index],
+            data: shownEntries[index],
           ),
         ),
       ),
       DragAndDropList(
         canDrag: false,
         header: ItemBuilder.buildCaptionItem(
-            context: context, title: S.current.sidebarEntries),
+            context: context,
+            title: _allShown
+                ? S.current.allEntriesShownTip
+                : S.current.hiddenEntries(S.current.library)),
         lastTarget: ItemBuilder.buildCaptionItem(
             context: context,
             title: S.current.dragTip,
             topRadius: false,
             bottomRadius: true),
+        contentsWhenEmpty: Container(),
         children: List.generate(
-          sidebarEntries.length,
+          hiddenEntries.length,
           (index) => DragAndDropItem(
             child: ItemBuilder.buildEntryItem(
               context: context,
-              title: NavEntry.getLabel(sidebarEntries[index].id),
+              title: NavEntry.getLabel(hiddenEntries[index].id),
               showTrailing: false,
             ),
-            data: sidebarEntries[index],
+            data: hiddenEntries[index],
           ),
         ),
       ),
@@ -98,21 +99,18 @@ class _NavSettingScreenState extends State<NavSettingScreen>
   }
 
   void updateNavBar() {
-    setState(() {
-      _selectedIndex = 0;
-      _navigationBarItemList = [];
-      for (DragAndDropItem item in _contents[0].children) {
-        _navigationBarItemList.add(SalomonBottomBarItem(
-            icon: Icon(NavEntry.getIcon((item.data as NavEntry).id)),
-            title: Text(NavEntry.getLabel((item.data as NavEntry).id))));
-      }
-      _navHasItem = _navigationBarItemList.isNotEmpty;
-    });
+    _allShown = _contents[1].children.isEmpty;
+    _allHidden = _contents[0].children.isEmpty;
     _contents[0].header = ItemBuilder.buildCaptionItem(
         context: context,
-        title: _navHasItem
-            ? S.current.navigationBarEntries
-            : S.current.allEntriesHidddenTip);
+        title: _allHidden
+            ? S.current.allEntriesHiddenTip
+            : S.current.shownEntries);
+    _contents[1].header = ItemBuilder.buildCaptionItem(
+        context: context,
+        title: _allShown
+            ? S.current.allEntriesShownTip
+            : S.current.hiddenEntries(S.current.library));
   }
 
   void persist() {
@@ -140,7 +138,7 @@ class _NavSettingScreenState extends State<NavSettingScreen>
     return Consumer<GlobalProvider>(builder: (context, globalProvider, child) {
       return Scaffold(
         appBar: ItemBuilder.buildSimpleAppBar(
-          title: S.current.bottomNavigationBarSetting,
+          title: S.current.sideBarEntriesSetting,
           context: context,
         ),
         body: Container(
@@ -149,25 +147,10 @@ class _NavSettingScreenState extends State<NavSettingScreen>
             behavior: NoShadowScrollBehavior(),
             child: CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: ItemBuilder.buildRadioItem(
-                      context: context,
-                      title: S.current.showNavigationBar,
-                      value: globalProvider.showNavigationBar,
-                      topRadius: true,
-                      bottomRadius: true,
-                      onTap: () {
-                        setState(() {
-                          globalProvider.showNavigationBar =
-                              !globalProvider.showNavigationBar;
-                        });
-                      },
-                    ),
-                  ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 10),
                 ),
-                globalProvider.showNavigationBar && _contents.isNotEmpty
+                _contents.isNotEmpty
                     ? DragAndDropLists(
                         children: _contents,
                         onItemReorder: _onItemReorder,
@@ -201,42 +184,17 @@ class _NavSettingScreenState extends State<NavSettingScreen>
             ),
           ),
         ),
-        bottomNavigationBar: Visibility(
-          visible: globalProvider.showNavigationBar && _navHasItem,
-          child: SalomonBottomBar(
-            margin: const EdgeInsets.all(10),
-            items: _navigationBarItemList,
-            currentIndex: _selectedIndex,
-            title: Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: Text(S.current.navigationBarPreview,
-                  style: Theme.of(context).textTheme.titleSmall),
-            ),
-            backgroundColor: Theme.of(context).canvasColor,
-            selectedItemColor: Theme.of(context).primaryColor,
-            onTap: (index) => setState(() => _selectedIndex = index),
-          ),
-        ),
       );
     });
   }
 
   _onItemReorder(
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-    if (newListIndex == 0 &&
-        oldListIndex == 1 &&
-        _contents[0].children.length >= NavEntry.maxShown) {
-      IToast.showTop(
-        context,
-        text: S.current.navigationBarMaxEntriesTip(NavEntry.maxShown),
-      );
-    } else {
-      setState(() {
-        var movedItem = _contents[oldListIndex].children.removeAt(oldItemIndex);
-        _contents[newListIndex].children.insert(newItemIndex, movedItem);
-      });
-      persist();
-      updateNavBar();
-    }
+    setState(() {
+      var movedItem = _contents[oldListIndex].children.removeAt(oldItemIndex);
+      _contents[newListIndex].children.insert(newItemIndex, movedItem);
+    });
+    persist();
+    updateNavBar();
   }
 }

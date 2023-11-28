@@ -1,3 +1,4 @@
+import 'package:cloudreader/Screens/Setting/entry_setting_screen.dart';
 import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
 import 'package:cloudreader/Utils/cache_util.dart';
 import 'package:cloudreader/Utils/itoast.dart';
@@ -15,7 +16,6 @@ import '../../Widgets/BottomSheet/bottom_sheet_builder.dart';
 import '../../Widgets/BottomSheet/list_bottom_sheet.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
-import 'nav_setting_screen.dart';
 
 class GeneralSettingScreen extends StatefulWidget {
   const GeneralSettingScreen({super.key});
@@ -150,14 +150,15 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen>
                 ),
                 ItemBuilder.buildEntryItem(
                   context: context,
-                  title: S.current.bottomNavigationBarSetting,
+                  title: S.current.sideBarEntriesSetting,
                   bottomRadius: true,
                   onTap: () {
                     setState(() {
                       Navigator.push(
                           context,
                           CupertinoPageRoute(
-                              builder: (context) => const NavSettingScreen()));
+                              builder: (context) =>
+                                  const EntrySettingScreen()));
                     });
                   },
                 ),

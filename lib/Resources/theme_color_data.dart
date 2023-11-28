@@ -271,14 +271,21 @@ class ThemeColorData {
           if (states.contains(MaterialState.selected)) {
             return canvasBackground;
           } else {
-            return textGrayColor;
+            return textGrayColor.withAlpha(200);
+          }
+        }),
+        trackOutlineColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return primaryColor;
+          } else {
+            return textGrayColor.withAlpha(40);
           }
         }),
         trackColor: MaterialStateProperty.resolveWith((states) {
           if (states.contains(MaterialState.selected)) {
             return primaryColor;
           } else {
-            return null;
+            return canvasBackground;
           }
         }),
       ),

@@ -20,17 +20,16 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(maxShown) =>
-      "The navigation bar can display at most ${maxShown} entries.";
+  static String m0(library) => "隐藏的入口（将被移动到${library}页面中）";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
-
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("About"),
         "advancedSetting":
             MessageLookupByLibrary.simpleMessage("Advanced Setting"),
-        "allEntriesHidddenTip": MessageLookupByLibrary.simpleMessage(
-            "All entries have been moved to the sidebar, and the navigation bar will no longer be displayed."),
+        "allArticle": MessageLookupByLibrary.simpleMessage("All Articles"),
+        "allEntriesHiddenTip": MessageLookupByLibrary.simpleMessage("已隐藏所有入口"),
+        "allEntriesShownTip": MessageLookupByLibrary.simpleMessage("已显示所有入口"),
         "appName": MessageLookupByLibrary.simpleMessage("Readar"),
         "apprearanceSetting":
             MessageLookupByLibrary.simpleMessage("Apprearance"),
@@ -51,8 +50,6 @@ class MessageLookup extends MessageLookupByLibrary {
             "Automatically mark as read when scrolling"),
         "backupSetting": MessageLookupByLibrary.simpleMessage("Backup"),
         "basicSetting": MessageLookupByLibrary.simpleMessage("Basic Setting"),
-        "bottomNavigationBarSetting":
-            MessageLookupByLibrary.simpleMessage("Navigation Bar Setting"),
         "bugReport": MessageLookupByLibrary.simpleMessage("Bug Report"),
         "cacheImageWhenPull":
             MessageLookupByLibrary.simpleMessage("Cache images when pulling"),
@@ -92,6 +89,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "githubRepo": MessageLookupByLibrary.simpleMessage("Github Repo"),
         "globalSetting": MessageLookupByLibrary.simpleMessage("Global"),
         "help": MessageLookupByLibrary.simpleMessage("Help"),
+        "hiddenEntries": m0,
         "highlights": MessageLookupByLibrary.simpleMessage("Highlights"),
         "history": MessageLookupByLibrary.simpleMessage("History"),
         "hotLinks": MessageLookupByLibrary.simpleMessage("Hot Links"),
@@ -101,11 +99,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "lightTheme": MessageLookupByLibrary.simpleMessage("Light Theme"),
         "linkedList": MessageLookupByLibrary.simpleMessage("Linked List"),
         "mobilizerType": MessageLookupByLibrary.simpleMessage("Mobilizer"),
-        "navigationBarEntries": MessageLookupByLibrary.simpleMessage(
-            "Entries displayed in navigation bar"),
-        "navigationBarMaxEntriesTip": m0,
-        "navigationBarPreview":
-            MessageLookupByLibrary.simpleMessage("Navigation Bar Preview"),
         "officialWebsite": MessageLookupByLibrary.simpleMessage("Website"),
         "operationSetting": MessageLookupByLibrary.simpleMessage("Operation"),
         "participateInTranslation":
@@ -124,10 +117,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "selectTheme": MessageLookupByLibrary.simpleMessage("Select Theme"),
         "serviceSetting": MessageLookupByLibrary.simpleMessage("Service"),
         "setting": MessageLookupByLibrary.simpleMessage("Setting"),
-        "showNavigationBar":
-            MessageLookupByLibrary.simpleMessage("Show Navigation Bar"),
-        "sidebarEntries": MessageLookupByLibrary.simpleMessage(
-            "Entries displayed in sidebar"),
+        "shownEntries": MessageLookupByLibrary.simpleMessage("显示的入口"),
+        "sideBarEntriesSetting":
+            MessageLookupByLibrary.simpleMessage("侧边栏入口设置"),
         "star": MessageLookupByLibrary.simpleMessage("Star"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
         "telegramGroup": MessageLookupByLibrary.simpleMessage("Telegram Group"),

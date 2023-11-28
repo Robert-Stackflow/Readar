@@ -78,6 +78,30 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                       const SizedBox(height: 10),
                       ItemBuilder.buildEntryItem(
                         context: context,
+                        title: S.current.help,
+                        showLeading: true,
+                        topRadius: true,
+                        padding: 15,
+                        onTap: () {
+                          UriUtil.launchUrlUri(
+                              "https://rssreader.cloudchewie.com/help");
+                        },
+                        leading: Icons.help_outline_rounded,
+                      ),
+                      ItemBuilder.buildEntryItem(
+                        context: context,
+                        title: S.current.privacyPolicy,
+                        showLeading: true,
+                        onTap: () {
+                          UriUtil.launchUrlUri(
+                              "https://rssreader.cloudchewie.com/privacyPolicy");
+                        },
+                        bottomRadius: true,
+                        leading: Icons.group_outlined,
+                      ),
+                      const SizedBox(height: 10),
+                      ItemBuilder.buildEntryItem(
+                        context: context,
                         title: S.current.contributor,
                         topRadius: true,
                         showLeading: true,
@@ -136,17 +160,6 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         leading: Icons.commit_rounded,
                       ),
                       const SizedBox(height: 10),
-                      ItemBuilder.buildEntryItem(
-                        context: context,
-                        title: S.current.privacyPolicy,
-                        showLeading: true,
-                        onTap: () {
-                          UriUtil.launchUrlUri(
-                              "https://rssreader.cloudchewie.com/privacyPolicy");
-                        },
-                        topRadius: true,
-                        leading: Icons.group_outlined,
-                      ),
                       // ItemBuilder.buildEntryItem(
                       //   context: context,
                       //   title: S.current.rate,
@@ -157,6 +170,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                       ItemBuilder.buildEntryItem(
                         context: context,
                         title: S.current.contact,
+                        topRadius: true,
                         onTap: () {
                           UriUtil.launchEmailUri(context, "2014027378@qq.com",
                               subject: "反馈");

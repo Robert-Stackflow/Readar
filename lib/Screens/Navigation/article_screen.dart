@@ -94,23 +94,26 @@ class _ArticleScreenState extends State<ArticleScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: ScrollConfiguration(
-        behavior: NoShadowScrollBehavior(),
-        child: Consumer2<GlobalProvider, RssProvider>(
-          builder: (context, globalProvider, rssProvider, child) =>
-              SmartRefresher(
-            enablePullDown: true,
-            enablePullUp: true,
-            header: MaterialClassicHeader(
-              backgroundColor: Theme.of(context).canvasColor,
-              color: Theme.of(context).primaryColor,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: ScrollConfiguration(
+          behavior: NoShadowScrollBehavior(),
+          child: Consumer2<GlobalProvider, RssProvider>(
+            builder: (context, globalProvider, rssProvider, child) =>
+                SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: true,
+              header: MaterialClassicHeader(
+                backgroundColor: Theme.of(context).canvasColor,
+                color: Theme.of(context).primaryColor,
+              ),
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              onLoading: _onLoading,
+              child: _buildRssItemList(rssProvider),
             ),
-            controller: _refreshController,
-            onRefresh: _onRefresh,
-            onLoading: _onLoading,
-            child: _buildRssItemList(rssProvider),
           ),
         ),
       ),

@@ -143,31 +143,6 @@ class _SettingScreenState extends State<SettingScreen>
                   leading: Icons.outlined_flag_rounded,
                 ),
                 const SizedBox(height: 10),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: S.current.help,
-                  topRadius: true,
-                  showLeading: true,
-                  onTap: () {
-                    UriUtil.launchUrlUri(
-                        "https://rssreader.cloudchewie.com/help");
-                  },
-                  leading: Icons.help_outline_rounded,
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: S.current.about,
-                  bottomRadius: true,
-                  showLeading: true,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                            builder: (context) => const AboutSettingScreen()));
-                  },
-                  leading: Icons.info_outline_rounded,
-                ),
-                const SizedBox(height: 10),
               ],
             ),
           ),

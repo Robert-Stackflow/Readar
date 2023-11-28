@@ -729,7 +729,7 @@ class MyDrawerControllerState extends State<MyDrawerController>
             key: _gestureDetectorKey,
             onHorizontalDragUpdate: _move,
             onHorizontalDragEnd: _settle,
-            behavior: HitTestBehavior.translucent,
+            behavior: HitTestBehavior.deferToChild,
             excludeFromSemantics: true,
             dragStartBehavior: widget.dragStartBehavior,
             child: Container(width: dragAreaWidth),

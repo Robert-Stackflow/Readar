@@ -1,23 +1,13 @@
-import 'package:cloudreader/Screens/Navigation/article_screen.dart';
-import 'package:cloudreader/Screens/Navigation/explore_screen.dart';
-import 'package:cloudreader/Screens/Navigation/feed_screen.dart';
-import 'package:cloudreader/Screens/Navigation/star_screen.dart';
+import 'package:cloudreader/Screens/Navigation/title_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import '../Providers/provider_manager.dart';
-import '../Screens/Navigation/library_screen.dart';
-import '../Screens/Navigation/read_later_screen.dart';
 import '../generated/l10n.dart';
 
-part 'nav_entry.g.dart';
-
-@JsonSerializable()
 class NavEntry {
   String id;
   int index;
   bool visible;
-  static const int maxShown = 5;
 
   NavEntry({
     required this.id,
@@ -25,17 +15,33 @@ class NavEntry {
     required this.visible,
   });
 
-  Map<String, dynamic> toJson() => _$NavEntryToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'index': index,
+        'visible': visible ? 1 : 0,
+      };
 
-  factory NavEntry.fromJson(Map<String, dynamic> json) =>
-      _$NavEntryFromJson(json);
+  factory NavEntry.fromJson(Map<String, dynamic> json) => NavEntry(
+        id: json['id'] as String,
+        index: json['index'] as int,
+        visible: json['visible'] == 0 ? false : true,
+      );
+
+  static NavEntry libraryEntry = NavEntry(
+    id: "library",
+    index: 1,
+    visible: true,
+  );
 
   static List<NavEntry> defaultEntries = <NavEntry>[
     NavEntry(
-      id: "article",
-      index: 0,
+      id: "explore",
+      index: 2,
       visible: true,
     ),
+  ];
+
+  static List<NavEntry> changableEntries = <NavEntry>[
     NavEntry(
       id: "feed",
       index: 1,
@@ -52,33 +58,49 @@ class NavEntry {
       visible: true,
     ),
     NavEntry(
-      id: "explore",
+      id: "highlights",
       index: 4,
       visible: false,
     ),
     NavEntry(
-      id: "library",
+      id: "saved",
       index: 5,
+      visible: false,
+    ),
+    NavEntry(
+      id: "history",
+      index: 6,
+      visible: false,
+    ),
+    NavEntry(
+      id: "statistics",
+      index: 7,
       visible: false,
     ),
   ];
 
   static Map<String, IconData> idToIconMap = {
-    "article": Icons.feed_outlined,
     "feed": Icons.rss_feed_rounded,
-    "star": Icons.bookmark_outline_rounded,
+    'star': Icons.star_outline_rounded,
     "readLater": Icons.checklist_rounded,
+    'highlights': Icons.lightbulb_outline_rounded,
+    'saved': Icons.save_alt_rounded,
+    'history': Icons.history_outlined,
+    "statistics": Icons.show_chart_rounded,
     "explore": Icons.explore_outlined,
     "library": Icons.library_books_outlined,
   };
 
   static Map<String, Widget> idToPageMap = {
-    "article": const ArticleScreen(),
-    "feed": const FeedScreen(),
-    "star": const StarScreen(),
-    "readLater": const ReadLaterScreen(),
-    "explore": const ExploreScreen(),
-    "library": const LibraryScreen(),
+    "feed": const TitleScreen("feed"),
+    'star': const TitleScreen("star"),
+    "readLater": const TitleScreen("readLater"),
+    'highlights': const TitleScreen("highlights"),
+    'saved': const TitleScreen("saved"),
+    'history': const TitleScreen("history"),
+    "statistics": const TitleScreen("statistics"),
+    "explore": const TitleScreen("explore"),
+    "library": const TitleScreen("library"),
   };
 
   static int compare(NavEntry a, NavEntry b) {
@@ -87,10 +109,13 @@ class NavEntry {
 
   static String getLabel(String id) {
     Map<String, String> idToLabelMap = {
-      "article": S.current.article,
       "feed": S.current.feed,
-      "star": S.current.star,
+      'star': S.current.star,
       "readLater": S.current.readLater,
+      'highlights': S.current.highlights,
+      'saved': S.current.saved,
+      'history': S.current.history,
+      "statistics": S.current.statistics,
       "explore": S.current.explore,
       "library": S.current.library,
     };
@@ -111,29 +136,28 @@ class NavEntry {
     return navs;
   }
 
-  static List<NavEntry> getNavigationBarEntries() {
+  static List<NavEntry> getHiddenEntries() {
     List<NavEntry> navEntries = ProviderManager.globalProvider.navEntries;
     navEntries.sort(compare);
-    List<NavEntry> navigationBarEntries = [];
+    List<NavEntry> hiddenEntries = [];
     for (NavEntry entry in navEntries) {
-      if (entry.visible) navigationBarEntries.add(entry);
-      if (navigationBarEntries.length >= maxShown) break;
+      if (!entry.visible) hiddenEntries.add(entry);
     }
-    return navigationBarEntries;
+    return hiddenEntries;
   }
 
-  static List<NavEntry> getSidebarEntries() {
+  static List<NavEntry> getShownEntries() {
     List<NavEntry> navEntries = ProviderManager.globalProvider.navEntries;
     navEntries.sort(compare);
-    List<NavEntry> sidebarEntries = [];
+    List<NavEntry> showEntries = [];
     List<String> ids =
         List.generate(navEntries.length, (index) => navEntries[index].id);
     for (NavEntry entry in navEntries) {
-      if (!entry.visible) sidebarEntries.add(entry);
+      if (entry.visible) showEntries.add(entry);
     }
-    for (NavEntry entry in NavEntry.defaultEntries) {
-      if (!ids.contains(entry.id)) sidebarEntries.add(entry);
+    for (NavEntry entry in NavEntry.changableEntries) {
+      if (!ids.contains(entry.id)) showEntries.add(entry);
     }
-    return sidebarEntries;
+    return showEntries;
   }
 }
