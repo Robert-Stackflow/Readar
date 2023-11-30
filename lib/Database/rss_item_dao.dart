@@ -1,5 +1,5 @@
-import 'package:cloudreader/Database/feed_dao.dart';
-import 'package:cloudreader/Models/feed.dart';
+import 'package:readar/Database/feed_dao.dart';
+import 'package:readar/Models/feed.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../Models/rss_item.dart';

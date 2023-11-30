@@ -1,6 +1,6 @@
-import 'package:cloudreader/Utils/iprint.dart';
-import 'package:cloudreader/Widgets/Unlock/gesture_notifier.dart';
-import 'package:cloudreader/Widgets/Unlock/gesture_unlock_view.dart';
+import 'package:readar/Utils/iprint.dart';
+import 'package:readar/Widgets/Unlock/gesture_notifier.dart';
+import 'package:readar/Widgets/Unlock/gesture_unlock_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;

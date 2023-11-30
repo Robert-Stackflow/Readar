@@ -46,4 +46,4 @@ app.*.map.json
 **/Deprecated/
 **/generated/
 
-cloudreader.db
+readar.db

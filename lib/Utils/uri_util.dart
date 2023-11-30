@@ -1,4 +1,4 @@
-import 'package:cloudreader/Utils/itoast.dart';
+import 'package:readar/Utils/itoast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';

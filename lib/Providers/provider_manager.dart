@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:cloudreader/Database/database_manager.dart';
-import 'package:cloudreader/Providers/rss_provider.dart';
+import 'package:readar/Database/database_manager.dart';
+import 'package:readar/Providers/rss_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:jaguar/serve/server.dart';

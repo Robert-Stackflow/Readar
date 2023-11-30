@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cloudreader/Resources/theme_color_data.dart';
-import 'package:cloudreader/Utils/iprint.dart';
+import 'package:readar/Resources/theme_color_data.dart';
+import 'package:readar/Utils/iprint.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,7 +12,7 @@ import '../Providers/global_provider.dart';
 
 class HiveUtil {
   //Database
-  static const String database = "CloudReader";
+  static const String database = "Readar";
 
   //HiveBox
   static const String settingsBox = "settings";

@@ -1,6 +1,6 @@
-import 'package:cloudreader/Models/nav_entry.dart';
-import 'package:cloudreader/Providers/global_provider.dart';
-import 'package:cloudreader/Providers/provider_manager.dart';
+import 'package:readar/Models/nav_entry.dart';
+import 'package:readar/Providers/global_provider.dart';
+import 'package:readar/Providers/provider_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

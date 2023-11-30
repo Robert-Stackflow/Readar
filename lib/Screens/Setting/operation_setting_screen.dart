@@ -1,4 +1,4 @@
-import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 
 import '../../Widgets/Item/item_builder.dart';

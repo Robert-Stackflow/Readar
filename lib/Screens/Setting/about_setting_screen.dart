@@ -1,5 +1,5 @@
-import 'package:cloudreader/Utils/uri_util.dart';
-import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:readar/Utils/uri_util.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -133,7 +133,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         title: S.current.bugReport,
                         onTap: () {
                           UriUtil.launchUrlUri(
-                              "https://github.com/Robert-Stackflow/CloudReader/issues");
+                              "https://github.com/Robert-Stackflow/Readar/issues");
                         },
                         showLeading: true,
                         leading: Icons.bug_report_outlined,
@@ -153,7 +153,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         title: S.current.githubRepo,
                         onTap: () {
                           UriUtil.launchUrlUri(
-                              "https://github.com/Robert-Stackflow/CloudReader");
+                              "https://github.com/Robert-Stackflow/Readar");
                         },
                         showLeading: true,
                         bottomRadius: true,
@@ -192,7 +192,7 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
                         context: context,
                         title: S.current.telegramGroup,
                         onTap: () {
-                          UriUtil.launchUrlUri("https://t.me/CloudReader");
+                          UriUtil.launchUrlUri("https://t.me/Readar");
                         },
                         bottomRadius: true,
                         showLeading: true,

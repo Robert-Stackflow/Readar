@@ -1,8 +1,8 @@
-import 'package:cloudreader/Screens/Setting/entry_setting_screen.dart';
-import 'package:cloudreader/Screens/Setting/select_theme_screen.dart';
-import 'package:cloudreader/Utils/cache_util.dart';
-import 'package:cloudreader/Utils/itoast.dart';
-import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:readar/Screens/Setting/entry_setting_screen.dart';
+import 'package:readar/Screens/Setting/select_theme_screen.dart';
+import 'package:readar/Utils/cache_util.dart';
+import 'package:readar/Utils/itoast.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';

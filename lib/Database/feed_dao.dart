@@ -1,4 +1,4 @@
-import 'package:cloudreader/Database/create_table_sql.dart';
+import 'package:readar/Database/create_table_sql.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../Models/feed.dart';

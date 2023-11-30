@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:cloudreader/Models/nav_entry.dart';
-import 'package:cloudreader/Screens/Navigation/article_screen.dart';
-import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:readar/Models/nav_entry.dart';
+import 'package:readar/Screens/Navigation/article_screen.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';

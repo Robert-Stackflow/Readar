@@ -1,4 +1,4 @@
-import 'package:cloudreader/Screens/Navigation/title_screen.dart';
+import 'package:readar/Screens/Navigation/title_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../Providers/provider_manager.dart';

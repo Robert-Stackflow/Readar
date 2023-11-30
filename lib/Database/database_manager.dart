@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:cloudreader/Database/create_table_sql.dart';
+import 'package:readar/Database/create_table_sql.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseManager {
-  static const _dbName = "cloudreader.db";
+  static const _dbName = "readar.db";
   static const _dbVersion = 1;
   static Database? _database;
 

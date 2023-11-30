@@ -1,6 +1,6 @@
-import 'package:cloudreader/Providers/global_provider.dart';
-import 'package:cloudreader/Widgets/Custom/no_shadow_scroll_behavior.dart';
-import 'package:cloudreader/Widgets/Item/item_builder.dart';
+import 'package:readar/Providers/global_provider.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:readar/Widgets/Item/item_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
