@@ -1,6 +1,6 @@
-import 'package:readar/Providers/global_provider.dart';
-import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
-import 'package:readar/Widgets/Item/item_builder.dart';
+import 'package:afar/Providers/global_provider.dart';
+import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:afar/Widgets/Item/item_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

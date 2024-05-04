@@ -1,4 +1,4 @@
-import 'package:readar/Resources/gaps.dart';
+import 'package:afar/Resources/gaps.dart';
 import 'package:flutter/material.dart';
 
 class SalomonBottomBar extends StatelessWidget {

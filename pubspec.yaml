@@ -1,6 +1,6 @@
-name: readar
+name: afar
 version: 1.0.0+1
-description: An RSS Reader
+description: An third-party application for LOFTER
 
 environment:
   sdk: '>=3.1.4 <4.0.0'

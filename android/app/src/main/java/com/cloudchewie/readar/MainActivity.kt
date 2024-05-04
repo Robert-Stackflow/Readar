@@ -1,4 +1,4 @@
-package com.cloudchewie.readar;
+package com.cloudchewie.afar;
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

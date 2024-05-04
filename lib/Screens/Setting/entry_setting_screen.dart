@@ -1,6 +1,6 @@
-import 'package:readar/Models/nav_entry.dart';
-import 'package:readar/Providers/global_provider.dart';
-import 'package:readar/Providers/provider_manager.dart';
+import 'package:afar/Models/nav_entry.dart';
+import 'package:afar/Providers/global_provider.dart';
+import 'package:afar/Providers/provider_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

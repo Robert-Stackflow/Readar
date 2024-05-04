@@ -1,7 +1,7 @@
-import 'package:readar/Providers/provider_manager.dart';
-import 'package:readar/Resources/theme_color_data.dart';
-import 'package:readar/Utils/hive_util.dart';
-import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:afar/Providers/provider_manager.dart';
+import 'package:afar/Resources/theme_color_data.dart';
+import 'package:afar/Utils/hive_util.dart';
+import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 
 import '../../Widgets/Item/item_builder.dart';

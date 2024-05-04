@@ -1,19 +1,19 @@
 import 'dart:io';
 
-import 'package:readar/Providers/global_provider.dart';
-import 'package:readar/Screens/Content/article_detail_screen.dart';
-import 'package:readar/Screens/Lock/pin_change_screen.dart';
-import 'package:readar/Screens/Navigation/explore_screen.dart';
-import 'package:readar/Screens/Navigation/read_later_screen.dart';
-import 'package:readar/Screens/Navigation/star_screen.dart';
-import 'package:readar/Screens/Navigation/tts_screen.dart';
-import 'package:readar/Screens/Setting/backup_setting_screen.dart';
-import 'package:readar/Screens/Setting/entry_setting_screen.dart';
-import 'package:readar/Screens/Setting/experiment_setting_screen.dart';
-import 'package:readar/Screens/Setting/extension_setting_screen.dart';
-import 'package:readar/Screens/Setting/operation_setting_screen.dart';
-import 'package:readar/Screens/Setting/select_theme_screen.dart';
-import 'package:readar/Screens/Setting/setting_screen.dart';
+import 'package:afar/Providers/global_provider.dart';
+import 'package:afar/Screens/Content/article_detail_screen.dart';
+import 'package:afar/Screens/Lock/pin_change_screen.dart';
+import 'package:afar/Screens/Navigation/explore_screen.dart';
+import 'package:afar/Screens/Navigation/read_later_screen.dart';
+import 'package:afar/Screens/Navigation/star_screen.dart';
+import 'package:afar/Screens/Navigation/tts_screen.dart';
+import 'package:afar/Screens/Setting/backup_setting_screen.dart';
+import 'package:afar/Screens/Setting/entry_setting_screen.dart';
+import 'package:afar/Screens/Setting/experiment_setting_screen.dart';
+import 'package:afar/Screens/Setting/extension_setting_screen.dart';
+import 'package:afar/Screens/Setting/operation_setting_screen.dart';
+import 'package:afar/Screens/Setting/select_theme_screen.dart';
+import 'package:afar/Screens/Setting/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<GlobalProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
-          title: 'Readar',
+          title: 'Afar',
           theme: globalProvider.getBrightness() == null ||
                   globalProvider.getBrightness() == Brightness.light
               ? globalProvider.lightTheme

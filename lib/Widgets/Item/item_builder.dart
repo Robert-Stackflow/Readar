@@ -1,5 +1,5 @@
-import 'package:readar/Resources/gaps.dart';
-import 'package:readar/Resources/theme_color_data.dart';
+import 'package:afar/Resources/gaps.dart';
+import 'package:afar/Resources/theme_color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

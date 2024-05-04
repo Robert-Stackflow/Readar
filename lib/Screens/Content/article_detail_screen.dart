@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:readar/Providers/rss_provider.dart';
+import 'package:afar/Providers/rss_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

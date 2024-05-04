@@ -1,5 +1,5 @@
-import 'package:readar/Screens/Setting/service_setting_screen.dart';
-import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:afar/Screens/Setting/service_setting_screen.dart';
+import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:readar/Utils/uri_util.dart';
-import 'package:readar/Widgets/Item/time_text.dart';
+import 'package:afar/Utils/uri_util.dart';
+import 'package:afar/Widgets/Item/time_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

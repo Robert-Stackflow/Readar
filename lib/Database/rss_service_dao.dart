@@ -1,4 +1,4 @@
-import 'package:readar/Database/create_table_sql.dart';
+import 'package:afar/Database/create_table_sql.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../Models/rss_service.dart';

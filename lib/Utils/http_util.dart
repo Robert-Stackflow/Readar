@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:readar/Utils/iprint.dart';
+import 'package:afar/Utils/iprint.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';

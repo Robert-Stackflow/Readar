@@ -1,4 +1,4 @@
-import 'package:readar/Resources/colors.dart';
+import 'package:afar/Resources/colors.dart';
 import 'package:flutter/material.dart';
 
 class ThemeColorData {

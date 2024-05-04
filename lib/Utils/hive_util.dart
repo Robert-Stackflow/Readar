@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:readar/Resources/theme_color_data.dart';
-import 'package:readar/Utils/iprint.dart';
+import 'package:afar/Resources/theme_color_data.dart';
+import 'package:afar/Utils/iprint.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,7 +12,7 @@ import '../Providers/global_provider.dart';
 
 class HiveUtil {
   //Database
-  static const String database = "Readar";
+  static const String database = "Afar";
 
   //HiveBox
   static const String settingsBox = "settings";

@@ -1,7 +1,7 @@
-import 'package:readar/Api/Rss/google_reader_service_handler.dart';
-import 'package:readar/Handler/rss_service_handler.dart';
-import 'package:readar/Models/feed_setting.dart';
-import 'package:readar/Models/rss_service.dart';
+import 'package:afar/Api/Rss/google_reader_service_handler.dart';
+import 'package:afar/Handler/rss_service_handler.dart';
+import 'package:afar/Models/feed_setting.dart';
+import 'package:afar/Models/rss_service.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../Database/create_table_sql.dart';

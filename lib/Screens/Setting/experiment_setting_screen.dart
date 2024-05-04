@@ -1,5 +1,5 @@
 import 'package:app_settings/app_settings.dart';
-import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:local_auth/local_auth.dart';
@@ -87,7 +87,7 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
                   title: S.current.ttsSystemSetting,
                   onTap: () {
                     AppSettings.openAppSettings(
-                        type: AppSettingsType.tts, asAnotherTask: true);
+                        type: AppSettingsType.apn, asAnotherTask: true);
                   },
                 ),
                 ItemBuilder.buildRadioItem(

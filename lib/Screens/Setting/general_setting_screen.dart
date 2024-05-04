@@ -1,8 +1,8 @@
-import 'package:readar/Screens/Setting/entry_setting_screen.dart';
-import 'package:readar/Screens/Setting/select_theme_screen.dart';
-import 'package:readar/Utils/cache_util.dart';
-import 'package:readar/Utils/itoast.dart';
-import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
+import 'package:afar/Screens/Setting/entry_setting_screen.dart';
+import 'package:afar/Screens/Setting/select_theme_screen.dart';
+import 'package:afar/Utils/cache_util.dart';
+import 'package:afar/Utils/itoast.dart';
+import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';

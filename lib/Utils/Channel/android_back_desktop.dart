@@ -1,4 +1,4 @@
-import 'package:readar/Utils/iprint.dart';
+import 'package:afar/Utils/iprint.dart';
 import 'package:flutter/services.dart';
 
 class AndroidBackDesktopChannel {

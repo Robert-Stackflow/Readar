@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.cloudchewie.readar">
+    package="com.cloudchewie.afar">
 
     <queries>
         <intent>
@@ -25,7 +25,7 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-        android:label="Readar">
+        android:label="Afar">
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

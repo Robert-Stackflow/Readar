@@ -1,4 +1,4 @@
-import 'package:readar/Widgets/Unlock/unlock_point.dart';
+import 'package:afar/Widgets/Unlock/unlock_point.dart';
 import 'package:flutter/material.dart';
 
 import 'gesture_unlock_view.dart';

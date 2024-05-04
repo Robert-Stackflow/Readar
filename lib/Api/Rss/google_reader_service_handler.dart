@@ -3,10 +3,10 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:readar/Database/create_table_sql.dart';
-import 'package:readar/Database/feed_dao.dart';
-import 'package:readar/Database/rss_service_dao.dart';
-import 'package:readar/Models/rss_service.dart';
+import 'package:afar/Database/create_table_sql.dart';
+import 'package:afar/Database/feed_dao.dart';
+import 'package:afar/Database/rss_service_dao.dart';
+import 'package:afar/Models/rss_service.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:tuple/tuple.dart';

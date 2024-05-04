@@ -1,5 +1,5 @@
-import 'package:readar/Database/rss_item_dao.dart';
-import 'package:readar/Models/rss_item.dart';
+import 'package:afar/Database/rss_item_dao.dart';
+import 'package:afar/Models/rss_item.dart';
 import 'package:tuple/tuple.dart';
 
 import '../Providers/provider_manager.dart';

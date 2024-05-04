@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:readar/Models/rss_service.dart';
-import 'package:readar/Providers/global_provider.dart';
-import 'package:readar/Providers/rss_provider.dart';
-import 'package:readar/Resources/gaps.dart';
-import 'package:readar/Widgets/Item/item_builder.dart';
+import 'package:afar/Models/rss_service.dart';
+import 'package:afar/Providers/global_provider.dart';
+import 'package:afar/Providers/rss_provider.dart';
+import 'package:afar/Resources/gaps.dart';
+import 'package:afar/Widgets/Item/item_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
