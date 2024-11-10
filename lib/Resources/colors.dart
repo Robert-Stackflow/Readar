@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:like_button/like_button.dart';
+
+import '../Utils/utils.dart';
+import '../Widgets/Window/window_button.dart';
 
 class MyColors {
   static const Color defaultPrimaryColor = Color(0xFF009BFF);
@@ -56,7 +60,7 @@ class MyColors {
   static const Color textColorDark = Color(0xFFB8B8B8);
 
   static const Color textGrayColor = Color(0xFF999999);
-  static const Color textGrayColorDark = Color(0xFF666666);
+  static const Color textGrayColorDark = Color(0xFF616161);
 
   static const Color textDisabledColor = Color(0xFFD4E2FA);
   static const Color textDisabledColorDark = Color(0xFFCEDBF2);
@@ -68,7 +72,78 @@ class MyColors {
   static const Color buttonDisabledColorDark = Color(0xFF83A5E0);
 
   static const Color dividerColor = Color(0xFFF5F6F7);
-  static const Color dividerColorDark = Color(0xFF393939);
+  static const Color dividerColorDark = Color(0xFF222222);
+
+  static const Color hotTagBackground = Color(0xFFFFF6F0);
+  static const Color hotTagBackgroundDark = Color(0xFF3E2723);
+  static const Color hotTagTextColor = Color(0xFFFB923C);
+  static const Color hotTagTextColorDark = Color(0xFFF57F17);
+
+  static const Color linkColor = Color(0xFF009BFF);
+  static const Color linkColorDark = Color(0xFF009BFF);
+
+  static const Color favoriteButtonColor = Color(0xFFFFD54F);
+  static const Color shareButtonColor = Color(0xFF29B6F6);
+  static const CircleColor shareButtonCircleColor =
+      CircleColor(start: Color(0xff00ddff), end: Color(0xff0099cc));
+  static const BubblesColor shareButtonBubblesColor = BubblesColor(
+    dotPrimaryColor: Color(0xff33b5e5),
+    dotSecondaryColor: Color(0xff0099cc),
+  );
+  static const Color likeButtonColor = Color(0xFFF06292);
+
+  static getStayOnTopButtonColors(BuildContext context) {
+    return WindowButtonColors(
+      normal: Theme.of(context).splashColor,
+      mouseOver: Theme.of(context).splashColor,
+      mouseDown: Theme.of(context).splashColor,
+      iconNormal: Theme.of(context).iconTheme.color,
+      iconMouseOver: Theme.of(context).iconTheme.color,
+      iconMouseDown: Theme.of(context).iconTheme.color,
+    );
+  }
+
+  static getNormalButtonColors(BuildContext context) {
+    return WindowButtonColors(
+      mouseOver: Theme.of(context).splashColor,
+      mouseDown: Theme.of(context).splashColor,
+      iconNormal: Theme.of(context).iconTheme.color,
+      iconMouseOver: Theme.of(context).iconTheme.color,
+      iconMouseDown: Theme.of(context).iconTheme.color,
+      selected: Theme.of(context).primaryColor.withAlpha(25),
+      iconSelected: Theme.of(context).primaryColor,
+    );
+  }
+
+  static getCloseButtonColors(BuildContext context) {
+    return WindowButtonColors(
+      mouseOver: const Color(0xFFD32F2F),
+      mouseDown: const Color(0xFFB71C1C),
+      iconNormal: Theme.of(context).iconTheme.color,
+      iconMouseOver: Colors.white,
+      iconMouseDown: Colors.white,
+      selected: Theme.of(context).primaryColor,
+      iconSelected: Colors.white,
+    );
+  }
+
+  static getLinkColor(BuildContext context) {
+    return Utils.currentBrightness(context) == Brightness.light
+        ? Theme.of(context).primaryColor
+        : Theme.of(context).primaryColor;
+  }
+
+  static getHotTagBackground(BuildContext context) {
+    return Utils.currentBrightness(context) == Brightness.light
+        ? hotTagBackground
+        : hotTagBackgroundDark;
+  }
+
+  static getHotTagTextColor(BuildContext context) {
+    return Utils.currentBrightness(context) == Brightness.light
+        ? hotTagTextColor
+        : hotTagTextColorDark;
+  }
 
   MaterialColor createMaterialColor(Color color) {
     List strengths = <double>[.05];

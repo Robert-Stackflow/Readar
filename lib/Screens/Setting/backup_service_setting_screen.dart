@@ -1,8 +1,10 @@
-import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 
+import '../../Utils/responsive_util.dart';
 import '../../Utils/uri_util.dart';
 import '../../Widgets/Item/item_builder.dart';
+import '../../generated/l10n.dart';
 
 class BackupServiceSettingScreen extends StatefulWidget {
   const BackupServiceSettingScreen({super.key});
@@ -21,8 +23,12 @@ class _BackupServiceSettingScreenState extends State<BackupServiceSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar:
-            ItemBuilder.buildSimpleAppBar(title: "选择备份服务", context: context),
+        appBar: ItemBuilder.buildResponsiveAppBar(
+          showBack: true,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          title: S.current.backupServiceSetting,
+          context: context,
+        ),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -31,17 +37,17 @@ class _BackupServiceSettingScreenState extends State<BackupServiceSettingScreen>
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
               children: [
-                const SizedBox(height: 10),
+                if (ResponsiveUtil.isLandscape()) const SizedBox(height: 10),
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "云端备份服务使用指南",
-                  topRadius: true,
-                  bottomRadius: true,
+                  roundTop: true,
+                  roundBottom: true,
                   leading: Icons.info,
                   showLeading: true,
                   showTrailing: false,
                   onTap: () {
-                    UriUtil.launchUrlUri(
+                    UriUtil.launchUrlUri(context,
                         "https://rssreader.cloudchewie.com/help/cloudBackup");
                   },
                 ),
@@ -77,7 +83,7 @@ class _BackupServiceSettingScreenState extends State<BackupServiceSettingScreen>
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "其他WebDAV服务",
-                  bottomRadius: true,
+                  roundBottom: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),

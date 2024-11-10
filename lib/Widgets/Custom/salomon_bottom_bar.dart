@@ -1,4 +1,3 @@
-import 'package:afar/Resources/gaps.dart';
 import 'package:flutter/material.dart';
 
 class SalomonBottomBar extends StatelessWidget {
@@ -74,10 +73,10 @@ class SalomonBottomBar extends StatelessWidget {
         boxShadow: boxShadow ??
             [
               BoxShadow(
-                color: Theme.of(context).shadowColor.withAlpha(70),
+                color: Theme.of(context).shadowColor.withAlpha(255),
                 offset: const Offset(0, 14),
                 blurRadius: 18,
-                spreadRadius: 0,
+                spreadRadius: 10,
               ),
             ],
         color: backgroundColor ?? Colors.transparent,
@@ -92,7 +91,7 @@ class SalomonBottomBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            title ?? MyGaps.empty,
+            title ?? Container(),
             Row(
               /// Using a different alignment when there are 2 items or less
               /// so it behaves the same as BottomNavigationBar.

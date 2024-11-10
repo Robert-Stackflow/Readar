@@ -1,79 +1,185 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:afar/Resources/theme_color_data.dart';
-import 'package:afar/Utils/iprint.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:readar/Resources/theme_color_data.dart';
+import 'package:readar/Utils/enums.dart';
+import 'package:readar/Utils/request_util.dart';
+import 'package:readar/Utils/utils.dart';
 
 import '../Models/nav_entry.dart';
-import '../Providers/global_provider.dart';
+import '../Resources/fonts.dart';
+import '../Widgets/Dialog/dialog_builder.dart';
+import '../generated/l10n.dart';
+import 'app_provider.dart';
+import 'constant.dart';
+import 'ilogger.dart';
+import 'itoast.dart';
 
 class HiveUtil {
   //Database
-  static const String database = "Afar";
+  static const String database = "Readar";
 
   //HiveBox
   static const String settingsBox = "settings";
-  static const String servicesBox = "services";
 
-  //TTS
-  static const String ttsEnableKey = "ttsEnable";
-  static const String ttsEngineKey = "ttsEngine";
-  static const String ttsSpeedKey = "ttsSpeed";
-  static const String ttsSpotKey = "ttsSpot";
-  static const String ttsAutoHaveReadKey = "ttsAutoHaveRead";
-  static const String ttsWakeLockKey = "ttsWakeLock";
+  //Auth
+  static const String userIdKey = "userId";
+  static const String phoneKey = "phone";
+  static const String userInfoKey = "userInfo";
+  static const String deviceIdKey = "deviceId";
+  static const String tokenKey = "token";
+  static const String tokenTypeKey = "tokenType";
+  static const String cookieKey = "cookieKey";
+  static const String customAvatarBoxKey = "customAvatarBox";
+  static const String searchHistoryKey = "searchHistory";
+
+  //General
+  static const String localeKey = "locale";
+  static const String sidebarChoiceKey = "sidebarChoice";
+  static const String recordWindowStateKey = "recordWindowState";
+  static const String windowSizeKey = "windowSize";
+  static const String windowPositionKey = "windowPosition";
+  static const String showTrayKey = "showTray";
+  static const String launchAtStartupKey = "launchAtStartup";
+  static const String enableCloseToTrayKey = "enableCloseToTray";
+  static const String enableCloseNoticeKey = "enableCloseNotice";
+  static const String autoCheckUpdateKey = "autoCheckUpdate";
+  static const String inappWebviewKey = "inappWebview";
+  static const String doubleTapActionKey = "doubleTapAction";
+  static const String downloadSuccessActionKey = "downloadSuccessAction";
 
   //Appearance
-  static const String localeKey = "locale";
+  static const String enableLandscapeInTabletKey = "enableLandscapeInTablet";
+  static const String fontFamilyKey = "fontFamily";
+  static const String customFontsKey = "customFonts";
   static const String lightThemeIndexKey = "lightThemeIndex";
   static const String darkThemeIndexKey = "darkThemeIndex";
   static const String lightThemePrimaryColorIndexKey =
       "lightThemePrimaryColorIndex";
   static const String darkThemePrimaryColorIndexKey =
       "darkThemePrimaryColorIndex";
-  static const String customPrimaryColorKey = "customPrimaryColor";
+  static const String customLightThemePrimaryColorKey =
+      "customLightThemePrimaryColor";
+  static const String customDarkThemePrimaryColorKey =
+      "customDarkThemePrimaryColor";
   static const String customLightThemeListKey = "customLightThemeList";
   static const String customDarkThemeListKey = "customDarkThemeListKey";
   static const String themeModeKey = "themeMode";
-  static const String sidebarEntriesKey = "sidebarEntries";
-  static const String articleLayoutKey = "articleLayout";
-  static const String articleMetaKey = "articleMeta";
+  static const String navItemsKey = "navItems";
 
-  //AI Summary
-  static const String aiSummaryEnableKey = "aiSummaryEnable";
-  static const String aiSummaryUseOfficialKey = "aiSummaryUseOfficial";
+  //Layout
+  static const String showRecommendVideoKey = "hideRecommendVideo";
+  static const String showRecommendArticleKey = "hideRecommendArticle";
+  static const String showSearchHistoryKey = "showSearchHistory";
+  static const String showSearchGuessKey = "showSearchGuess";
+  static const String showSearchConfigKey = "showSearchConfig";
+  static const String showSearchRankKey = "showSearchRank";
+  static const String showCollectionPreNextKey = "showCollectionPreNext";
+  static const String showDownloadKey = "showDownload";
 
-  //Translate
-  static const String translateEnableKey = "translateEnable";
-
-  //Experiment
-  static const String hardwareAccelerationKey = "hardwareAcceleration";
-  static const String previewVideoKey = "previewVideo";
+  //image
+  static const String followMainColorKey = "followMainColor";
+  static const String savePathKey = "savePaths";
+  static const String filenameFormatKey = "filenameFormat";
+  static const String waterfallFlowImageQualityKey =
+      "waterfallFlowImageQuality";
+  static const String postDetailImageQualityKey = "postDetailImageQuality";
+  static const String imageDetailImageQualityKey = "imageDetailImageQuality";
+  static const String tapLinkButtonImageQualityKey =
+      "tapLinkButtonImageQuality";
+  static const String longPressLinkButtonImageQualityKey =
+      "longPressLinkButtonImageQuality";
 
   //Privacy
   static const String enableGuesturePasswdKey = "enableGuesturePasswd";
   static const String guesturePasswdKey = "guesturePasswd";
   static const String enableBiometricKey = "enableBiometric";
   static const String autoLockKey = "autoLock";
-  static const String autoLockTimeKey = "autoLockTime";
+  static const String autoLockSecondsKey = "autoLockSeconds";
   static const String enableSafeModeKey = "enableSafeMode";
 
   //System
   static const String firstLoginKey = "firstLogin";
-  static const String skipGuideKey = "skipGuide";
+  static const String refreshRateKey = "refreshRate";
+  static const String haveShownQQGroupDialogKey = "haveShownQQGroupDialog";
+  static const String overrideCloudControlKey = "overrideCloudControl";
 
-  //Mess
-  static const String apiUrlKey = "apiUrl";
-  static const String apiKeyKey = "apiKey";
-  static const String apiCustomUrlKey = "apiCustomUrl";
-  static const String apiCodeKey = "apiCode";
+  static initConfig() async {
+    HiveUtil.put(HiveUtil.doubleTapActionKey, 1);
+    HiveUtil.put(HiveUtil.showRecommendVideoKey, false);
+    HiveUtil.put(HiveUtil.showRecommendArticleKey, true);
+    HiveUtil.put(HiveUtil.showSearchHistoryKey, true);
+    HiveUtil.put(HiveUtil.showSearchGuessKey, true);
+    HiveUtil.put(HiveUtil.showSearchConfigKey, false);
+    HiveUtil.put(HiveUtil.showSearchRankKey, true);
+    HiveUtil.put(HiveUtil.showCollectionPreNextKey, true);
+    HiveUtil.put(HiveUtil.followMainColorKey, true);
+    HiveUtil.put(HiveUtil.inappWebviewKey, true);
+  }
+
+  static void setWindowSize(Size size) {
+    HiveUtil.put(HiveUtil.windowSizeKey, "${size.width},${size.height}");
+  }
+
+  static Size getWindowSize() {
+    if (!HiveUtil.getBool(HiveUtil.recordWindowStateKey)) {
+      return defaultWindowSize;
+    }
+    String? size = HiveUtil.getString(HiveUtil.windowSizeKey);
+    if (size == null || size.isEmpty) {
+      return defaultWindowSize;
+    }
+    try {
+      List<String> list = size.split(",");
+      return Size(double.parse(list[0]), double.parse(list[1]));
+    } catch (e, t) {
+      ILogger.error("Failed to get window size", e, t);
+      return defaultWindowSize;
+    }
+  }
+
+  static void setWindowPosition(Offset offset) {
+    HiveUtil.put(HiveUtil.windowPositionKey, "${offset.dx},${offset.dy}");
+  }
+
+  static Offset getWindowPosition() {
+    if (!HiveUtil.getBool(HiveUtil.recordWindowStateKey)) return Offset.zero;
+    String? position = HiveUtil.getString(HiveUtil.windowPositionKey);
+    if (position == null || position.isEmpty) {
+      return Offset.zero;
+    }
+    try {
+      List<String> list = position.split(",");
+      return Offset(double.parse(list[0]), double.parse(list[1]));
+    } catch (e, t) {
+      ILogger.error("Failed to get window position", e, t);
+      return Offset.zero;
+    }
+  }
+
+  static void setCustomFonts(List<CustomFont> fonts) {
+    HiveUtil.put(HiveUtil.customFontsKey,
+        jsonEncode(fonts.map((e) => e.toJson()).toList()));
+  }
+
+  static List<CustomFont> getCustomFonts() {
+    String? json = HiveUtil.getString(HiveUtil.customFontsKey);
+    if (json == null || json.isEmpty) {
+      return [];
+    } else {
+      List<dynamic> list = jsonDecode(json);
+      return list.map((e) => CustomFont.fromJson(e)).toList();
+    }
+  }
 
   static bool isFirstLogin() {
-    if (getBool(key: firstLoginKey, defaultValue: true) == true) return true;
+    if (getBool(firstLoginKey, defaultValue: true) == true) return true;
     return false;
+  }
+
+  static void setFirstLogin() {
+    HiveUtil.put(firstLoginKey, false);
   }
 
   static Locale? stringToLocale(String? localeString) {
@@ -89,30 +195,37 @@ class HiveUtil {
   }
 
   static Locale? getLocale() {
-    return stringToLocale(HiveUtil.getString(key: HiveUtil.localeKey));
+    return stringToLocale(HiveUtil.getString(HiveUtil.localeKey));
   }
 
   static void setLocale(Locale? locale) {
     if (locale == null) {
-      HiveUtil.delete(key: HiveUtil.localeKey);
+      HiveUtil.delete(HiveUtil.localeKey);
     } else {
-      HiveUtil.put(key: HiveUtil.localeKey, value: locale.toString());
+      HiveUtil.put(HiveUtil.localeKey, locale.toString());
     }
   }
 
+  static int? getFontSize() {
+    return 2;
+  }
+
+  static void setFontSize(int? fontSize) {
+    HiveUtil.put(HiveUtil.fontFamilyKey, fontSize);
+  }
+
   static ActiveThemeMode getThemeMode() {
-    return ActiveThemeMode.values[HiveUtil.getInt(key: HiveUtil.themeModeKey)];
+    return ActiveThemeMode.values[HiveUtil.getInt(HiveUtil.themeModeKey)];
   }
 
   static void setThemeMode(ActiveThemeMode themeMode) {
-    HiveUtil.put(key: HiveUtil.themeModeKey, value: themeMode.index);
+    HiveUtil.put(HiveUtil.themeModeKey, themeMode.index);
   }
 
   static int getLightThemeIndex() {
-    int index =
-        HiveUtil.getInt(key: HiveUtil.lightThemeIndexKey, defaultValue: 0);
+    int index = HiveUtil.getInt(HiveUtil.lightThemeIndexKey, defaultValue: 0);
     if (index > ThemeColorData.defaultLightThemes.length) {
-      String? json = HiveUtil.getString(key: HiveUtil.customLightThemeListKey);
+      String? json = HiveUtil.getString(HiveUtil.customLightThemeListKey);
       if (json == null || json.isEmpty) {
         setLightTheme(0);
         return 0;
@@ -126,15 +239,14 @@ class HiveUtil {
         }
       }
     } else {
-      return index;
+      return Utils.patchEnum(index, ThemeColorData.defaultLightThemes.length);
     }
   }
 
   static int getDarkThemeIndex() {
-    int index =
-        HiveUtil.getInt(key: HiveUtil.darkThemeIndexKey, defaultValue: 0);
+    int index = HiveUtil.getInt(HiveUtil.darkThemeIndexKey, defaultValue: 0);
     if (index > ThemeColorData.defaultDarkThemes.length) {
-      String? json = HiveUtil.getString(key: HiveUtil.customDarkThemeListKey);
+      String? json = HiveUtil.getString(HiveUtil.customDarkThemeListKey);
       if (json == null || json.isEmpty) {
         setDarkTheme(0);
         return 0;
@@ -148,15 +260,14 @@ class HiveUtil {
         }
       }
     } else {
-      return index;
+      return Utils.patchEnum(index, ThemeColorData.defaultDarkThemes.length);
     }
   }
 
   static ThemeColorData getLightTheme() {
-    int index =
-        HiveUtil.getInt(key: HiveUtil.lightThemeIndexKey, defaultValue: 0);
+    int index = HiveUtil.getInt(HiveUtil.lightThemeIndexKey, defaultValue: 0);
     if (index > ThemeColorData.defaultLightThemes.length) {
-      String? json = HiveUtil.getString(key: HiveUtil.customLightThemeListKey);
+      String? json = HiveUtil.getString(HiveUtil.customLightThemeListKey);
       if (json == null || json.isEmpty) {
         setLightTheme(0);
         return ThemeColorData.defaultLightThemes[0];
@@ -171,15 +282,15 @@ class HiveUtil {
         }
       }
     } else {
-      return ThemeColorData.defaultLightThemes[index];
+      return ThemeColorData.defaultLightThemes[
+          Utils.patchEnum(index, ThemeColorData.defaultLightThemes.length)];
     }
   }
 
   static ThemeColorData getDarkTheme() {
-    int index =
-        HiveUtil.getInt(key: HiveUtil.darkThemeIndexKey, defaultValue: 0);
+    int index = HiveUtil.getInt(HiveUtil.darkThemeIndexKey, defaultValue: 0);
     if (index > ThemeColorData.defaultDarkThemes.length) {
-      String? json = HiveUtil.getString(key: HiveUtil.customDarkThemeListKey);
+      String? json = HiveUtil.getString(HiveUtil.customDarkThemeListKey);
       if (json == null || json.isEmpty) {
         setDarkTheme(0);
         return ThemeColorData.defaultDarkThemes[0];
@@ -194,130 +305,177 @@ class HiveUtil {
         }
       }
     } else {
-      return ThemeColorData.defaultDarkThemes[index];
+      return ThemeColorData.defaultDarkThemes[
+          Utils.patchEnum(index, ThemeColorData.defaultDarkThemes.length)];
     }
   }
 
   static void setLightTheme(int index) =>
-      HiveUtil.put(key: HiveUtil.lightThemeIndexKey, value: index);
+      HiveUtil.put(HiveUtil.lightThemeIndexKey, index);
 
   static void setDarkTheme(int index) =>
-      HiveUtil.put(key: HiveUtil.darkThemeIndexKey, value: index);
+      HiveUtil.put(HiveUtil.darkThemeIndexKey, index);
 
   static bool shouldAutoLock() =>
-      HiveUtil.getBool(key: HiveUtil.enableGuesturePasswdKey) &&
-      HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
-      HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!.isNotEmpty &&
-      HiveUtil.getBool(key: HiveUtil.autoLockKey);
+      canLock() && HiveUtil.getBool(HiveUtil.autoLockKey);
 
-  static List<NavEntry> getNavEntries() {
-    String? json = HiveUtil.getString(key: HiveUtil.sidebarEntriesKey);
+  static bool canLock() =>
+      HiveUtil.getBool(HiveUtil.enableGuesturePasswdKey) && hasGuesturePasswd();
+
+  static bool hasGuesturePasswd() =>
+      HiveUtil.getString(HiveUtil.guesturePasswdKey) != null &&
+      HiveUtil.getString(HiveUtil.guesturePasswdKey)!.isNotEmpty;
+
+  static List<SortableItem> getSortableItems(
+    String key,
+    List<SortableItem> defaultValue,
+  ) {
+    String? json = HiveUtil.getString(key);
     if (json == null || json.isEmpty) {
-      return NavEntry.changableEntries;
+      return defaultValue;
     } else {
       List<dynamic> list = jsonDecode(json);
-      return List<NavEntry>.from(
-          list.map((item) => NavEntry.fromJson(item)).toList());
+      return List<SortableItem>.from(
+          list.map((item) => SortableItem.fromJson(item)).toList());
     }
   }
 
-  static void setNavEntries(List<NavEntry> entries) =>
-      HiveUtil.put(key: HiveUtil.sidebarEntriesKey, value: jsonEncode(entries));
+  static void setSortableItems(String key, List<SortableItem> items) =>
+      HiveUtil.put(key, jsonEncode(items));
 
-  //Essential
+  static Map<String, String> getCookie() {
+    Map<String, String> map = {};
+    String str = getString(cookieKey) ?? "";
+    if (str.isNotEmpty) {
+      List<String> list = str.split("; ");
+      for (String item in list) {
+        int equalIndex = item.indexOf("=");
+        if (equalIndex != -1) {
+          map[item.substring(0, equalIndex)] = item.substring(equalIndex + 1);
+        }
+      }
+    }
+    return map;
+  }
 
-  static int getInt(
-      {String boxName = HiveUtil.settingsBox,
-      required String key,
-      bool autoCreate = true,
-      int defaultValue = 0}) {
-    final Box box = Hive.box(boxName);
+  static dynamic get(
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+    int defaultValue = 0,
+  }) {
+    final Box box = Hive.box(name: boxName);
     if (!box.containsKey(key)) {
-      put(boxName: boxName, key: key, value: defaultValue);
+      put(key, defaultValue, boxName: boxName);
     }
     return box.get(key);
   }
 
-  static bool getBool(
-      {String boxName = HiveUtil.settingsBox,
-      required String key,
-      bool autoCreate = true,
-      bool defaultValue = true}) {
-    final Box box = Hive.box(boxName);
+  static int getInt(
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+    int defaultValue = 0,
+  }) {
+    final Box box = Hive.box(name: boxName);
     if (!box.containsKey(key)) {
-      put(boxName: boxName, key: key, value: defaultValue);
+      put(key, defaultValue, boxName: boxName);
+    }
+    return box.get(key, defaultValue: defaultValue);
+  }
+
+  static bool getBool(
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+    bool defaultValue = true,
+  }) {
+    final Box box = Hive.box(name: boxName);
+    if (!box.containsKey(key)) {
+      put(key, defaultValue, boxName: boxName);
     }
     return box.get(key);
   }
 
   static String? getString(
-      {String boxName = HiveUtil.settingsBox,
-      required String key,
-      bool autoCreate = true,
-      String? defaultValue}) {
-    final Box box = Hive.box(boxName);
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+    bool autoCreate = true,
+    String? defaultValue,
+  }) {
+    final Box box = Hive.box(name: boxName);
     if (!box.containsKey(key)) {
       if (!autoCreate) {
         return null;
       }
-      put(boxName: boxName, key: key, value: defaultValue);
+      put(key, defaultValue, boxName: boxName);
     }
     return box.get(key);
+  }
+
+  static Map<String, dynamic> getMap(
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+  }) {
+    final Box box = Hive.box(name: boxName);
+    Map<String, dynamic> res = {};
+    if (box.get(key) != null) {
+      res = Map<String, dynamic>.from(box.get(key));
+    }
+    return res;
   }
 
   static List<dynamic>? getList(
-      {String boxName = HiveUtil.settingsBox,
-      required String key,
-      bool autoCreate = true,
-      List<dynamic>? defaultValue}) {
-    final Box box = Hive.box(boxName);
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+    bool autoCreate = true,
+    List<dynamic> defaultValue = const [],
+  }) {
+    final Box box = Hive.box(name: boxName);
     if (!box.containsKey(key)) {
       if (!autoCreate) {
         return null;
       }
-      put(boxName: boxName, key: key, value: defaultValue);
+      put(key, defaultValue, boxName: boxName);
     }
     return box.get(key);
   }
 
+  static List<String>? getStringList(
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+    bool autoCreate = true,
+    List<dynamic> defaultValue = const [],
+  }) {
+    return getList(
+      key,
+      boxName: boxName,
+      autoCreate: autoCreate,
+      defaultValue: defaultValue,
+    )!
+        .map((e) => e.toString())
+        .toList();
+  }
+
   static Future<void> put(
-      {String boxName = HiveUtil.settingsBox,
-      required String key,
-      required dynamic value}) async {
-    final Box box = Hive.box(boxName);
+    String key,
+    dynamic value, {
+    String boxName = HiveUtil.settingsBox,
+  }) async {
+    final Box box = Hive.box(name: boxName);
     return box.put(key, value);
   }
 
-  static void delete(
-      {String boxName = HiveUtil.settingsBox, required String key}) {
-    final Box box = Hive.box(boxName);
+  static Future<void> delete(
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+  }) async {
+    final Box box = Hive.box(name: boxName);
     box.delete(key);
   }
 
   static bool contains(
-      {String boxName = HiveUtil.settingsBox, required String key}) {
-    final Box box = Hive.box(boxName);
+    String key, {
+    String boxName = HiveUtil.settingsBox,
+  }) {
+    final Box box = Hive.box(name: boxName);
     return box.containsKey(key);
-  }
-
-  static Future<void> openHiveBox(String boxName, {bool limit = false}) async {
-    final box = await Hive.openBox(boxName).onError((error, stackTrace) async {
-      IPrint.debug('Failed to open $boxName Box');
-      final Directory dir = await getApplicationDocumentsDirectory();
-      final String dirPath = dir.path;
-      File dbFile = File('$dirPath/$boxName.hive');
-      File lockFile = File('$dirPath/$boxName.lock');
-      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-        dbFile = File('$dirPath/${HiveUtil.database}/$boxName.hive');
-        lockFile = File('$dirPath/${HiveUtil.database}/$boxName.lock');
-      }
-      await dbFile.delete();
-      await lockFile.delete();
-      await Hive.openBox(boxName);
-      throw 'Failed to open $boxName Box\nError: $error';
-    });
-    if (limit && box.length > 500) {
-      box.clear();
-    }
   }
 }

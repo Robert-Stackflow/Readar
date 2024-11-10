@@ -1,16 +1,19 @@
-import 'package:app_settings/app_settings.dart';
-import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:readar/Utils/ilogger.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
-import '../../Providers/global_provider.dart';
-import '../../Providers/provider_manager.dart';
+import '../../Utils/app_provider.dart';
 import '../../Utils/hive_util.dart';
 import '../../Utils/itoast.dart';
+import '../../Utils/responsive_util.dart';
+import '../../Utils/route_util.dart';
 import '../../Widgets/BottomSheet/bottom_sheet_builder.dart';
 import '../../Widgets/BottomSheet/list_bottom_sheet.dart';
+import '../../Widgets/General/EasyRefresh/easy_refresh.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 import '../Lock/pin_change_screen.dart';
@@ -29,216 +32,260 @@ class ExperimentSettingScreen extends StatefulWidget {
 class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
     with TickerProviderStateMixin {
   bool _enableGuesturePasswd =
-      HiveUtil.getBool(key: HiveUtil.enableGuesturePasswdKey);
-  bool _hasGuesturePasswd =
-      HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
-          HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!.isNotEmpty;
-  bool _autoLock = HiveUtil.getBool(key: HiveUtil.autoLockKey);
+      HiveUtil.getBool(HiveUtil.enableGuesturePasswdKey);
+  bool _autoLock = HiveUtil.getBool(HiveUtil.autoLockKey);
   bool _enableSafeMode =
-      HiveUtil.getBool(key: HiveUtil.enableSafeModeKey, defaultValue: false);
-  bool _enableBiometric = HiveUtil.getBool(key: HiveUtil.enableBiometricKey);
+      HiveUtil.getBool(HiveUtil.enableSafeModeKey, defaultValue: false);
+  bool _enableBiometric = HiveUtil.getBool(HiveUtil.enableBiometricKey);
   bool _biometricAvailable = false;
+  int _refreshRate = HiveUtil.getInt(HiveUtil.refreshRateKey);
+  List<DisplayMode> _modes = [];
+  DisplayMode? _activeMode;
+  DisplayMode? _preferredMode;
+
+  List<Tuple2<String, DisplayMode>> get _supportedModeTuples =>
+      _modes.map((e) => Tuple2(e.toString(), e)).toList();
 
   @override
   void initState() {
     super.initState();
     initBiometricAuthentication();
+    if (ResponsiveUtil.isAndroid()) getRefreshRate();
+  }
+
+  getRefreshRate() async {
+    _modes = await FlutterDisplayMode.supported;
+    _activeMode = await FlutterDisplayMode.active;
+    _preferredMode = await FlutterDisplayMode.preferred;
+    ILogger.info(
+        "Current active display mode: $_activeMode\nCurrent preferred display mode: $_preferredMode");
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      child: Scaffold(
-        appBar: ItemBuilder.buildSimpleAppBar(
-            title: S.current.experimentSetting, context: context),
-        body: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: ScrollConfiguration(
-            behavior: NoShadowScrollBehavior(),
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              children: [
-                const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: S.current.ttsSetting),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: S.current.ttsEnable,
-                  value: true,
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: S.current.ttsEngine,
-                  tip: "默认引擎",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: S.current.ttsSpeed,
-                  tip: "1.0x",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: S.current.ttsSystemSetting,
-                  onTap: () {
-                    AppSettings.openAppSettings(
-                        type: AppSettingsType.apn, asAnotherTask: true);
-                  },
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: S.current.ttsSpot,
-                  value: true,
-                  description: S.current.ttsSpotTip,
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: S.current.ttsAutoHaveRead,
-                  value: true,
-                  description: S.current.ttsAutoHaveReadTip,
-                  onTap: () {},
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  title: S.current.ttsWakeLock,
-                  value: true,
-                  description: S.current.ttsWakeLockTip,
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(context: context, title: "AI摘要"),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "第三方AI服务管理",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "内容发送模板",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "内容发送字数上限",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "聊天室",
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(context: context, title: "翻译"),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "第三方翻译服务管理",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "源语言",
-                  description: "当文章为何种语言时自动翻译",
-                  onTap: () {},
-                ),
-                ItemBuilder.buildEntryItem(
-                  context: context,
-                  title: "目标语言",
-                  description: "将文章自动翻译为目标语言",
-                  bottomRadius: true,
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                ItemBuilder.buildCaptionItem(
-                    context: context, title: S.current.privacySetting),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: _enableGuesturePasswd,
-                  title: "启用手势密码",
-                  onTap: onEnablePinTapped,
-                ),
-                Visibility(
-                  visible: _enableGuesturePasswd,
-                  child: ItemBuilder.buildEntryItem(
-                    context: context,
-                    title: _hasGuesturePasswd ? "更改手势密码" : "设置手势密码",
-                    description: _hasGuesturePasswd ? "" : "设置手势密码后才能使用锁定功能",
-                    onTap: onChangePinTapped,
-                  ),
-                ),
-                Visibility(
-                  visible: _enableGuesturePasswd &&
-                      _hasGuesturePasswd &&
-                      _biometricAvailable,
-                  child: ItemBuilder.buildRadioItem(
-                    context: context,
-                    value: _enableBiometric,
-                    title: "生物识别",
-                    onTap: onBiometricTapped,
-                  ),
-                ),
-                Visibility(
-                  visible: _enableGuesturePasswd && _hasGuesturePasswd,
-                  child: ItemBuilder.buildRadioItem(
-                    context: context,
-                    value: _autoLock,
-                    title: "处于后台自动锁定",
-                    onTap: onEnableAutoLockTapped,
-                  ),
-                ),
-                Visibility(
-                  visible:
-                      _enableGuesturePasswd && _hasGuesturePasswd && _autoLock,
-                  child: Selector<GlobalProvider, int>(
-                    selector: (context, globalProvider) =>
-                        globalProvider.autoLockTime,
-                    builder: (context, autoLockTime, child) =>
-                        ItemBuilder.buildEntryItem(
-                      context: context,
-                      title: "自动锁定时机",
-                      tip: GlobalProvider.getAutoLockOptionLabel(autoLockTime),
-                      onTap: () {
-                        BottomSheetBuilder.showListBottomSheet(
-                          context,
-                          (context) => TileList.fromOptions(
-                            GlobalProvider.getAutoLockOptions(),
-                            autoLockTime,
-                            (item2) {
-                              ProviderManager.globalProvider.autoLockTime =
-                                  item2;
-                              Navigator.pop(context);
-                            },
-                            context: context,
-                            title: "选择自动锁定时机",
-                            onCloseTap: () => Navigator.pop(context),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                ItemBuilder.buildRadioItem(
-                  context: context,
-                  value: _enableSafeMode,
-                  title: "安全模式",
-                  bottomRadius: true,
-                  description: "当软件进入最近任务列表页面，隐藏页面内容；同时禁用应用内截图",
-                  onTap: onSafeModeTapped,
-                ),
-                const SizedBox(height: 10),
-              ],
-            ),
+    return Scaffold(
+      appBar: ItemBuilder.buildResponsiveAppBar(
+        title: S.current.experimentSetting,
+        context: context,
+        showBack: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      ),
+      body: EasyRefresh(
+        child: Selector<AppProvider, bool>(
+          selector: (context, globalProvider) => globalProvider.pinSettled,
+          builder: (context, pinSettled, child) => ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            children: [
+              if (ResponsiveUtil.isLandscape()) const SizedBox(height: 10),
+              ..._privacySettings(pinSettled),
+              ..._ttsSetting(),
+              if (ResponsiveUtil.isAndroid()) ..._fpsSettings(),
+              const SizedBox(height: 30),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  _fpsSettings() {
+    return [
+      const SizedBox(height: 10),
+      ItemBuilder.buildEntryItem(
+        context: context,
+        title: S.current.refreshRate,
+        description: S.current.refreshRateDescription(
+          _modes.isNotEmpty
+              ? _modes[_refreshRate.clamp(0, _modes.length - 1)].toString()
+              : "",
+          _preferredMode?.toString() ?? "Unknown",
+          _activeMode?.toString() ?? "Unknown",
+        ),
+        roundTop: true,
+        roundBottom: true,
+        onTap: () {
+          getRefreshRate();
+          BottomSheetBuilder.showListBottomSheet(
+            context,
+            (context) => TileList.fromOptions(
+              _supportedModeTuples,
+              (item2) async {
+                try {
+                  ILogger.info("Try to set display mode: ${item2.toString()}");
+                  ILogger.info(
+                      "Active display mode before set: ${_activeMode.toString()}\nPreferred display mode before set: ${_preferredMode.toString()}");
+                  await FlutterDisplayMode.setPreferredMode(item2);
+                  _activeMode = await FlutterDisplayMode.active;
+                  _preferredMode = await FlutterDisplayMode.preferred;
+                  ILogger.info(
+                      "Active display mode after set: ${_activeMode.toString()}\nPreferred display mode after set: ${_preferredMode.toString()}");
+                  if (_preferredMode?.toString() != item2.toString()) {
+                    IToast.showTop(S.current.setRefreshRateFailed);
+                  } else {
+                    if (_activeMode?.toString() != item2.toString()) {
+                      IToast.showTop(S.current
+                          .setRefreshRateSuccessWithDisplayModeNotChanged);
+                    } else {
+                      IToast.showTop(S.current.setRefreshRateSuccess);
+                    }
+                  }
+                } catch (e, t) {
+                  IToast.showTop(
+                      S.current.setRefreshRateFailedWithError(e.toString()));
+                  ILogger.error("Failed to set display mode", e, t);
+                }
+                _refreshRate = _modes.indexOf(item2);
+                getRefreshRate();
+                HiveUtil.put(HiveUtil.refreshRateKey, _refreshRate);
+                Navigator.pop(context);
+              },
+              selected: _modes[_refreshRate.clamp(0, _modes.length - 1)],
+              context: context,
+              title: S.current.chooseRefreshRate,
+              onCloseTap: () => Navigator.pop(context),
+            ),
+          );
+        },
+      ),
+    ];
+  }
+
+  _privacySettings(bool pinSettled) {
+    return [
+      ItemBuilder.buildCaptionItem(
+          context: context, title: S.current.privacySetting),
+      ItemBuilder.buildRadioItem(
+        context: context,
+        value: _enableGuesturePasswd,
+        title: S.current.enableGestureLock,
+        onTap: onEnablePinTapped,
+      ),
+      Visibility(
+        visible: _enableGuesturePasswd,
+        child: ItemBuilder.buildEntryItem(
+          context: context,
+          title: pinSettled
+              ? S.current.changeGestureLock
+              : S.current.setGestureLock,
+          description: pinSettled ? "" : S.current.haveToSetGestureLockTip,
+          onTap: onChangePinTapped,
+        ),
+      ),
+      Visibility(
+        visible: _enableGuesturePasswd && pinSettled && _biometricAvailable,
+        child: ItemBuilder.buildRadioItem(
+          context: context,
+          value: _enableBiometric,
+          disabled: ResponsiveUtil.isMacOS() || ResponsiveUtil.isLinux(),
+          title: S.current.biometric,
+          description: S.current.biometricUnlockTip,
+          onTap: onBiometricTapped,
+        ),
+      ),
+      Visibility(
+        visible: _enableGuesturePasswd && pinSettled,
+        child: ItemBuilder.buildRadioItem(
+          context: context,
+          value: _autoLock,
+          title: S.current.autoLock,
+          description: S.current.autoLockTip,
+          onTap: onEnableAutoLockTapped,
+        ),
+      ),
+      Visibility(
+        visible: _enableGuesturePasswd && pinSettled && _autoLock,
+        child: Selector<AppProvider, int>(
+          selector: (context, globalProvider) => globalProvider.autoLockSeconds,
+          builder: (context, autoLockTime, child) => ItemBuilder.buildEntryItem(
+            context: context,
+            title: S.current.autoLockDelay,
+            tip: AppProvider.getAutoLockOptionLabel(autoLockTime),
+            onTap: () {
+              BottomSheetBuilder.showListBottomSheet(
+                context,
+                (context) => TileList.fromOptions(
+                  AppProvider.getAutoLockOptions(),
+                  (item2) {
+                    appProvider.autoLockSeconds = item2;
+                    Navigator.pop(context);
+                  },
+                  selected: autoLockTime,
+                  context: context,
+                  title: S.current.chooseAutoLockDelay,
+                  onCloseTap: () => Navigator.pop(context),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      ItemBuilder.buildRadioItem(
+        context: context,
+        value: _enableSafeMode,
+        title: S.current.safeMode,
+        disabled: ResponsiveUtil.isDesktop(),
+        roundBottom: true,
+        description: S.current.safeModeTip,
+        onTap: onSafeModeTapped,
+      ),
+    ];
+  }
+
+  _ttsSetting(){
+    return [
+      const SizedBox(height: 10),
+      ItemBuilder.buildCaptionItem(
+          context: context, title: S.current.ttsSetting),
+      ItemBuilder.buildRadioItem(
+        context: context,
+        title: S.current.ttsEnable,
+        value: true,
+        onTap: () {},
+      ),
+      ItemBuilder.buildEntryItem(
+        context: context,
+        title: S.current.ttsEngine,
+        tip: "默认引擎",
+        onTap: () {},
+      ),
+      ItemBuilder.buildEntryItem(
+        context: context,
+        title: S.current.ttsSpeed,
+        tip: "1.0x",
+        onTap: () {},
+      ),
+      ItemBuilder.buildEntryItem(
+        context: context,
+        title: S.current.ttsSystemSetting,
+        onTap: () {
+          // AppSettings.openAppSettings(
+          //     type: AppSettingsType.apn, asAnotherTask: true);
+        },
+      ),
+      ItemBuilder.buildRadioItem(
+        context: context,
+        title: S.current.ttsSpot,
+        value: true,
+        description: S.current.ttsSpotTip,
+        onTap: () {},
+      ),
+      ItemBuilder.buildRadioItem(
+        context: context,
+        title: S.current.ttsAutoHaveRead,
+        value: true,
+        description: S.current.ttsAutoHaveReadTip,
+        onTap: () {},
+      ),
+      ItemBuilder.buildRadioItem(
+        context: context,
+        title: S.current.ttsWakeLock,
+        value: true,
+        description: S.current.ttsWakeLockTip,
+        roundBottom: true,
+        onTap: () {},
+      ),
+    ];
   }
 
   initBiometricAuthentication() async {
@@ -251,101 +298,79 @@ class _ExperimentSettingScreenState extends State<ExperimentSettingScreen>
 
   onEnablePinTapped() {
     setState(() {
-      if (_enableGuesturePasswd) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PinVerifyScreen(
-              onSuccess: () {
-                IToast.showTop(context, text: "手势密码关闭成功");
-                setState(() {
-                  _enableGuesturePasswd = !_enableGuesturePasswd;
-                  HiveUtil.put(
-                      key: HiveUtil.enableGuesturePasswdKey,
-                      value: _enableGuesturePasswd);
-                  _hasGuesturePasswd =
-                      HiveUtil.getString(key: HiveUtil.guesturePasswdKey) !=
-                              null &&
-                          HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!
-                              .isNotEmpty;
-                });
-              },
-              isModal: false,
-            ),
-          ),
-        );
-      } else {
-        setState(() {
-          _enableGuesturePasswd = !_enableGuesturePasswd;
-          HiveUtil.put(
-              key: HiveUtil.enableGuesturePasswdKey,
-              value: _enableGuesturePasswd);
-          _hasGuesturePasswd =
-              HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
-                  HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!
-                      .isNotEmpty;
-        });
-      }
+      RouteUtil.pushPanelCupertinoRoute(
+        context,
+        PinVerifyScreen(
+          onSuccess: () {
+            setState(() {
+              _enableGuesturePasswd = !_enableGuesturePasswd;
+              IToast.showTop(_enableGuesturePasswd
+                  ? S.current.enableGestureLockSuccess
+                  : S.current.disableGestureLockSuccess);
+              HiveUtil.put(
+                  HiveUtil.enableGuesturePasswdKey, _enableGuesturePasswd);
+            });
+          },
+          isModal: false,
+        ),
+      );
     });
   }
 
   onBiometricTapped() {
     if (!_enableBiometric) {
-      Navigator.push(
+      RouteUtil.pushPanelCupertinoRoute(
         context,
-        MaterialPageRoute(
-          builder: (context) => PinVerifyScreen(
-            onSuccess: () {
-              IToast.showTop(context, text: "生物识别开启成功");
-              setState(() {
-                _enableBiometric = !_enableBiometric;
-                HiveUtil.put(
-                    key: HiveUtil.enableBiometricKey, value: _enableBiometric);
-              });
-            },
-            isModal: false,
-          ),
+        PinVerifyScreen(
+          onSuccess: () {
+            IToast.showTop(S.current.enableBiometricSuccess);
+            setState(() {
+              _enableBiometric = !_enableBiometric;
+              HiveUtil.put(HiveUtil.enableBiometricKey, _enableBiometric);
+            });
+          },
+          isModal: false,
         ),
       );
     } else {
       setState(() {
         _enableBiometric = !_enableBiometric;
-        HiveUtil.put(key: HiveUtil.enableBiometricKey, value: _enableBiometric);
+        HiveUtil.put(HiveUtil.enableBiometricKey, _enableBiometric);
       });
     }
   }
 
   onChangePinTapped() {
     setState(() {
-      Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const PinChangeScreen()))
-          .then((value) {
-        setState(() {
-          _hasGuesturePasswd =
-              HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
-                  HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!
-                      .isNotEmpty;
-        });
-      });
+      RouteUtil.pushPanelCupertinoRoute(context, const PinChangeScreen());
+      //     .then((value) {
+      //   setState(() {
+      //     _hasGuesturePasswd =
+      //         HiveUtil.getString(HiveUtil.guesturePasswdKey) != null &&
+      //             HiveUtil.getString(HiveUtil.guesturePasswdKey)!.isNotEmpty;
+      //   });
+      // });
     });
   }
 
   onEnableAutoLockTapped() {
     setState(() {
       _autoLock = !_autoLock;
-      HiveUtil.put(key: HiveUtil.autoLockKey, value: _autoLock);
+      HiveUtil.put(HiveUtil.autoLockKey, _autoLock);
     });
   }
 
   onSafeModeTapped() {
     setState(() {
       _enableSafeMode = !_enableSafeMode;
-      if (_enableSafeMode) {
-        FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-      } else {
-        FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+      if (ResponsiveUtil.isMobile()) {
+        if (_enableSafeMode) {
+          FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+        } else {
+          FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+        }
       }
-      HiveUtil.put(key: HiveUtil.enableSafeModeKey, value: _enableSafeMode);
+      HiveUtil.put(HiveUtil.enableSafeModeKey, _enableSafeMode);
     });
   }
 }

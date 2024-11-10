@@ -1,15 +1,17 @@
-import 'package:afar/Utils/iprint.dart';
-import 'package:afar/Utils/itoast.dart';
-import 'package:afar/Widgets/Unlock/gesture_notifier.dart';
-import 'package:afar/Widgets/Unlock/gesture_unlock_indicator.dart';
-import 'package:afar/Widgets/Unlock/gesture_unlock_view.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
-import 'package:local_auth/local_auth.dart';
-import 'package:local_auth_android/local_auth_android.dart';
+import 'package:readar/Utils/app_provider.dart';
+import 'package:readar/Utils/itoast.dart';
+import 'package:readar/Utils/responsive_util.dart';
+import 'package:readar/Widgets/General/Unlock/gesture_notifier.dart';
+import 'package:readar/Widgets/General/Unlock/gesture_unlock_indicator.dart';
+import 'package:readar/Widgets/General/Unlock/gesture_unlock_view.dart';
+import 'package:readar/Widgets/Item/item_builder.dart';
 
 import '../../Utils/hive_util.dart';
+import '../../Utils/utils.dart';
+import '../../generated/l10n.dart';
 
 class PinChangeScreen extends StatefulWidget {
   const PinChangeScreen({super.key});
@@ -20,29 +22,20 @@ class PinChangeScreen extends StatefulWidget {
   PinChangeScreenState createState() => PinChangeScreenState();
 }
 
-AndroidAuthMessages andStrings = const AndroidAuthMessages(
-  cancelButton: '取消',
-  goToSettingsButton: '去设置',
-  biometricNotRecognized: '指纹识别失败',
-  goToSettingsDescription: '请设置指纹',
-  biometricHint: '',
-  biometricSuccess: '指纹识别成功',
-  signInTitle: '指纹验证',
-  deviceCredentialsRequiredTitle: '请先录入指纹!',
-);
-
 class PinChangeScreenState extends State<PinChangeScreen> {
   String _gesturePassword = "";
-  final String? _oldPassword =
-      HiveUtil.getString(key: HiveUtil.guesturePasswdKey);
-  bool _isEditMode =
-      HiveUtil.getString(key: HiveUtil.guesturePasswdKey) != null &&
-          HiveUtil.getString(key: HiveUtil.guesturePasswdKey)!.isNotEmpty;
+  final String? _oldPassword = HiveUtil.getString(HiveUtil.guesturePasswdKey);
+  bool _isEditMode = HiveUtil.getString(HiveUtil.guesturePasswdKey) != null &&
+      HiveUtil.getString(HiveUtil.guesturePasswdKey)!.isNotEmpty;
   late final bool _isUseBiometric =
-      _isEditMode && HiveUtil.getBool(key: HiveUtil.enableBiometricKey);
+      _isEditMode && HiveUtil.getBool(HiveUtil.enableBiometricKey);
   late final GestureNotifier _notifier = _isEditMode
-      ? GestureNotifier(status: GestureStatus.verify, gestureText: "绘制旧手势密码")
-      : GestureNotifier(status: GestureStatus.create, gestureText: "绘制新手势密码");
+      ? GestureNotifier(
+          status: GestureStatus.verify,
+          gestureText: S.current.drawOldGestureLock)
+      : GestureNotifier(
+          status: GestureStatus.create,
+          gestureText: S.current.drawNewGestureLock);
   final GlobalKey<GestureState> _gestureUnlockView = GlobalKey();
   final GlobalKey<GestureUnlockIndicatorState> _indicator = GlobalKey();
 
@@ -55,98 +48,73 @@ class PinChangeScreenState extends State<PinChangeScreen> {
   }
 
   void auth() async {
-    LocalAuthentication localAuth = LocalAuthentication();
-    try {
-      await localAuth
-          .authenticate(
-              localizedReason: '进行指纹验证以使用APP',
-              authMessages: [andStrings, andStrings, andStrings],
-              options: const AuthenticationOptions(
-                  biometricOnly: true,
-                  useErrorDialogs: false,
-                  stickyAuth: true))
-          .then((value) {
-        if (value) {
-          IToast.showTop(context, text: "验证成功");
-          setState(() {
-            _notifier.setStatus(
-              status: GestureStatus.create,
-              gestureText: "绘制新手势密码",
-            );
-            _isEditMode = false;
-          });
-          _gestureUnlockView.currentState?.updateStatus(UnlockStatus.normal);
-        }
+    await Utils.localAuth(onAuthed: () {
+      IToast.showTop(S.current.biometricVerifySuccess);
+      setState(() {
+        _notifier.setStatus(
+          status: GestureStatus.create,
+          gestureText: S.current.drawNewGestureLock,
+        );
+        _isEditMode = false;
       });
-    } on PlatformException catch (e) {
-      if (e.code == auth_error.notAvailable) {
-        IPrint.debug("not avaliable");
-      } else if (e.code == auth_error.notEnrolled) {
-        IPrint.debug("not enrolled");
-      } else if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
-        IPrint.debug("locked out");
-      } else {
-        IPrint.debug("other reason:$e");
-      }
-    }
+      _gestureUnlockView.currentState?.updateStatus(UnlockStatus.normal);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        right: false,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 100),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                _notifier.gestureText,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 30),
-              GestureUnlockIndicator(
-                key: _indicator,
-                size: 30,
-                roundSpace: 4,
+      appBar: ItemBuilder.buildResponsiveAppBar(
+        showBack: true,
+        context: context,
+      ),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 50),
+            Text(
+              _notifier.gestureText,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 30),
+            GestureUnlockIndicator(
+              key: _indicator,
+              size: 30,
+              roundSpace: 4,
+              defaultColor: Colors.grey.withOpacity(0.5),
+              selectedColor: Theme.of(context).primaryColor.withOpacity(0.6),
+            ),
+            Flexible(
+              child: GestureUnlockView(
+                key: _gestureUnlockView,
+                size: min(MediaQuery.sizeOf(context).width, 400),
+                padding: 60,
+                roundSpace: 40,
                 defaultColor: Colors.grey.withOpacity(0.5),
-                selectedColor: Theme.of(context).primaryColor.withOpacity(0.6),
+                selectedColor: Theme.of(context).primaryColor,
+                failedColor: Theme.of(context).colorScheme.error,
+                disableColor: Colors.grey,
+                solidRadiusRatio: 0.3,
+                lineWidth: 2,
+                touchRadiusRatio: 0.3,
+                onCompleted: _gestureComplete,
               ),
-              Expanded(
-                child: GestureUnlockView(
-                  key: _gestureUnlockView,
-                  size: MediaQuery.of(context).size.width,
-                  padding: 60,
-                  roundSpace: 40,
-                  defaultColor: Colors.grey.withOpacity(0.5),
-                  selectedColor: Theme.of(context).primaryColor,
-                  failedColor: Theme.of(context).colorScheme.error,
-                  disableColor: Colors.grey,
-                  solidRadiusRatio: 0.3,
-                  lineWidth: 2,
-                  touchRadiusRatio: 0.3,
-                  onCompleted: _gestureComplete,
-                ),
+            ),
+            if (_isEditMode && _isUseBiometric)
+              ItemBuilder.buildRoundButton(
+                context,
+                text: ResponsiveUtil.isWindows()
+                    ? S.current.biometricVerifyPin
+                    : S.current.biometric,
+                onTap: () {
+                  auth();
+                },
               ),
-              Visibility(
-                visible: _isEditMode,
-                child: Visibility(
-                  visible: _isUseBiometric,
-                  child: GestureDetector(
-                    onTap: () {
-                      auth();
-                    },
-                    child: Text(
-                      "指纹识别",
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            const SizedBox(height: 50),
+          ],
         ),
       ),
     );
@@ -160,7 +128,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
           setState(() {
             _notifier.setStatus(
               status: GestureStatus.createFailed,
-              gestureText: "连接数不能小于4个，请重新设置",
+              gestureText: S.current.atLeast4Points,
             );
           });
           _gestureUnlockView.currentState?.updateStatus(UnlockStatus.failed);
@@ -168,7 +136,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
           setState(() {
             _notifier.setStatus(
               status: GestureStatus.verify,
-              gestureText: "请再次绘制解锁密码",
+              gestureText: S.current.drawGestureLockAgain,
             );
           });
           _gesturePassword = GestureUnlockView.selectedToString(selected);
@@ -181,22 +149,22 @@ class PinChangeScreenState extends State<PinChangeScreen> {
         if (!_isEditMode) {
           String password = GestureUnlockView.selectedToString(selected);
           if (_gesturePassword == password) {
-            IToast.showTop(context, text: "设置成功");
+            IToast.showTop(S.current.setGestureLockSuccess);
             setState(() {
               _notifier.setStatus(
                 status: GestureStatus.verify,
-                gestureText: "设置成功",
+                gestureText: S.current.setGestureLockSuccess,
               );
               Navigator.pop(context);
             });
-            HiveUtil.put(
-                key: HiveUtil.guesturePasswdKey,
-                value: GestureUnlockView.selectedToString(selected));
+            HiveUtil.put(HiveUtil.guesturePasswdKey,
+                GestureUnlockView.selectedToString(selected));
+            appProvider.pinSettled = HiveUtil.hasGuesturePasswd();
           } else {
             setState(() {
               _notifier.setStatus(
                 status: GestureStatus.verifyFailed,
-                gestureText: "与上一次绘制不一致, 请重新绘制",
+                gestureText: S.current.gestureLockNotMatch,
               );
             });
             _gestureUnlockView.currentState?.updateStatus(UnlockStatus.failed);
@@ -207,7 +175,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
             setState(() {
               _notifier.setStatus(
                 status: GestureStatus.create,
-                gestureText: "绘制新手势密码",
+                gestureText: S.current.drawNewGestureLock,
               );
               _isEditMode = false;
             });
@@ -216,7 +184,7 @@ class PinChangeScreenState extends State<PinChangeScreen> {
             setState(() {
               _notifier.setStatus(
                 status: GestureStatus.verifyFailed,
-                gestureText: "密码错误, 请重新绘制",
+                gestureText: S.current.gestureLockWrong,
               );
             });
             _gestureUnlockView.currentState?.updateStatus(UnlockStatus.failed);

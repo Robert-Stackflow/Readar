@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../Utils/app_provider.dart';
+import '../Utils/responsive_util.dart';
+import '../Utils/utils.dart';
 import 'colors.dart';
 import 'styles.dart';
 
-class AppTheme {
-  AppTheme._();
+class MyTheme {
+  MyTheme._();
 
-  bool isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
+  static bool get isDarkMode => Theme.of(rootContext).brightness == Brightness.dark;
 
   static ThemeData getTheme({required bool isDarkMode}) {
     return ThemeData(
@@ -34,8 +35,8 @@ class AppTheme {
       highlightColor:
           isDarkMode ? MyColors.highlightColorDark : MyColors.highlightColor,
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return isDarkMode
                 ? MyColors.materialBackgroundDark
                 : MyColors.materialBackground;
@@ -45,8 +46,8 @@ class AppTheme {
                 : MyColors.textGrayColor;
           }
         }),
-        trackColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return isDarkMode
                 ? MyColors.defaultPrimaryColorDark
                 : MyColors.defaultPrimaryColor;
@@ -56,8 +57,8 @@ class AppTheme {
         }),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return isDarkMode
                 ? MyColors.defaultPrimaryColorDark
                 : MyColors.defaultPrimaryColor;
@@ -169,4 +170,86 @@ class AppTheme {
     fontSize: 12,
     letterSpacing: 0.2,
   );
+
+  static List<BoxShadow> get defaultBoxShadow {
+    return [
+      BoxShadow(
+        color: Theme.of(rootContext).shadowColor,
+        offset: const Offset(0, 4),
+        blurRadius: 10,
+        spreadRadius: 1,
+      ).scale(2),
+    ];
+  }
+
+  static BoxDecoration get defaultDecoration {
+    return BoxDecoration(
+      color: Theme.of(rootContext).canvasColor,
+      border: Border.all(color: Theme.of(rootContext).dividerColor, width: 1),
+      boxShadow: defaultBoxShadow,
+      borderRadius: BorderRadius.circular(10),
+    );
+  }
+
+  static BoxDecoration getDefaultDecoration(
+      [double radius = 10, double borderWidth = 1]) {
+    return BoxDecoration(
+      color: Theme.of(rootContext).canvasColor,
+      border: Border.all(
+          color: Theme.of(rootContext).dividerColor, width: borderWidth),
+      boxShadow: defaultBoxShadow,
+      borderRadius: BorderRadius.circular(radius),
+    );
+  }
+
+  static Border get bottomBorder {
+    return Border(bottom: borderSide);
+  }
+
+  static Border get rightBorder {
+    return Border(right: borderSide);
+  }
+
+
+  static Border get border {
+    return Border.all(color: Theme.of(rootContext).dividerColor, width: 0.5);
+  }
+
+  static BorderSide get borderSide {
+    return BorderSide(color: Theme.of(rootContext).dividerColor, width: 0.5);
+  }
+
+  static getBackground(BuildContext context) {
+    return Utils.currentBrightness(context) == Brightness.light
+        ? canvasColor
+        : scaffoldBackgroundColor;
+  }
+
+  static getCardBackground(BuildContext context) {
+    return Utils.currentBrightness(context) == Brightness.light
+        ? scaffoldBackgroundColor
+        : canvasColor;
+  }
+
+  static Color get background {
+    return Utils.currentBrightness(rootContext) == Brightness.light
+        ? scaffoldBackgroundColor
+        : scaffoldBackgroundColor;
+  }
+
+  static Color get itemBackground {
+    if (ResponsiveUtil.isLandscape()) {
+      return canvasColor;
+    }
+    return Utils.currentBrightness(rootContext) == Brightness.light
+        ? canvasColor
+        : scaffoldBackgroundColor;
+  }
+
+  static Color get primaryColor => Theme.of(rootContext).primaryColor;
+
+  static Color get canvasColor => Theme.of(rootContext).canvasColor;
+
+  static Color get scaffoldBackgroundColor =>
+      Theme.of(rootContext).scaffoldBackgroundColor;
 }
