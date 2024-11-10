@@ -1,6 +1,7 @@
-import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 
+import '../../Utils/responsive_util.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
@@ -20,8 +21,12 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildSimpleAppBar(
-            title: S.current.operationSetting, context: context),
+        appBar: ItemBuilder.buildResponsiveAppBar(
+          showBack: true,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          title: S.current.operationSetting,
+          context: context,
+        ),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -30,7 +35,7 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
               children: [
-                const SizedBox(height: 10),
+                if (ResponsiveUtil.isLandscape()) const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
                     context: context, title: "文章列表快捷操作"),
                 ItemBuilder.buildEntryItem(
@@ -56,7 +61,7 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
                   title: "向右长滑动",
                   tip: "加入稍后读",
                   onTap: () {},
-                  bottomRadius: true,
+                  roundBottom: true,
                 ),
                 const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
@@ -82,7 +87,7 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
                   context: context,
                   title: "音量键",
                   tip: "切换文章",
-                  bottomRadius: true,
+                  roundBottom: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
@@ -103,7 +108,7 @@ class _OperationSettingScreenState extends State<OperationSettingScreen>
                 ItemBuilder.buildRadioItem(
                   context: context,
                   title: "标记为已读前确认",
-                  bottomRadius: true,
+                  roundBottom: true,
                   value: false,
                   onTap: () {},
                 ),

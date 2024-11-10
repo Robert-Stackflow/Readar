@@ -46,4 +46,6 @@ app.*.map.json
 **/Deprecated/
 **/generated/
 
-afar.db
+readar.db
+
+/assets/fonts/**

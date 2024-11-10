@@ -1,6 +1,7 @@
-import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:flutter/material.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 
+import '../../Utils/responsive_util.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 
@@ -20,8 +21,12 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildSimpleAppBar(
-            title: S.current.extensionSetting, context: context),
+        appBar: ItemBuilder.buildResponsiveAppBar(
+          showBack: true,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          title: S.current.extensionSetting,
+          context: context,
+        ),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -31,7 +36,7 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
-                const SizedBox(height: 10),
+                if (ResponsiveUtil.isLandscape()) const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(
                     context: context, title: "下列插件可直接保存文章"),
                 ItemBuilder.buildRadioItem(
@@ -104,7 +109,7 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                   context: context,
                   value: false,
                   title: "flomo",
-                  bottomRadius: true,
+                  roundBottom: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
@@ -112,8 +117,8 @@ class _ExtensionSettingScreenState extends State<ExtensionSettingScreen>
                   context: context,
                   title: "建议新的插件",
                   description: "向我们建议你希望支持的笔记服务插件",
-                  topRadius: true,
-                  bottomRadius: true,
+                  roundTop: true,
+                  roundBottom: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),

@@ -3,11 +3,18 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  audioplayers_windows
-  flutter_tts
+  app_links
+  hotkey_manager_windows
+  isar_flutter_libs
   local_auth_windows
+  local_notifier
+  permission_handler_windows
+  protocol_handler_windows
+  screen_retriever
   share_plus
+  tray_manager
   url_launcher_windows
+  window_manager
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

@@ -1,7 +1,8 @@
-import 'package:afar/Widgets/Custom/no_shadow_scroll_behavior.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:readar/Utils/route_util.dart';
+import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 
+import '../../Utils/responsive_util.dart';
 import '../../Widgets/Item/item_builder.dart';
 import '../../generated/l10n.dart';
 import 'backup_service_setting_screen.dart';
@@ -22,8 +23,12 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
     return Container(
       color: Colors.transparent,
       child: Scaffold(
-        appBar: ItemBuilder.buildSimpleAppBar(
-            title: S.current.backupSetting, context: context),
+        appBar: ItemBuilder.buildResponsiveAppBar(
+          showBack: true,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          title: S.current.backupSetting,
+          context: context,
+        ),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: ScrollConfiguration(
@@ -38,9 +43,9 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                 //   leading: Icons.info_outline_rounded,
                 //   showLeading: true,
                 //   title: "备份内容包括：软件配置、订阅源、星标、稍后再读、阅读历史、集锦",
-                //   bottomRadius: true,
+                //   roundBottom: true,
                 // ),
-                const SizedBox(height: 10),
+                if (ResponsiveUtil.isLandscape()) const SizedBox(height: 10),
                 ItemBuilder.buildCaptionItem(context: context, title: "云端备份设置"),
                 ItemBuilder.buildRadioItem(
                   context: context,
@@ -53,11 +58,8 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   title: "选择备份服务",
                   description: "已选择：Dropbox",
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                            builder: (context) =>
-                                const BackupServiceSettingScreen()));
+                    RouteUtil.pushPanelCupertinoRoute(
+                        context, const BackupServiceSettingScreen());
                   },
                 ),
                 ItemBuilder.buildEntryItem(
@@ -70,7 +72,7 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   context: context,
                   title: "从云端拉取备份",
                   description: "上次拉取时间：2023-11-11 20:10:09",
-                  bottomRadius: true,
+                  roundBottom: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
@@ -93,7 +95,7 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   title: "备份份数阈值",
                   tip: "20份",
                   description: "已有备份份数超过该阈值后，新备份将自动覆盖旧备份；当设置为1份时，即表示仅保留最新备份",
-                  bottomRadius: true,
+                  roundBottom: true,
                   onTap: () {},
                 ),
                 const SizedBox(height: 10),
@@ -111,7 +113,7 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                 ItemBuilder.buildEntryItem(
                   context: context,
                   title: "从本地导入备份",
-                  bottomRadius: true,
+                  roundBottom: true,
                   onTap: () {},
                 ),
                 // ItemBuilder.buildEntryItem(
@@ -122,7 +124,7 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                 // ItemBuilder.buildEntryItem(
                 //   context: context,
                 //   title: "从OPML文件导入订阅源",
-                //   bottomRadius: true,
+                //   roundBottom: true,
                 //   onTap: () {},
                 // ),
                 const SizedBox(height: 10),
@@ -141,7 +143,7 @@ class _BackupSettingScreenState extends State<BackupSettingScreen>
                   description: "当从本地或云端恢复备份时不恢复的内容",
                   onTap: () {},
                   showTrailing: false,
-                  bottomRadius: true,
+                  roundBottom: true,
                 ),
                 const SizedBox(height: 10),
               ],

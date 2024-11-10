@@ -1,18 +1,36 @@
-import 'package:afar/Utils/iprint.dart';
-import 'package:afar/Widgets/Unlock/gesture_notifier.dart';
-import 'package:afar/Widgets/Unlock/gesture_unlock_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
-import 'package:local_auth/local_auth.dart';
-import 'package:local_auth_android/local_auth_android.dart';
+import 'dart:math';
 
+import 'package:flutter/material.dart';
+import 'package:readar/Widgets/General/Unlock/gesture_notifier.dart';
+import 'package:readar/Widgets/General/Unlock/gesture_unlock_view.dart';
+import 'package:tray_manager/tray_manager.dart';
+import 'package:window_manager/window_manager.dart';
+
+import '../../Resources/theme.dart';
+import '../../Utils/app_provider.dart';
+import '../../Utils/constant.dart';
 import '../../Utils/hive_util.dart';
+import '../../Utils/responsive_util.dart';
+import '../../Utils/route_util.dart';
+import '../../Utils/utils.dart';
+import '../../Widgets/Item/item_builder.dart';
+import '../../generated/l10n.dart';
+import '../main_screen.dart';
 
 class PinVerifyScreen extends StatefulWidget {
-  const PinVerifyScreen({super.key, this.onSuccess, this.isModal = true});
+  const PinVerifyScreen({
+    super.key,
+    this.onSuccess,
+    this.isModal = true,
+    this.jumpToMain = false,
+    this.showWindowTitle = false,
+    this.autoAuth = true,
+  });
 
   final bool isModal;
+  final bool autoAuth;
+  final bool showWindowTitle;
+  final bool jumpToMain;
   final Function()? onSuccess;
   static const String routeName = "/pin/verify";
 
@@ -20,114 +38,167 @@ class PinVerifyScreen extends StatefulWidget {
   PinVerifyScreenState createState() => PinVerifyScreenState();
 }
 
-AndroidAuthMessages andStrings = const AndroidAuthMessages(
-  cancelButton: '取消',
-  goToSettingsButton: '去设置',
-  biometricNotRecognized: '指纹识别失败',
-  goToSettingsDescription: '请设置指纹',
-  biometricHint: '',
-  biometricSuccess: '指纹识别成功',
-  signInTitle: '指纹验证',
-  deviceCredentialsRequiredTitle: '请先录入指纹!',
-);
-
-class PinVerifyScreenState extends State<PinVerifyScreen> {
-  final String? _password = HiveUtil.getString(key: HiveUtil.guesturePasswdKey);
+class PinVerifyScreenState extends State<PinVerifyScreen>
+    with WindowListener, TrayListener {
+  final String? _password = HiveUtil.getString(HiveUtil.guesturePasswdKey);
   late final bool _isUseBiometric =
-      HiveUtil.getBool(key: HiveUtil.enableBiometricKey);
-  late final GestureNotifier _notifier =
-      GestureNotifier(status: GestureStatus.verify, gestureText: "验证密码");
+      HiveUtil.getBool(HiveUtil.enableBiometricKey);
+  late final GestureNotifier _notifier = GestureNotifier(
+      status: GestureStatus.verify, gestureText: S.current.verifyGestureLock);
   final GlobalKey<GestureState> _gestureUnlockView = GlobalKey();
+  bool _isMaximized = false;
+  bool _isStayOnTop = false;
+
+  @override
+  Future<void> onWindowResize() async {
+    super.onWindowResize();
+    windowManager.setMinimumSize(minimumSize);
+    HiveUtil.setWindowSize(await windowManager.getSize());
+  }
+
+  @override
+  Future<void> onWindowResized() async {
+    super.onWindowResized();
+    HiveUtil.setWindowSize(await windowManager.getSize());
+  }
+
+  @override
+  Future<void> onWindowMove() async {
+    super.onWindowMove();
+    HiveUtil.setWindowPosition(await windowManager.getPosition());
+  }
+
+  @override
+  Future<void> onWindowMoved() async {
+    super.onWindowMoved();
+    HiveUtil.setWindowPosition(await windowManager.getPosition());
+  }
+
+  @override
+  void onWindowMaximize() {
+    windowManager.setMinimumSize(minimumSize);
+    setState(() {
+      _isMaximized = true;
+    });
+  }
+
+  @override
+  void onWindowUnmaximize() {
+    windowManager.setMinimumSize(minimumSize);
+    setState(() {
+      _isMaximized = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    trayManager.removeListener(this);
+    windowManager.removeListener(this);
+  }
 
   @override
   void initState() {
+    if (widget.jumpToMain) {
+      trayManager.addListener(this);
+      Utils.initSimpleTray();
+    }
+    windowManager.addListener(this);
     super.initState();
-    if (_isUseBiometric) {
+    if (_isUseBiometric && widget.autoAuth) {
       auth();
     }
   }
 
   void auth() async {
-    LocalAuthentication localAuth = LocalAuthentication();
-    try {
-      await localAuth
-          .authenticate(
-              localizedReason: '进行指纹验证以使用APP',
-              authMessages: [andStrings, andStrings, andStrings],
-              options: const AuthenticationOptions(
-                  biometricOnly: true,
-                  useErrorDialogs: false,
-                  stickyAuth: true))
-          .then((value) {
-        if (value) {
-          if (widget.onSuccess != null) widget.onSuccess!();
-          Navigator.pop(context);
-          _gestureUnlockView.currentState?.updateStatus(UnlockStatus.normal);
+    Utils.localAuth(
+      onAuthed: () {
+        if (widget.onSuccess != null) widget.onSuccess!();
+        if (widget.jumpToMain) {
+          Navigator.of(context).pushReplacement(RouteUtil.getFadeRoute(
+              ItemBuilder.buildContextMenuOverlay(
+                  MainScreen(key: mainScreenKey))));
+        } else {
+          Navigator.of(context).pop();
         }
-      });
-    } on PlatformException catch (e) {
-      if (e.code == auth_error.notAvailable) {
-        IPrint.debug("not avaliable");
-      } else if (e.code == auth_error.notEnrolled) {
-        IPrint.debug("not enrolled");
-      } else if (e.code == auth_error.lockedOut ||
-          e.code == auth_error.permanentlyLockedOut) {
-        IPrint.debug("locked out");
-      } else {
-        IPrint.debug("other reason:$e");
-      }
-    }
+        _gestureUnlockView.currentState?.updateStatus(UnlockStatus.normal);
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    Utils.setSafeMode(HiveUtil.getBool(HiveUtil.enableSafeModeKey,
+        defaultValue: defaultEnableSafeMode));
     return Scaffold(
-      body: SafeArea(
-        right: false,
-        child: WillPopScope(
-          onWillPop: () {
-            return Future(() => !widget.isModal);
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 100),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  _notifier.gestureText,
-                  style: Theme.of(context).textTheme.titleMedium,
+      backgroundColor: MyTheme.background,
+      appBar: ResponsiveUtil.isDesktop() && widget.showWindowTitle
+          ? PreferredSize(
+              preferredSize: const Size(0, 86),
+              child: ItemBuilder.buildWindowTitle(
+                context,
+                forceClose: true,
+                leftWidgets: [const Spacer()],
+                backgroundColor: MyTheme.background,
+                isStayOnTop: _isStayOnTop,
+                isMaximized: _isMaximized,
+                onStayOnTopTap: () {
+                  setState(() {
+                    _isStayOnTop = !_isStayOnTop;
+                    windowManager.setAlwaysOnTop(_isStayOnTop);
+                  });
+                },
+              ),
+            )
+          : null,
+      bottomNavigationBar: widget.showWindowTitle
+          ? Container(
+              height: 86,
+              color: MyTheme.background,
+            )
+          : null,
+      body: Center(
+        child: PopScope(
+          canPop: !widget.isModal,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 50),
+              Text(
+                _notifier.gestureText,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 30),
+              Flexible(
+                child: GestureUnlockView(
+                  key: _gestureUnlockView,
+                  size: min(MediaQuery.sizeOf(context).width, 400),
+                  padding: 60,
+                  roundSpace: 40,
+                  defaultColor: Colors.grey.withOpacity(0.5),
+                  selectedColor: Theme.of(context).primaryColor,
+                  failedColor: Colors.redAccent,
+                  disableColor: Colors.grey,
+                  solidRadiusRatio: 0.3,
+                  lineWidth: 2,
+                  touchRadiusRatio: 0.3,
+                  onCompleted: _gestureComplete,
                 ),
-                const SizedBox(height: 30),
-                Expanded(
-                  child: GestureUnlockView(
-                    key: _gestureUnlockView,
-                    size: MediaQuery.of(context).size.width,
-                    padding: 60,
-                    roundSpace: 40,
-                    defaultColor: Colors.grey.withOpacity(0.5),
-                    selectedColor: Theme.of(context).primaryColor,
-                    failedColor: Colors.redAccent,
-                    disableColor: Colors.grey,
-                    solidRadiusRatio: 0.3,
-                    lineWidth: 2,
-                    touchRadiusRatio: 0.3,
-                    onCompleted: _gestureComplete,
-                  ),
+              ),
+              if (_isUseBiometric)
+                ItemBuilder.buildRoundButton(
+                  context,
+                  text: ResponsiveUtil.isWindows()
+                      ? S.current.biometricVerifyPin
+                      : S.current.biometric,
+                  onTap: () {
+                    auth();
+                  },
                 ),
-                Visibility(
-                  visible: _isUseBiometric,
-                  child: GestureDetector(
-                    onTap: () {
-                      auth();
-                    },
-                    child: Text(
-                      "指纹识别",
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              const SizedBox(height: 50),
+            ],
           ),
         ),
       ),
@@ -147,7 +218,7 @@ class PinVerifyScreenState extends State<PinVerifyScreen> {
           setState(() {
             _notifier.setStatus(
               status: GestureStatus.verifyFailed,
-              gestureText: "密码错误, 请重新绘制",
+              gestureText: S.current.gestureLockWrong,
             );
           });
           _gestureUnlockView.currentState?.updateStatus(UnlockStatus.failed);
@@ -158,5 +229,23 @@ class PinVerifyScreenState extends State<PinVerifyScreen> {
       case GestureStatus.createFailed:
         break;
     }
+  }
+
+  @override
+  void onTrayIconMouseDown() {
+    Utils.displayApp();
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    trayManager.popUpContextMenu();
+  }
+
+  @override
+  void onTrayIconRightMouseUp() {}
+
+  @override
+  Future<void> onTrayMenuItemClick(MenuItem menuItem) async {
+    Utils.processTrayMenuItemClick(context, menuItem, true);
   }
 }
