@@ -14,7 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
-import 'package:readar/Models/github_response.dart';
+import 'package:readar/Models/other/github_response.dart';
 import 'package:readar/Screens/Setting/experiment_setting_screen.dart';
 import 'package:readar/Screens/Setting/update_screen.dart';
 import 'package:readar/Utils/enums.dart';
@@ -43,8 +43,20 @@ import 'cloud_control_provider.dart';
 import 'constant.dart';
 import 'ilogger.dart';
 import 'itoast.dart';
+import 'package:uuid/uuid.dart';
 
 class Utils {
+
+  static String generateUid() {
+    return const Uuid().v4();
+  }
+
+  static bool isUid(String uid) {
+    return RegExp(
+        r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+        .hasMatch(uid);
+  }
+
   static Future<void> setSafeMode(bool enabled) async {
     if (ResponsiveUtil.isMobile()) {
       if (enabled) {

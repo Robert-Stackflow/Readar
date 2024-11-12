@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:readar/Models/github_response.dart';
+import 'package:readar/Models/other/github_response.dart';
 import 'package:readar/Utils/cache_util.dart';
 import 'package:readar/Utils/itoast.dart';
 import 'package:tuple/tuple.dart';

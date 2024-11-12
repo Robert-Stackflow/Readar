@@ -7,7 +7,7 @@ import 'package:readar/Utils/enums.dart';
 import 'package:readar/Utils/request_util.dart';
 import 'package:readar/Utils/utils.dart';
 
-import '../Models/nav_entry.dart';
+import '../Models/other/nav_entry.dart';
 import '../Resources/fonts.dart';
 import '../Widgets/Dialog/dialog_builder.dart';
 import '../generated/l10n.dart';

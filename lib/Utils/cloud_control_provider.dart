@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../Models/cloud_control.dart';
+import '../Models/other/cloud_control.dart';
 
 ReadarControlProvider controlProvider = ReadarControlProvider();
 

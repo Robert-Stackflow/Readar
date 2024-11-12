@@ -1155,6 +1155,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.0"
+  opml:
+    dependency: "direct main"
+    description:
+      name: opml
+      sha256: "812ac9abc81c486c24c26dc96de0ffab71696f88c26edc39e21f3435f97dbd56"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.0"
   package_config:
     dependency: transitive
     description:
@@ -1443,6 +1451,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.2.1"
+  rss_dart:
+    dependency: "direct main"
+    description:
+      name: rss_dart
+      sha256: "81bbcc1a5205546f2a85ebadf8f29f5b090ccb5781f400f3713cf02f1cc992ee"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.10"
   rxdart:
     dependency: transitive
     description:
@@ -1761,7 +1777,7 @@ packages:
     source: hosted
     version: "3.1.1"
   uuid:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: uuid
       sha256: "83d37c7ad7aaf9aa8e275490669535c8080377cfa7a7004c24dfac53afffaa90"

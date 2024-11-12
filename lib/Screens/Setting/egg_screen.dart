@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Models/cloud_control.dart';
+import '../../Models/other/cloud_control.dart';
 import '../../Utils/cloud_control_provider.dart';
 import '../../Utils/hive_util.dart';
 import '../../Utils/lottie_util.dart';

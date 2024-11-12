@@ -10,7 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:readar/Models/github_response.dart';
+import 'package:readar/Models/other/github_response.dart';
 import 'package:readar/Utils/cloud_control_provider.dart';
 import 'package:readar/Utils/constant.dart';
 import 'package:readar/Utils/responsive_util.dart';

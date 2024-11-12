@@ -212,7 +212,7 @@ class HomeScreenState extends State<HomeScreen>
   }
 
   void scrollToTopOrRefresh() {
-    if (_scrollController.offset > 30) {
+    if (_scrollController.hasClients && _scrollController.offset > 30) {
       scrollToTop();
     } else {
       _refreshController.callRefresh();

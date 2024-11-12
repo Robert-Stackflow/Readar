@@ -7,7 +7,7 @@ import 'package:readar/Utils/constant.dart';
 import 'package:readar/Utils/hive_util.dart';
 import 'package:readar/Widgets/Dialog/dialog_builder.dart';
 
-import '../Models/cloud_control.dart';
+import '../Models/other/cloud_control.dart';
 import '../Utils/ilogger.dart';
 import '../Utils/utils.dart';
 

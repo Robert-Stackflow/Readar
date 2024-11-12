@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:readar/Utils/responsive_util.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../Models/github_response.dart';
+import '../../Models/other/github_response.dart';
 import '../../Utils/uri_util.dart';
 import '../../Utils/utils.dart';
 import '../../Widgets/General/EasyRefresh/easy_refresh.dart';

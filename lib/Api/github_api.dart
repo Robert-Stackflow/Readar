@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../Models/github_response.dart';
+import '../Models/other/github_response.dart';
 import '../Utils/ilogger.dart';
 
 class GithubApi {

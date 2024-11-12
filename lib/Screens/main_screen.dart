@@ -1,16 +1,21 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:app_links/app_links.dart';
 import 'package:context_menus/context_menus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
+import 'package:opml/opml.dart';
 import 'package:provider/provider.dart';
+import 'package:readar/Adapters/RssService/local_rss_service_adapter.dart';
 import 'package:readar/Api/server_api.dart';
 import 'package:readar/Screens/panel_screen.dart';
 import 'package:readar/Utils/asset_util.dart';
 import 'package:readar/Utils/cloud_control_provider.dart';
 import 'package:readar/Utils/constant.dart';
+import 'package:readar/Utils/file_util.dart';
 import 'package:readar/Utils/responsive_util.dart';
 import 'package:readar/Utils/uri_util.dart';
 import 'package:readar/Widgets/BottomSheet/bottom_sheet_builder.dart';
@@ -20,6 +25,7 @@ import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../../generated/l10n.dart';
+import '../Models/feed.dart';
 import '../Resources/fonts.dart';
 import '../Resources/theme.dart';
 import '../Utils/app_provider.dart';
@@ -436,6 +442,36 @@ class MainScreenState extends State<MainScreen>
                       },
                     ),
                     const Spacer(),
+                    const SizedBox(height: 8),
+                    ToolButton(
+                      context: context,
+                      icon: Icons.rss_feed_rounded,
+                      onTap: () async {
+                        FilePickerResult? result = await FileUtil.pickFiles(
+                          dialogTitle: "选择OPML文件",
+                          allowedExtensions: ["opml"],
+                        );
+                        if (result != null) {
+                          String filePath = result.files.single.path!;
+                          String xmlString =
+                              await File(filePath).readAsString();
+                          OpmlDocument opml = OpmlDocument.parse(xmlString);
+                          List<Feed> feeds = [];
+                          for (OpmlOutline outline in opml.body) {
+                            if (outline.xmlUrl != null) {
+                              feeds.add(Feed(
+                                "",
+                                outline.xmlUrl!,
+                                outline.title ?? outline.text ?? "",
+                                serviceUid: LocalRssServiceAdapter.instance.service.id,
+                              ));
+                            }
+                          }
+                          LocalRssServiceAdapter.instance.addFeeds(feeds);
+                        }
+                      },
+                      iconSize: 24,
+                    ),
                     const SizedBox(height: 8),
                     ToolButton(
                       context: context,
