@@ -20,7 +20,7 @@ class FeedDao extends BaseDao<Feed> {
     bool checkRssUrl = true,
   }) async {
     if (checkRssUrl) {
-      List<Feed> feeds = await queryByServiceId(item.serviceUid);
+      List<Feed> feeds = await queryByServiceUid(item.serviceUid);
       if (feeds.any((feed) => feed.url == item.url)) {
         return 0;
       }
@@ -40,7 +40,7 @@ class FeedDao extends BaseDao<Feed> {
   }) async {
     if (items.isEmpty) return 0;
     if (checkRssUrl) {
-      List<Feed> feeds = await queryByServiceId(items[0].serviceUid);
+      List<Feed> feeds = await queryByServiceUid(items[0].serviceUid);
       items.removeWhere(
           (element) => feeds.any((feed) => feed.url == element.url));
     }
@@ -60,23 +60,24 @@ class FeedDao extends BaseDao<Feed> {
   @override
   Future<int> delete(Feed item) async {
     Database db = await getDataBase();
-    var res = await db.delete(tableName, where: 'id = ?', whereArgs: [item.id]);
+    var res =
+        await db.delete(tableName, where: 'uid = ?', whereArgs: [item.uid]);
     return res;
   }
 
-  Future<int> deleteFeeds(List<String> fids) async {
+  Future<int> deleteFeeds(List<String> uids) async {
     Database db = await getDataBase();
     final batch = db.batch();
-    for (var fid in fids) {
+    for (var uid in uids) {
       batch.delete(
         ArticleItemDao.tableName,
-        where: "feedFid = ?",
-        whereArgs: [fid],
+        where: "feedUid = ?",
+        whereArgs: [uid],
       );
       batch.delete(
         tableName,
-        where: "fid = ?",
-        whereArgs: [fid],
+        where: "uid = ?",
+        whereArgs: [uid],
       );
     }
     var res = await batch.commit();
@@ -86,7 +87,10 @@ class FeedDao extends BaseDao<Feed> {
   @override
   Future<int> update(Feed item) async {
     Database db = await getDataBase();
-    var res = await db.update(tableName, item.toJson());
+    var tmp = item.toJson();
+    tmp.remove('id');
+    var res = await db
+        .update(tableName, tmp, where: 'uid = ?', whereArgs: [tmp['uid']]);
     return res;
   }
 
@@ -95,16 +99,18 @@ class FeedDao extends BaseDao<Feed> {
     Database db = await getDataBase();
     Batch batch = db.batch();
     for (Feed feed in items) {
-      batch.update(tableName, feed.toJson());
+      var tmp = feed.toJson();
+      tmp.remove('id');
+      batch.update(tableName, tmp, where: 'uid = ?', whereArgs: [tmp['uid']]);
     }
     var res = await batch.commit();
     return res.length;
   }
 
-  Future<List<Feed>> queryByServiceId(int serviceId) async {
+  Future<List<Feed>> queryByServiceUid(String serviceUid) async {
     Database db = await getDataBase();
     List<Map<String, Object?>> result = await db
-        .query(tableName, where: 'serviceId = ?', whereArgs: [serviceId]);
+        .query(tableName, where: 'serviceUid = ?', whereArgs: [serviceUid]);
     List<Feed> feeds = [];
     for (dynamic json in result) {
       feeds.add(Feed.fromJson(json));
@@ -120,18 +126,11 @@ class FeedDao extends BaseDao<Feed> {
     return Feed.fromJson(result[0]);
   }
 
-  Future<Feed> queryByFid(String fid) async {
+  Future<Feed> queryByUid(String uid) async {
     Database db = await getDataBase();
     List<Map<String, Object?>> result =
-        await db.query(tableName, where: 'fid = ?', whereArgs: [fid]);
+        await db.query(tableName, where: 'uid = ?', whereArgs: [uid]);
     return Feed.fromJson(result[0]);
-  }
-
-  Future<int> getIdByFid(String fid) async {
-    Database db = await getDataBase();
-    List<Map<String, Object?>> result =
-        await db.query(tableName, where: 'fid = ?', whereArgs: [fid]);
-    return Feed.fromJson(result[0]).id;
   }
 
   Future<Feed> queryByUrl(String url) async {

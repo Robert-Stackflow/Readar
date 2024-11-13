@@ -38,7 +38,7 @@ enum RssServiceType {
 /// Rss服务
 ///
 class RssService {
-  int id;
+  int? id;
   String uid;
   String endpoint;
   String name;
@@ -79,7 +79,7 @@ class RssService {
   });
 
   RssService.local()
-      : id = 0,
+      : id = null,
         endpoint = "",
         name = "",
         uid = Utils.generateUid(),

@@ -9,7 +9,9 @@ import 'package:flutter/services.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:opml/opml.dart';
 import 'package:provider/provider.dart';
+import 'package:readar/Adapters/RssService/base_rss_service_adapter.dart';
 import 'package:readar/Adapters/RssService/local_rss_service_adapter.dart';
+import 'package:readar/Adapters/global_adapter.dart';
 import 'package:readar/Api/server_api.dart';
 import 'package:readar/Screens/panel_screen.dart';
 import 'package:readar/Utils/asset_util.dart';
@@ -20,8 +22,10 @@ import 'package:readar/Utils/responsive_util.dart';
 import 'package:readar/Utils/uri_util.dart';
 import 'package:readar/Widgets/BottomSheet/bottom_sheet_builder.dart';
 import 'package:readar/Widgets/Item/item_builder.dart';
+import 'package:readar/Widgets/Readar/feed_item.dart';
 import 'package:readar/Widgets/Window/window_caption.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../../generated/l10n.dart';
@@ -40,6 +44,7 @@ import '../Widgets/General/EasyRefresh/easy_refresh.dart';
 import '../Widgets/General/LottieCupertinoRefresh/lottie_cupertino_refresh.dart';
 import '../Widgets/Window/window_button.dart';
 import 'Lock/pin_verify_screen.dart';
+import 'Setting/about_setting_screen.dart';
 import 'Setting/setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -155,6 +160,7 @@ class MainScreenState extends State<MainScreen>
   }
 
   void fetchBasicData() {
+    var _ = LocalRssServiceAdapter.instance;
     ServerApi.getCloudControl();
     CustomFont.downloadFont(showToast: false);
     if (HiveUtil.getBool(HiveUtil.autoCheckUpdateKey)) {
@@ -326,7 +332,7 @@ class MainScreenState extends State<MainScreen>
     double rightPadding = 0,
   }) {
     return Container(
-      width: 42 + leftPadding + rightPadding,
+      width: 240 + leftPadding + rightPadding,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Theme.of(context).canvasColor,
@@ -348,182 +354,264 @@ class MainScreenState extends State<MainScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ResponsiveUtil.buildDesktopWidget(
-                        desktop: const SizedBox(height: 5)),
-                    ResponsiveUtil.buildDesktopWidget(desktop: _buildLogo()),
-                    const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      selected:
-                          hideNavigator && sidebarChoice == SideBarChoice.Feed,
-                      icon: Icons.article_outlined,
-                      selectedIcon: Icons.article_rounded,
-                      onTap: () async {
-                        appProvider.sidebarChoice = SideBarChoice.Feed;
-                        panelScreenState?.popAll(false);
-                      },
-                      iconSize: 24,
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        _buildLogo(),
+                        Text(S.current.appName, style: MyTheme.titleLarge),
+                        const Spacer(),
+                        ClipOval(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                BottomSheetBuilder.showContextMenu(
+                                    context, _buildServiceMoreButtons());
+                              },
+                              child: AssetUtil.load(AssetUtil.avatar),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
                     ),
                     const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      selected:
-                          hideNavigator && sidebarChoice == SideBarChoice.Star,
-                      icon: Icons.star_border_rounded,
-                      selectedIcon: Icons.star_rounded,
-                      onTap: () async {
-                        appProvider.sidebarChoice = SideBarChoice.Star;
-                        panelScreenState?.popAll(false);
-                      },
-                      iconSize: 24,
-                    ),
-                    const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      selected: hideNavigator &&
-                          sidebarChoice == SideBarChoice.ReadLater,
-                      icon: Icons.bookmark_border_rounded,
-                      selectedIcon: Icons.bookmark_rounded,
-                      onTap: () async {
-                        appProvider.sidebarChoice = SideBarChoice.ReadLater;
-                        panelScreenState?.popAll(false);
-                      },
-                      iconSize: 24,
-                    ),
-                    const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      selected: hideNavigator &&
-                          sidebarChoice == SideBarChoice.Highlights,
-                      icon: Icons.auto_fix_high_outlined,
-                      selectedIcon: Icons.auto_fix_high_rounded,
-                      onTap: () async {
-                        appProvider.sidebarChoice = SideBarChoice.Highlights;
-                        panelScreenState?.popAll(false);
-                      },
-                      iconSize: 24,
-                    ),
-                    const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      selected:
-                          hideNavigator && sidebarChoice == SideBarChoice.Saved,
-                      icon: Icons.save_alt_rounded,
-                      selectedIcon: Icons.save_alt_rounded,
-                      onTap: () async {
-                        appProvider.sidebarChoice = SideBarChoice.Saved;
-                        panelScreenState?.popAll(false);
-                      },
-                      iconSize: 24,
-                    ),
-                    const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      selected: hideNavigator &&
-                          sidebarChoice == SideBarChoice.History,
-                      icon: Icons.history_rounded,
-                      selectedIcon: Icons.history_rounded,
-                      onTap: () async {
-                        appProvider.sidebarChoice = SideBarChoice.History;
-                        panelScreenState?.popAll(false);
-                      },
-                      iconSize: 24,
-                    ),
-                    const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      selected: hideNavigator &&
-                          sidebarChoice == SideBarChoice.Explore,
-                      icon: Icons.explore_outlined,
-                      selectedIcon: Icons.explore_rounded,
-                      onTap: () async {
-                        appProvider.sidebarChoice = SideBarChoice.Explore;
-                        panelScreenState?.popAll(false);
-                      },
-                    ),
-                    const Spacer(),
-                    const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      icon: Icons.rss_feed_rounded,
-                      onTap: () async {
-                        FilePickerResult? result = await FileUtil.pickFiles(
-                          dialogTitle: "选择OPML文件",
-                          allowedExtensions: ["opml"],
+                    Selector<GlobalAdapter, BaseRssServiceAdapter>(
+                      selector: (context, globalAdapter) =>
+                          globalAdapter.currentRssServiceAdapter,
+                      builder: (context, serviceAdapter, child) {
+                        return Expanded(
+                          child: WaterfallFlow.builder(
+                            itemCount: serviceAdapter.feeds.length,
+                            gridDelegate:
+                                const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 1,
+                              mainAxisSpacing: 2,
+                            ),
+                            itemBuilder: (context, index) {
+                              Feed feed = serviceAdapter.feeds[index];
+                              return FeedItem(
+                                feed: feed,
+                                selected:
+                                    serviceAdapter.selectedFeedUid == feed.uid,
+                                onTap: () {
+                                  serviceAdapter.selectedFeedUid = feed.uid;
+                                },
+                              );
+                            },
+                          ),
                         );
-                        if (result != null) {
-                          String filePath = result.files.single.path!;
-                          String xmlString =
-                              await File(filePath).readAsString();
-                          OpmlDocument opml = OpmlDocument.parse(xmlString);
-                          List<Feed> feeds = [];
-                          for (OpmlOutline outline in opml.body) {
-                            if (outline.xmlUrl != null) {
-                              feeds.add(Feed(
-                                "",
-                                outline.xmlUrl!,
-                                outline.title ?? outline.text ?? "",
-                                serviceUid: LocalRssServiceAdapter.instance.service.id,
-                              ));
-                            }
-                          }
-                          LocalRssServiceAdapter.instance.addFeeds(feeds);
-                        }
-                      },
-                      iconSize: 24,
-                    ),
-                    const SizedBox(height: 8),
-                    ToolButton(
-                      context: context,
-                      icon: Icons.language_rounded,
-                      onTap: () async {
-                        BottomSheetBuilder.showContextMenu(
-                            context, _buildServiceMoreButtons());
-                      },
-                      iconSize: 24,
-                    ),
-                    const SizedBox(height: 2),
-                    ItemBuilder.buildDynamicToolButton(
-                      context: context,
-                      iconBuilder: (colors) => darkModeWidget ?? emptyWidget,
-                      onTap: changeMode,
-                      onChangemode: (context, themeMode, child) {
-                        if (darkModeController.duration != null) {
-                          if (themeMode == ActiveThemeMode.light) {
-                            darkModeController.forward();
-                          } else if (themeMode == ActiveThemeMode.dark) {
-                            darkModeController.reverse();
-                          } else {
-                            if (Utils.isDark(context)) {
-                              darkModeController.reverse();
-                            } else {
-                              darkModeController.forward();
-                            }
-                          }
-                        }
                       },
                     ),
-                    const SizedBox(height: 2),
-                    ToolButton(
-                      context: context,
-                      iconBuilder: (_) => AssetUtil.loadDouble(
-                        context,
-                        AssetUtil.settingLightIcon,
-                        AssetUtil.settingDarkIcon,
+                    const SizedBox(height: 10),
+                    WaterfallFlow.builder(
+                      itemCount: 6,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
                       ),
-                      padding: const EdgeInsets.all(8),
-                      onTap: () {
-                        RouteUtil.pushPanelCupertinoRoute(
-                            context, const SettingScreen());
+                      itemBuilder: (context, index) {
+                        switch (index) {
+                          case 0:
+                            return _buildBigToolButton(
+                              text: "收藏",
+                              iconData: Icons.star_rounded,
+                              selected: sidebarChoice == SideBarChoice.Star,
+                              onTap: () async {
+                                appProvider.sidebarChoice = SideBarChoice.Star;
+                                panelScreenState?.popAll(false);
+                              },
+                            );
+                          case 1:
+                            return _buildBigToolButton(
+                              text: "稍后阅读",
+                              iconData: Icons.bookmark_rounded,
+                              selected:
+                                  sidebarChoice == SideBarChoice.ReadLater,
+                              onTap: () async {
+                                appProvider.sidebarChoice =
+                                    SideBarChoice.ReadLater;
+                                panelScreenState?.popAll(false);
+                              },
+                            );
+                          case 2:
+                            return _buildBigToolButton(
+                              text: "集锦",
+                              iconData: Icons.auto_fix_high_rounded,
+                              selected:
+                                  sidebarChoice == SideBarChoice.Highlights,
+                              onTap: () async {
+                                appProvider.sidebarChoice =
+                                    SideBarChoice.Highlights;
+                                panelScreenState?.popAll(false);
+                              },
+                            );
+                          case 3:
+                            return _buildBigToolButton(
+                              text: "已保存",
+                              iconData: Icons.save_alt_rounded,
+                              selected: sidebarChoice == SideBarChoice.Saved,
+                              onTap: () async {
+                                appProvider.sidebarChoice = SideBarChoice.Saved;
+                                panelScreenState?.popAll(false);
+                              },
+                            );
+                          case 4:
+                            return _buildBigToolButton(
+                              text: "历史",
+                              iconData: Icons.history_rounded,
+                              selected: sidebarChoice == SideBarChoice.History,
+                              onTap: () async {
+                                appProvider.sidebarChoice =
+                                    SideBarChoice.History;
+                                panelScreenState?.popAll(false);
+                              },
+                            );
+                          case 5:
+                            return _buildBigToolButton(
+                              text: "探索",
+                              iconData: Icons.explore_rounded,
+                              selected: sidebarChoice == SideBarChoice.Explore,
+                              onTap: () async {
+                                appProvider.sidebarChoice =
+                                    SideBarChoice.Explore;
+                                panelScreenState?.popAll(false);
+                              },
+                            );
+                          default:
+                            return Container();
+                        }
                       },
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ToolButton(
+                          context: context,
+                          icon: Icons.add_rounded,
+                          onTap: () async {
+                            FilePickerResult? result = await FileUtil.pickFiles(
+                              dialogTitle: "选择OPML文件",
+                              allowedExtensions: ["opml"],
+                            );
+                            if (result != null) {
+                              String filePath = result.files.single.path!;
+                              String xmlString =
+                                  await File(filePath).readAsString();
+                              OpmlDocument opml = OpmlDocument.parse(xmlString);
+                              List<Feed> feeds = [];
+                              for (OpmlOutline outline in opml.body) {
+                                if (outline.xmlUrl != null) {
+                                  feeds.add(Feed(
+                                    Utils.generateUid(),
+                                    outline.xmlUrl!,
+                                    outline.title ?? outline.text ?? "",
+                                    serviceUid: LocalRssServiceAdapter
+                                        .instance.service.uid,
+                                    createTime:
+                                        DateTime.now().millisecondsSinceEpoch,
+                                  ));
+                                }
+                              }
+                              LocalRssServiceAdapter.instance.addFeeds(feeds);
+                            }
+                          },
+                          iconSize: 24,
+                        ),
+                        ItemBuilder.buildDynamicToolButton(
+                          context: context,
+                          iconBuilder: (colors) =>
+                              darkModeWidget ?? emptyWidget,
+                          onTap: changeMode,
+                          onChangemode: (context, themeMode, child) {
+                            if (darkModeController.duration != null) {
+                              if (themeMode == ActiveThemeMode.light) {
+                                darkModeController.forward();
+                              } else if (themeMode == ActiveThemeMode.dark) {
+                                darkModeController.reverse();
+                              } else {
+                                if (Utils.isDark(context)) {
+                                  darkModeController.reverse();
+                                } else {
+                                  darkModeController.forward();
+                                }
+                              }
+                            }
+                          },
+                        ),
+                        ToolButton(
+                          context: context,
+                          iconBuilder: (_) => AssetUtil.loadDouble(
+                            context,
+                            AssetUtil.settingLightIcon,
+                            AssetUtil.settingDarkIcon,
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          onTap: () {
+                            RouteUtil.pushPanelCupertinoRoute(
+                                context, const SettingScreen());
+                          },
+                        ),
+                        ToolButton(
+                          context: context,
+                          icon: Icons.info_outline_rounded,
+                          iconSize: 22,
+                          onTap: () {
+                            RouteUtil.pushPanelCupertinoRoute(
+                                context, const AboutSettingScreen());
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  _buildBigToolButton({
+    required String text,
+    required IconData iconData,
+    Function()? onTap,
+    bool selected = false,
+  }) {
+    return ItemBuilder.buildInk(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      color: selected ? MyTheme.lightPrimaryColor : null,
+      child: Container(
+        height: 40,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), border: MyTheme.border),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              iconData,
+              size: 20,
+              color: selected ? MyTheme.primaryColor : null,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              text,
+              style: MyTheme.titleSmall.apply(
+                fontSizeDelta: 1,
+                color: selected ? MyTheme.primaryColor : null,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -541,7 +629,7 @@ class MainScreenState extends State<MainScreen>
   }
 
   _buildLogo({
-    double size = 50,
+    double size = 40,
   }) {
     return IgnorePointer(
       child: ClipRRect(

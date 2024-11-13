@@ -9,7 +9,8 @@ import 'styles.dart';
 class MyTheme {
   MyTheme._();
 
-  static bool get isDarkMode => Theme.of(rootContext).brightness == Brightness.dark;
+  static bool get isDarkMode =>
+      Theme.of(rootContext).brightness == Brightness.dark;
 
   static ThemeData getTheme({required bool isDarkMode}) {
     return ThemeData(
@@ -95,81 +96,25 @@ class MyTheme {
     );
   }
 
-  static const TextTheme textTheme = TextTheme(
-    headlineMedium: display1,
-    headlineSmall: headline,
-    titleLarge: title,
-    titleSmall: subtitle,
-    bodyMedium: body2,
-    bodyLarge: body1,
-    bodySmall: caption,
-  );
-  static const TextStyle display1 = TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 36,
-    letterSpacing: 0.4,
-    height: 0.9,
-  );
+  static TextTheme get textTheme => Theme.of(rootContext).textTheme;
 
-  static const TextStyle headline = TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 24,
-    letterSpacing: 0.27,
-  );
+  static TextStyle get titleSmall => textTheme.titleSmall!;
 
-  static const TextStyle title = TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 16,
-    letterSpacing: 0.18,
-  );
+  static TextStyle get titleMedium => textTheme.titleMedium!;
 
-  static const TextStyle itemTitle = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 16,
-    letterSpacing: 0.1,
-  );
+  static TextStyle get titleLarge => textTheme.titleLarge!;
 
-  static const TextStyle itemTitleLittle = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 13,
-    letterSpacing: 0.1,
-  );
+  static TextStyle get labelSmall => textTheme.labelSmall!;
 
-  static const TextStyle itemTip = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 13,
-    letterSpacing: 0.1,
-  );
+  static TextStyle get labelMedium => textTheme.labelMedium!;
 
-  static const TextStyle itemTipLittle = TextStyle(
-    fontWeight: FontWeight.normal,
-    fontSize: 11,
-    letterSpacing: 0.1,
-  );
+  static TextStyle get labelLarge => textTheme.labelLarge!;
 
-  static const TextStyle subtitle = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 14,
-    letterSpacing: -0.04,
-  );
+  static TextStyle get bodySmall => textTheme.bodySmall!;
 
-  static const TextStyle body2 = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 14,
-    letterSpacing: 0.2,
-  );
+  static TextStyle get bodyMedium => textTheme.bodyMedium!;
 
-  static const TextStyle body1 = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 16,
-    letterSpacing: -0.05,
-  );
-
-  static const TextStyle caption = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 12,
-    letterSpacing: 0.2,
-  );
+  static TextStyle get bodyLarge => textTheme.bodyLarge!;
 
   static List<BoxShadow> get defaultBoxShadow {
     return [
@@ -210,7 +155,6 @@ class MyTheme {
     return Border(right: borderSide);
   }
 
-
   static Border get border {
     return Border.all(color: Theme.of(rootContext).dividerColor, width: 0.5);
   }
@@ -247,6 +191,9 @@ class MyTheme {
   }
 
   static Color get primaryColor => Theme.of(rootContext).primaryColor;
+
+  static Color get lightPrimaryColor =>
+      Theme.of(rootContext).primaryColor.withAlpha(25);
 
   static Color get canvasColor => Theme.of(rootContext).canvasColor;
 

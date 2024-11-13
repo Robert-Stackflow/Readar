@@ -4,7 +4,7 @@ import 'dart:convert';
 /// RSS文章条目
 ///
 class ArticleItem {
-  int id;
+  int? id;
   String uid;
   String feedUid;
   String title;
@@ -26,7 +26,7 @@ class ArticleItem {
 
   ArticleItem({
     required this.id,
-    required this.feedId,
+    required this.uid,
     required this.feedUid,
     required this.title,
     this.aiSummary = "",
@@ -48,7 +48,7 @@ class ArticleItem {
 
   ArticleItem._privateConstructor(
     this.id,
-    this.feedId,
+    this.uid,
     this.feedUid,
     this.title,
     this.url,
@@ -71,7 +71,7 @@ class ArticleItem {
   ArticleItem clone() {
     return ArticleItem._privateConstructor(
       id,
-      feedId,
+      uid,
       feedUid,
       title,
       url,
@@ -94,8 +94,8 @@ class ArticleItem {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
-        'feedId': feedId,
-        'feedFid': feedUid,
+        'uid': uid,
+        'feedUid': feedUid,
         'title': title,
         'url': url,
         'date': publishTime,
@@ -115,9 +115,9 @@ class ArticleItem {
       };
 
   factory ArticleItem.fromJson(Map<String, dynamic> map) => ArticleItem(
-        id: map['id'] as String,
-        feedId: map['feedId'] as int,
-        feedUid: map['feedFid'] as String,
+        id: map['id'] as int,
+        uid: map['uid'] as String,
+        feedUid: map['feedUid'] as String,
         title: map['title'] as String,
         url: map['url'] as String,
         publishTime: map['date'] as int,
@@ -129,10 +129,10 @@ class ArticleItem {
         starred: map['starred'] == 1,
         readTime: map['readTime'] as int,
         starTime: map['starTime'] as int,
-        params: jsonDecode(map['params'] as String),
-        aiSummary: map['aiDigest'] as String,
         readDuration: map['readDuration'] as int,
-        hide: map['hide'] == 1,
+        aiSummary: map['aiDigest'] as String,
         aiSummaryTime: map['aiSummaryTime'] as int,
+        hide: map['hide'] == 1,
+        params: jsonDecode(map['params'] as String),
       );
 }

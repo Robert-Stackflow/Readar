@@ -75,7 +75,7 @@ class RssServiceDao extends BaseDao<RssService> {
   @override
   Future<int> delete(RssService item) async {
     var db = await getDataBase();
-    var res = db.delete(tableName, where: 'id = ?', whereArgs: [item.id]);
+    var res = db.delete(tableName, where: 'uid = ?', whereArgs: [item.uid]);
     return res;
   }
 
@@ -91,6 +91,17 @@ class RssServiceDao extends BaseDao<RssService> {
     var db = await getDataBase();
     List<Map<String, Object?>> result =
         await db.query(tableName, where: 'id = ?', whereArgs: [id]);
+    if (result.isNotEmpty) {
+      return RssService.fromJson(result[0]);
+    } else {
+      return null;
+    }
+  }
+
+  Future<RssService?> queryByUid(int uid) async {
+    var db = await getDataBase();
+    List<Map<String, Object?>> result =
+        await db.query(tableName, where: 'uid = ?', whereArgs: [uid]);
     if (result.isNotEmpty) {
       return RssService.fromJson(result[0]);
     } else {

@@ -8,11 +8,6 @@ import '../../Database/Dao/feed_dao.dart';
 import '../../Models/rss_service.dart';
 
 class LocalRssServiceAdapter extends BaseRssServiceAdapter {
-  RssService? _service;
-
-  @override
-  RssService get service => _service!;
-
   LocalRssServiceAdapter._internal();
 
   static final LocalRssServiceAdapter _instance =
@@ -25,40 +20,63 @@ class LocalRssServiceAdapter extends BaseRssServiceAdapter {
     return _instance;
   }
 
+  RssService? _service;
+
+  @override
+  RssService get service => _service!;
+
   @override
   init() async {
     _service = await RssServiceDao.instance.getLocalRssService();
+    await _refreshFeeds();
+    fetchFavicon();
+  }
+
+  _refreshFeeds() async {
+    feeds = [];
+    feeds.addAll(await FeedDao.instance.queryByServiceUid(_service!.uid));
+    notifyListeners();
   }
 
   @override
   Future addFeed(Feed feed) async {
-    feed.serviceUid = service.id;
-    feed.id = 0;
+    feed.serviceUid = service.uid;
+    feed.id = null;
     await FeedDao.instance.insert(feed);
+    _refreshFeeds();
   }
 
   @override
-  FutureOr addFeeds(List<Feed> feeds) {
+  Future addFeeds(List<Feed> feeds) async {
     for (Feed feed in feeds) {
-      feed.serviceUid = service.id;
-      feed.id = 0;
+      feed.serviceUid = service.uid;
+      feed.id = null;
     }
-    return FeedDao.instance.insertAll(feeds);
+    var res = await FeedDao.instance.insertAll(feeds);
+    _refreshFeeds();
+    return res;
   }
 
   @override
-  FutureOr deleteAllFeeds() {
-    return FeedDao.instance.deleteAll();
+  Future deleteAllFeeds() async {
+    var res = await FeedDao.instance.deleteAll();
+    _refreshFeeds();
+    return res;
   }
 
   @override
-  FutureOr deleteFeed(Feed feed) {
-    return FeedDao.instance.delete(feed);
+  Future deleteFeed(Feed feed) async {
+    var res = await FeedDao.instance.delete(feed);
+    _refreshFeeds();
+    return res;
   }
 
   @override
-  FutureOr deleteFeeds(List<Feed> feeds) {
-    return FeedDao.instance.deleteFeeds(feeds.map((e) => e.uid).toList());
+  Future deleteFeeds(List<Feed> feeds) async {
+    var res =
+        await FeedDao.instance.deleteFeeds(feeds.map((e) => e.uid).toList());
+    _refreshFeeds();
+    return res;
   }
 
   @override
@@ -73,16 +91,20 @@ class LocalRssServiceAdapter extends BaseRssServiceAdapter {
 
   @override
   FutureOr queryFeedByFId(String fid) {
-    return FeedDao.instance.queryByFid(fid);
+    return FeedDao.instance.queryByUid(fid);
   }
 
   @override
-  FutureOr updateFeed(Feed feed) {
-    return FeedDao.instance.update(feed);
+  Future updateFeed(Feed feed) async {
+    var res = await FeedDao.instance.update(feed);
+    _refreshFeeds();
+    return res;
   }
 
   @override
-  FutureOr updateFeeds(List<Feed> feeds) {
-    return FeedDao.instance.updateAll(feeds);
+  Future updateFeeds(List<Feed> feeds) async {
+    var res = await FeedDao.instance.updateAll(feeds);
+    _refreshFeeds();
+    return res;
   }
 }

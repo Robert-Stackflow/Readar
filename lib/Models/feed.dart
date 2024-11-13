@@ -8,9 +8,9 @@ import 'feed_setting.dart';
 /// 订阅源
 ///
 class Feed {
-  int id;
-  String serviceUid; // RSS service id
+  int? id;
   String uid; // feed id
+  String serviceUid; // RSS service id
   String url; // feed url
   String? iconUrl; // feed icon url
   String name; // feed name
@@ -19,6 +19,7 @@ class Feed {
   SyncStatus lastFetchStatus; // last fetch status
   int lastFetchTime; // last fetch time
   int latestArticleTime; // latest article time
+  int createTime;
   String? latestArticleTitle; // latest article title
   List<FilterRule> filterRules;
   Map<String, dynamic> params;
@@ -32,16 +33,14 @@ class Feed {
     this.unReadCount = 0,
     this.feedSetting,
     this.lastFetchTime = 0,
-    this.lastFetchStatus=SyncStatus.unspecified,
+    this.lastFetchStatus = SyncStatus.unspecified,
     this.iconUrl,
     this.latestArticleTime = 0,
-    this.latestArticleTitle,
+    this.createTime = 0,
+    this.latestArticleTitle = "",
     this.params = const {},
     this.filterRules = const [],
-  }) {
-    latestArticleTime = DateTime.now().millisecondsSinceEpoch;
-    latestArticleTitle = "";
-  }
+  });
 
   Feed._privateConstructor(
     this.id,
@@ -58,31 +57,32 @@ class Feed {
     this.feedSetting,
     this.params,
     this.filterRules,
+    this.createTime,
   );
 
   Feed clone() {
     return Feed._privateConstructor(
-      id,
-      serviceUid,
-      uid,
-      url,
-      iconUrl,
-      name,
-      unReadCount,
-      latestArticleTime,
-      latestArticleTitle,
-      lastFetchStatus,
-      lastFetchTime,
-      feedSetting,
-      params,
-      filterRules,
-    );
+        id,
+        serviceUid,
+        uid,
+        url,
+        iconUrl,
+        name,
+        unReadCount,
+        latestArticleTime,
+        latestArticleTitle,
+        lastFetchStatus,
+        lastFetchTime,
+        feedSetting,
+        params,
+        filterRules,
+        createTime);
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
-        'serviceId': serviceUid,
-        'fid': uid,
+        'serviceUid': serviceUid,
+        'uid': uid,
         'url': url,
         'iconUrl': iconUrl,
         'name': name,
@@ -94,14 +94,15 @@ class Feed {
         'feedSetting': feedSetting?.toJson(),
         'params': jsonEncode(params),
         'filterRules': jsonEncode(filterRules),
+        'createTime': createTime,
       };
 
   factory Feed.fromJson(Map<String, dynamic> map) => Feed(
-        map['fid'] as String,
+        map['uid'] as String,
         map['url'] as String,
         map['name'] as String,
         id: map['id'] as int,
-        serviceUid: map['serviceId'] as String,
+        serviceUid: map['serviceUid'] as String,
         iconUrl: map['iconUrl'] as String?,
         unReadCount: map['unReadCount'] as int,
         latestArticleTime: map['latestArticleTime'] as int,
@@ -115,5 +116,6 @@ class Feed {
         filterRules: (jsonDecode(map['filterRules'] as String) as List)
             .map((e) => FilterRule.fromJson(e))
             .toList(),
+        createTime: map['createTime'] as int,
       );
 }

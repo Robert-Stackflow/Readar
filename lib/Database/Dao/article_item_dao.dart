@@ -47,7 +47,7 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
     var db = await getDataBase();
     List<Map<String, Object?>> result = await db.query(
       tableName,
-      orderBy: "date DESC",
+      orderBy: "publishTime DESC",
       limit: loadLimit,
       offset: offset,
       where: where,
@@ -61,8 +61,8 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
     var db = await getDataBase();
     var res = await db.delete(
       tableName,
-      where: 'feedId = ? and url = ?',
-      whereArgs: [item.feedUid, item.url],
+      where: 'uid = ?',
+      whereArgs: [item.uid],
     );
     return res;
   }
@@ -88,29 +88,22 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
   Future<List<Map<String, Object?>>> queryUnReadCountByFeedFid() async {
     var db = await getDataBase();
     var res = await db.rawQuery(
-        "SELECT feedFid, COUNT(iid) FROM rssItems WHERE hasRead=0 GROUP BY feedFid;");
+        "SELECT feedUid, COUNT(iid) FROM rssItems WHERE hasRead=0 GROUP BY feedUid;");
     return res;
   }
 
-  Future<List<ArticleItem>> queryByFeedFid(String feedFid) async {
+  Future<List<ArticleItem>> queryByFeedUid(String feedUid) async {
     var db = await getDataBase();
     List<Map<String, Object?>> result =
-        await db.query(tableName, where: 'feedFid = ?', whereArgs: [feedFid]);
+        await db.query(tableName, where: 'feedUid = ?', whereArgs: [feedUid]);
     return result.map<ArticleItem>((e) => ArticleItem.fromJson(e)).toList();
   }
 
-  Future<List<ArticleItem>> queryByFeedid(int feedId) async {
-    var db = await getDataBase();
-    List<Map<String, Object?>> result =
-        await db.query(tableName, where: 'feedId = ?', whereArgs: [feedId]);
-    return result.map<ArticleItem>((e) => ArticleItem.fromJson(e)).toList();
-  }
-
-  Future<List<ArticleItem>> queryByServiceId(int serviceId) async {
-    List<Feed> feeds = await FeedDao.instance.queryByServiceId(serviceId);
+  Future<List<ArticleItem>> queryByServiceUid(String serviceUid) async {
+    List<Feed> feeds = await FeedDao.instance.queryByServiceUid(serviceUid);
     List<ArticleItem> items = [];
     for (var feed in feeds) {
-      List<ArticleItem> result = await queryByFeedFid(feed.uid);
+      List<ArticleItem> result = await queryByFeedUid(feed.uid);
       items.addAll(result);
     }
     return items;
@@ -136,5 +129,12 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
     return db.then((value) => value.query(tableName,
         where: 'id = ?',
         whereArgs: [id]).then((value) => ArticleItem.fromJson(value.first)));
+  }
+
+  FutureOr<ArticleItem?> queryByUid(int uid) {
+    var db = getDataBase();
+    return db.then((value) => value.query(tableName,
+        where: 'uid = ?',
+        whereArgs: [uid]).then((value) => ArticleItem.fromJson(value.first)));
   }
 }

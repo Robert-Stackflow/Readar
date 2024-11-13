@@ -14,6 +14,8 @@ import 'package:intl/intl.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:local_auth/local_auth.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:readar/Models/other/github_response.dart';
 import 'package:readar/Screens/Setting/experiment_setting_screen.dart';
 import 'package:readar/Screens/Setting/update_screen.dart';
@@ -24,10 +26,9 @@ import 'package:readar/Utils/responsive_util.dart';
 import 'package:readar/Utils/route_util.dart';
 import 'package:readar/Utils/shortcuts_util.dart';
 import 'package:readar/Utils/uri_util.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:palette_generator/palette_generator.dart';
 import 'package:screen_protector/screen_protector.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:uuid/uuid.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../Api/github_api.dart';
@@ -43,17 +44,15 @@ import 'cloud_control_provider.dart';
 import 'constant.dart';
 import 'ilogger.dart';
 import 'itoast.dart';
-import 'package:uuid/uuid.dart';
 
 class Utils {
-
   static String generateUid() {
     return const Uuid().v4();
   }
 
   static bool isUid(String uid) {
     return RegExp(
-        r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
         .hasMatch(uid);
   }
 
@@ -414,11 +413,13 @@ class Utils {
 
   static bool isUrl(String url) => _urlRegex.hasMatch(url.trim());
 
-  static Future<String?> fetchFavicon(String url) async {
+  static Future<String?> fetchFavicon(String originUrl) async {
     try {
+      var url = originUrl;
       url = url.split("/").getRange(0, 3).join("/");
       var uri = Uri.parse(url);
       var result = await http.get(uri);
+      var faviconUrl = "";
       if (result.statusCode == 200) {
         var htmlStr = result.body;
         var dom = parse(htmlStr);
@@ -430,22 +431,27 @@ class Utils {
             var href = link.attributes["href"]!;
             var parsedUrl = Uri.parse(url);
             if (href.startsWith("//")) {
-              return "${parsedUrl.scheme}:$href";
+              faviconUrl = "${parsedUrl.scheme}:$href";
             } else if (href.startsWith("/")) {
-              return url + href;
+              faviconUrl = url + href;
             } else {
-              return href;
+              faviconUrl = href;
             }
           }
         }
       }
-      url = "$url/favicon.ico";
-      if (await Utils.validateFavicon(url)) {
-        return url;
+      if (faviconUrl.isEmpty) {
+        faviconUrl = "$url/favicon.ico";
+      }
+      if (await Utils.validateFavicon(faviconUrl)) {
+        ILogger.info("Favicon found for $originUrl: $faviconUrl");
+        return faviconUrl;
       } else {
+        ILogger.error("Failed to fetch favicon for $originUrl");
         return null;
       }
-    } catch (exp) {
+    } catch (e, t) {
+      ILogger.error("Failed to fetch favicon for $originUrl", e, t);
       return null;
     }
   }

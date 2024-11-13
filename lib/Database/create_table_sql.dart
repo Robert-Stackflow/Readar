@@ -2,6 +2,7 @@ enum CreateTableSql {
   rssService("rssService", '''
         CREATE TABLE rssService (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          uid TEXT NOT NULL,
           endpoint TEXT NOT NULL,
           name TEXT NOT NULL,
           rssServiceType INTEGER NOT NULL,
@@ -23,8 +24,8 @@ enum CreateTableSql {
   feed("feed", '''
         CREATE TABLE feed (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          serviceId INTEGER NOT NULL,
-          fid TEXT NOT NULL,
+          serviceUid TEXT NOT NULL,
+          uid TEXT NOT NULL,
           url TEXT NOT NULL,
           iconUrl TEXT,
           name TEXT NOT NULL,
@@ -35,13 +36,14 @@ enum CreateTableSql {
           latestArticleTime INTEGER NOT NULL,
           latestArticleTitle TEXT,
           filterRules TEXT,
+          createTime INTEGER NOT NULL,
           params TEXT
         )
         '''),articleItem("articleItem", '''
         CREATE TABLE articleItem (
           id TEXT PRIMARY KEY,
-          feedId INTEGER NOT NULL,
-          feedFId TEXT NOT NULL,
+          uid TEXT NOT NULL,
+          feedUid TEXT NOT NULL,
           title TEXT NOT NULL,
           url TEXT NOT NULL,
           publishTime INTEGER NOT NULL,
@@ -71,10 +73,10 @@ enum CreateTableSql {
           totalSize INTEGER NOT NULL,
           usedSize INTEGER NOT NULL,
           remainingSize INTEGER NOT NULL,
-          createTimestamp INTEGER NOT NULL,
-          editTimestamp INTEGER NOT NULL,
-          lastFetchTimestamp INTEGER NOT NULL,
-          lastBackupTimestamp INTEGER NOT NULL,
+          createTime INTEGER NOT NULL,
+          editTime INTEGER NOT NULL,
+          lastFetchTime INTEGER NOT NULL,
+          lastBackupTime INTEGER NOT NULL,
           lastFetchStatus INTEGER NOT NULL,
           lastBackupStatus INTEGER NOT NULL,
           params TEXT
@@ -99,14 +101,3 @@ enum CreateTableSql {
   final String tableName;
   final String sql;
 }
-
-// int id;
-// String endpoint;
-// String? username;
-// String? password;
-// String? appId;
-// String? appKey;
-// int articleCount;
-// int lastPullTime;
-// SyncStatus? lastPullStatus;
-// Map<String, dynamic> params;

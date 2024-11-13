@@ -55,7 +55,7 @@ class ArticleItemList {
         where: conditions.item1,
         whereArgs: conditions.item2));
     allLoaded = items.length < loadLimit;
-    iids = items.map((i) => i.id).toList();
+    iids = items.map((i) => i.uid).toList();
     loading = false;
     initialized = true;
   }

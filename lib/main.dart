@@ -21,6 +21,7 @@ import 'package:readar/Utils/hive_util.dart';
 import 'package:readar/Utils/request_util.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'Adapters/global_adapter.dart';
 import 'Screens/Lock/pin_verify_screen.dart';
 import 'Screens/main_screen.dart';
 import 'Utils/constant.dart';
@@ -161,6 +162,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: appProvider),
         ChangeNotifierProvider.value(value: controlProvider),
+        ChangeNotifierProvider.value(value: globalAdapter),
       ],
       child: Consumer<AppProvider>(
         builder: (context, globalProvider, child) => MaterialApp(

@@ -16,10 +16,10 @@ class BackupService {
   int totalSize;
   int usedSize;
   int remainingSize;
-  int createTimestamp;
-  int editTimestamp;
-  int lastFetchTimestamp;
-  int lastBackupTimestamp;
+  int createTime;
+  int editTime;
+  int lastFetchTime;
+  int lastBackupTime;
   SyncStatus lastFetchStatus;
   SyncStatus lastBackupStatus;
   Map<String, dynamic> params;
@@ -35,10 +35,10 @@ class BackupService {
     this.totalSize = 0,
     this.usedSize = 0,
     this.remainingSize = 0,
-    this.createTimestamp = 0,
-    this.editTimestamp = 0,
-    this.lastFetchTimestamp = 0,
-    this.lastBackupTimestamp = 0,
+    this.createTime = 0,
+    this.editTime = 0,
+    this.lastFetchTime = 0,
+    this.lastBackupTime = 0,
     this.lastFetchStatus=SyncStatus.unspecified,
     this.lastBackupStatus=SyncStatus.unspecified,
     this.params = const {},
@@ -55,10 +55,10 @@ class BackupService {
     this.totalSize,
     this.usedSize,
     this.remainingSize,
-    this.createTimestamp,
-    this.editTimestamp,
-    this.lastFetchTimestamp,
-    this.lastBackupTimestamp,
+    this.createTime,
+    this.editTime,
+    this.lastFetchTime,
+    this.lastBackupTime,
     this.lastFetchStatus,
     this.lastBackupStatus,
     this.params,
@@ -76,10 +76,10 @@ class BackupService {
       totalSize,
       usedSize,
       remainingSize,
-      createTimestamp,
-      editTimestamp,
-      lastFetchTimestamp,
-      lastBackupTimestamp,
+      createTime,
+      editTime,
+      lastFetchTime,
+      lastBackupTime,
       lastFetchStatus,
       lastBackupStatus,
       Map<String, dynamic>.from(params),
@@ -97,10 +97,10 @@ class BackupService {
         'totalSize': totalSize,
         'usedSize': usedSize,
         'remainingSize': remainingSize,
-        'createTimestamp': createTimestamp,
-        'editTimestamp': editTimestamp,
-        'lastFetchTimestamp': lastFetchTimestamp,
-        'lastBackupTimestamp': lastBackupTimestamp,
+        'createTime': createTime,
+        'editTime': editTime,
+        'lastFetchTime': lastFetchTime,
+        'lastBackupTime': lastBackupTime,
         'lastFetchStatus': lastFetchStatus.index,
         'lastBackupStatus': lastBackupStatus.index,
         'params': jsonEncode(params),
@@ -117,10 +117,10 @@ class BackupService {
         totalSize: map['totalSize'] as int,
         usedSize: map['usedSize'] as int,
         remainingSize: map['remainingSize'] as int,
-        createTimestamp: map['createTimestamp'] as int,
-        editTimestamp: map['editTimestamp'] as int,
-        lastFetchTimestamp: map['lastFetchTimestamp'] as int,
-        lastBackupTimestamp: map['lastBackupTimestamp'] as int,
+        createTime: map['createTime'] as int,
+        editTime: map['editTime'] as int,
+        lastFetchTime: map['lastFetchTime'] as int,
+        lastBackupTime: map['lastBackupTime'] as int,
         lastFetchStatus: SyncStatus.values[map['lastFetchStatus'] as int],
         lastBackupStatus: SyncStatus.values[map['lastBackupStatus'] as int],
         params: jsonDecode(map['params'] as String),
