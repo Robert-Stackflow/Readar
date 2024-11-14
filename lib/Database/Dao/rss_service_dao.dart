@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../../Models/rss_service.dart';
 import 'base_dao.dart';
 
-class RssServiceDao extends BaseDao<RssService> {
+class RssServiceDao extends BaseDao<RssServiceModel> {
   static final String tableName = CreateTableSql.rssService.tableName;
 
   RssServiceDao._internal();
@@ -14,7 +14,7 @@ class RssServiceDao extends BaseDao<RssService> {
   static final RssServiceDao instance = RssServiceDao._internal();
 
   @override
-  Future<int> insert(RssService item) async {
+  Future<int> insert(RssServiceModel item) async {
     var db = await getDataBase();
     var res = await db.insert(
       tableName,
@@ -25,14 +25,14 @@ class RssServiceDao extends BaseDao<RssService> {
   }
 
   Future<void> initLocalRssService() async {
-    RssService? localRssService = await checkLocalRssService();
+    RssServiceModel? localRssService = await checkLocalRssService();
     if (localRssService == null) {
-      await insert(RssService.local());
+      await insert(RssServiceModel.local());
     }
   }
 
-  Future<RssService?> checkLocalRssService() async {
-    List<RssService> rssServices = await queryAll();
+  Future<RssServiceModel?> checkLocalRssService() async {
+    List<RssServiceModel> rssServices = await queryAll();
     var localServices = rssServices
         .where((element) => element.rssServiceType == RssServiceType.local);
     if (localServices.isNotEmpty) {
@@ -41,8 +41,8 @@ class RssServiceDao extends BaseDao<RssService> {
     return null;
   }
 
-  Future<RssService> getLocalRssService() async {
-    RssService? localRssService = await checkLocalRssService();
+  Future<RssServiceModel> getLocalRssService() async {
+    RssServiceModel? localRssService = await checkLocalRssService();
     if (localRssService == null) {
       await initLocalRssService();
       localRssService = await checkLocalRssService();
@@ -51,10 +51,10 @@ class RssServiceDao extends BaseDao<RssService> {
   }
 
   @override
-  Future<int> insertAll(List<RssService> items) async {
+  Future<int> insertAll(List<RssServiceModel> items) async {
     var db = await getDataBase();
     Batch batch = db.batch();
-    for (RssService item in items) {
+    for (RssServiceModel item in items) {
       batch.insert(
         tableName,
         item.toJson(),
@@ -73,54 +73,54 @@ class RssServiceDao extends BaseDao<RssService> {
   }
 
   @override
-  Future<int> delete(RssService item) async {
+  Future<int> delete(RssServiceModel item) async {
     var db = await getDataBase();
     var res = db.delete(tableName, where: 'uid = ?', whereArgs: [item.uid]);
     return res;
   }
 
   @override
-  Future<int> update(RssService item) async {
+  Future<int> update(RssServiceModel item) async {
     var db = await getDataBase();
     var res = db.update(tableName, item.toJson());
     return res;
   }
 
   @override
-  Future<RssService?> queryById(int id) async {
+  Future<RssServiceModel?> queryById(int id) async {
     var db = await getDataBase();
     List<Map<String, Object?>> result =
         await db.query(tableName, where: 'id = ?', whereArgs: [id]);
     if (result.isNotEmpty) {
-      return RssService.fromJson(result[0]);
+      return RssServiceModel.fromJson(result[0]);
     } else {
       return null;
     }
   }
 
-  Future<RssService?> queryByUid(int uid) async {
+  Future<RssServiceModel?> queryByUid(int uid) async {
     var db = await getDataBase();
     List<Map<String, Object?>> result =
         await db.query(tableName, where: 'uid = ?', whereArgs: [uid]);
     if (result.isNotEmpty) {
-      return RssService.fromJson(result[0]);
+      return RssServiceModel.fromJson(result[0]);
     } else {
       return null;
     }
   }
 
   @override
-  Future<List<RssService>> queryAll() async {
+  Future<List<RssServiceModel>> queryAll() async {
     var db = await getDataBase();
     List<Map<String, Object?>> result = await db.query(tableName);
-    return result.map((e) => RssService.fromJson(e)).toList();
+    return result.map((e) => RssServiceModel.fromJson(e)).toList();
   }
 
   @override
-  Future<int> updateAll(List<RssService> items) async {
+  Future<int> updateAll(List<RssServiceModel> items) async {
     var db = await getDataBase();
     Batch batch = db.batch();
-    for (RssService item in items) {
+    for (RssServiceModel item in items) {
       batch.update(tableName, item.toJson());
     }
     var res = await batch.commit();

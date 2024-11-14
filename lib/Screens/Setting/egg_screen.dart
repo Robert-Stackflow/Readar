@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../Models/other/cloud_control.dart';
-import '../../Utils/cloud_control_provider.dart';
 import '../../Utils/hive_util.dart';
 import '../../Utils/lottie_util.dart';
 import '../../Widgets/General/EasyRefresh/easy_refresh.dart';
@@ -64,7 +62,7 @@ class _EggScreenState extends State<EggScreen> with TickerProviderStateMixin {
       children: [
         Scaffold(
           appBar: ItemBuilder.buildResponsiveAppBar(
-                context: context,
+            context: context,
             showBack: true,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           ),
@@ -116,7 +114,6 @@ class _EggScreenState extends State<EggScreen> with TickerProviderStateMixin {
                   ),
                   context: context,
                 ),
-                ..._buildButton(),
               ],
             ),
           ),
@@ -134,34 +131,5 @@ class _EggScreenState extends State<EggScreen> with TickerProviderStateMixin {
         ),
       ],
     );
-  }
-
-  _buildButton() {
-    return [
-      const SizedBox(height: 10),
-      ItemBuilder.buildRadioItem(
-        value: overrideCloudControl,
-        context: context,
-        title: S.current.overrideCloudControl,
-        description: S.current.overrideCloudControlDescription,
-        roundTop: true,
-        roundBottom: true,
-        onTap: () {
-          setState(() {
-            overrideCloudControl = !overrideCloudControl;
-            HiveUtil.put(
-                HiveUtil.overrideCloudControlKey, overrideCloudControl);
-            if (overrideCloudControl) {
-              controlProvider.globalControl =
-                  ReadarControl.getOverridedCloudControl(
-                      controlProvider.originalCloudControl);
-            } else {
-              controlProvider.globalControl =
-                  controlProvider.originalCloudControl;
-            }
-          });
-        },
-      ),
-    ];
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'feed_setting.dart';
 import '../Utils/utils.dart';
+import 'feed_setting.dart';
 
 ///
 /// Rss服务类型
@@ -37,7 +37,7 @@ enum RssServiceType {
 ///
 /// Rss服务
 ///
-class RssService {
+class RssServiceModel {
   int? id;
   String uid;
   String endpoint;
@@ -57,7 +57,7 @@ class RssService {
   int createTime;
   Map<String, dynamic> params;
 
-  RssService(
+  RssServiceModel(
     this.uid,
     this.endpoint,
     this.name,
@@ -78,7 +78,7 @@ class RssService {
     this.params = const {},
   });
 
-  RssService.local()
+  RssServiceModel.local()
       : id = null,
         endpoint = "",
         name = "",
@@ -98,7 +98,7 @@ class RssService {
         createTime = DateTime.now().millisecondsSinceEpoch,
         params = {};
 
-  RssService._privateConstructor(
+  RssServiceModel._privateConstructor(
     this.id,
     this.uid,
     this.endpoint,
@@ -119,8 +119,8 @@ class RssService {
     this.createTime,
   );
 
-  RssService clone() {
-    return RssService._privateConstructor(
+  RssServiceModel clone() {
+    return RssServiceModel._privateConstructor(
       id,
       uid,
       endpoint,
@@ -163,7 +163,7 @@ class RssService {
         'createTime': createTime,
       };
 
-  factory RssService.fromJson(Map<String, dynamic> map) => RssService(
+  factory RssServiceModel.fromJson(Map<String, dynamic> map) => RssServiceModel(
         map['uid'],
         map['endpoint'],
         map['name'],

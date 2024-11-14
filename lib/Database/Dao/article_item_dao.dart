@@ -100,7 +100,7 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
   }
 
   Future<List<ArticleItem>> queryByServiceUid(String serviceUid) async {
-    List<Feed> feeds = await FeedDao.instance.queryByServiceUid(serviceUid);
+    List<FeedModel> feeds = await FeedDao.instance.queryByServiceUid(serviceUid);
     List<ArticleItem> items = [];
     for (var feed in feeds) {
       List<ArticleItem> result = await queryByFeedUid(feed.uid);

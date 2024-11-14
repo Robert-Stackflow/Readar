@@ -1,9 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_resizable_container/flutter_resizable_container.dart';
+import 'package:provider/provider.dart';
+import 'package:readar/Providers/Feed/feed_provider.dart';
 import 'package:readar/Resources/theme.dart';
 import 'package:readar/Screens/refresh_interface.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 
+import '../../Providers/RssService/base_rss_service_provider.dart';
 import '../../Utils/app_provider.dart';
 import '../../Utils/asset_util.dart';
 import '../../Utils/constant.dart';
@@ -15,6 +21,7 @@ import '../../Utils/utils.dart';
 import '../../Widgets/General/EasyRefresh/easy_refresh.dart';
 import '../../Widgets/Hidable/scroll_to_hide.dart';
 import '../../Widgets/Item/item_builder.dart';
+import '../../Widgets/Readar/feed_item.dart';
 import '../../generated/l10n.dart';
 import '../Setting/setting_screen.dart';
 
@@ -49,6 +56,7 @@ class HomeScreenState extends State<HomeScreen>
   late AnimationController _refreshRotationController;
   final ScrollToHideController _scrollToHideController =
       ScrollToHideController();
+  final ResizableController _resizableController = ResizableController();
 
   late AnimationController darkModeController;
   Widget? darkModeWidget;
@@ -68,12 +76,14 @@ class HomeScreenState extends State<HomeScreen>
         (_) => panelScreenState?.refreshScrollControllers());
     darkModeController = AnimationController(vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      darkModeWidget = LottieUtil.load(
-        LottieUtil.sunLight,
-        size: 25,
-        autoForward: !Utils.isDark(context),
-        controller: darkModeController,
-      );
+      try {
+        darkModeWidget = LottieUtil.load(
+          LottieUtil.sunLight,
+          size: 25,
+          autoForward: !Utils.isDark(context),
+          controller: darkModeController,
+        );
+      } catch (_) {}
       panelScreenState?.refreshScrollControllers();
     });
   }
@@ -124,16 +134,42 @@ class HomeScreenState extends State<HomeScreen>
       ),
       body: Stack(
         children: [
-          EasyRefresh(
-            refreshOnStart: true,
-            controller: _refreshController,
-            onRefresh: () {},
-            onLoad: () {},
-            child: ItemBuilder.buildEmptyPlaceholder(
-              context: context,
-              text: S.current.home,
-              shrinkWrap: false,
+          ResizableContainer(
+            direction: Axis.horizontal,
+            controller: _resizableController,
+            divider: ResizableDivider(
+              color: Theme.of(context).dividerColor,
+              thickness: ResponsiveUtil.isMobile() ? 2 : 1,
+              size: 6,
+              onHoverEnter: () {
+                if (ResponsiveUtil.isMobile()) {
+                  HapticFeedback.lightImpact();
+                }
+              },
             ),
+            children: [
+              ResizableChild(
+                size: const ResizableSize.pixels(240),
+                minSize: 240,
+                maxSize: 300,
+                child: _buildFeedList(),
+              ),
+              ResizableChild(
+                minSize: 300,
+                size: const ResizableSize.expand(),
+                child: EasyRefresh(
+                  refreshOnStart: true,
+                  controller: _refreshController,
+                  onRefresh: () {},
+                  onLoad: () {},
+                  child: ItemBuilder.buildEmptyPlaceholder(
+                    context: context,
+                    text: S.current.home,
+                    shrinkWrap: false,
+                  ),
+                ),
+              ),
+            ],
           ),
           Positioned(
             right: 16,
@@ -148,6 +184,32 @@ class HomeScreenState extends State<HomeScreen>
         ],
       ),
     );
+  }
+
+  Widget _buildFeedList() {
+    final serviceAdapter = Provider.of<BaseRssServiceProvider?>(context);
+    return serviceAdapter == null
+        ? Container()
+        : WaterfallFlow.builder(
+            itemCount: serviceAdapter.feedProviders.length,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            gridDelegate:
+                const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              mainAxisSpacing: 2,
+            ),
+            itemBuilder: (context, index) {
+              FeedProvider feedProvider = serviceAdapter.feedProviders[index];
+              var feed = feedProvider.feedModel;
+              return FeedItem(
+                feed: feed,
+                selected: serviceAdapter.selectedFeedUid == feed.uid,
+                onTap: () {
+                  serviceAdapter.selectedFeedUid = feed.uid;
+                },
+              );
+            },
+          );
   }
 
   void scrollToTopAndRefresh() {

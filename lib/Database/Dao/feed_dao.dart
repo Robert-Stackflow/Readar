@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../../Models/feed.dart';
 import 'article_item_dao.dart';
 
-class FeedDao extends BaseDao<Feed> {
+class FeedDao extends BaseDao<FeedModel> {
   static final String tableName = CreateTableSql.feed.tableName;
 
   FeedDao._internal();
@@ -16,11 +16,11 @@ class FeedDao extends BaseDao<Feed> {
 
   @override
   Future<int> insert(
-    Feed item, {
+    FeedModel item, {
     bool checkRssUrl = true,
   }) async {
     if (checkRssUrl) {
-      List<Feed> feeds = await queryByServiceUid(item.serviceUid);
+      List<FeedModel> feeds = await queryByServiceUid(item.serviceUid);
       if (feeds.any((feed) => feed.url == item.url)) {
         return 0;
       }
@@ -35,18 +35,18 @@ class FeedDao extends BaseDao<Feed> {
 
   @override
   Future<int> insertAll(
-    List<Feed> items, {
+    List<FeedModel> items, {
     bool checkRssUrl = true,
   }) async {
     if (items.isEmpty) return 0;
     if (checkRssUrl) {
-      List<Feed> feeds = await queryByServiceUid(items[0].serviceUid);
+      List<FeedModel> feeds = await queryByServiceUid(items[0].serviceUid);
       items.removeWhere(
           (element) => feeds.any((feed) => feed.url == element.url));
     }
     Database db = await getDataBase();
     Batch batch = db.batch();
-    for (Feed feed in items) {
+    for (FeedModel feed in items) {
       batch.insert(
         tableName,
         feed.toJson(),
@@ -58,7 +58,7 @@ class FeedDao extends BaseDao<Feed> {
   }
 
   @override
-  Future<int> delete(Feed item) async {
+  Future<int> delete(FeedModel item) async {
     Database db = await getDataBase();
     var res =
         await db.delete(tableName, where: 'uid = ?', whereArgs: [item.uid]);
@@ -85,7 +85,7 @@ class FeedDao extends BaseDao<Feed> {
   }
 
   @override
-  Future<int> update(Feed item) async {
+  Future<int> update(FeedModel item) async {
     Database db = await getDataBase();
     var tmp = item.toJson();
     tmp.remove('id');
@@ -95,10 +95,10 @@ class FeedDao extends BaseDao<Feed> {
   }
 
   @override
-  Future<int> updateAll(List<Feed> items) async {
+  Future<int> updateAll(List<FeedModel> items) async {
     Database db = await getDataBase();
     Batch batch = db.batch();
-    for (Feed feed in items) {
+    for (FeedModel feed in items) {
       var tmp = feed.toJson();
       tmp.remove('id');
       batch.update(tableName, tmp, where: 'uid = ?', whereArgs: [tmp['uid']]);
@@ -107,45 +107,45 @@ class FeedDao extends BaseDao<Feed> {
     return res.length;
   }
 
-  Future<List<Feed>> queryByServiceUid(String serviceUid) async {
+  Future<List<FeedModel>> queryByServiceUid(String serviceUid) async {
     Database db = await getDataBase();
     List<Map<String, Object?>> result = await db
         .query(tableName, where: 'serviceUid = ?', whereArgs: [serviceUid]);
-    List<Feed> feeds = [];
+    List<FeedModel> feeds = [];
     for (dynamic json in result) {
-      feeds.add(Feed.fromJson(json));
+      feeds.add(FeedModel.fromJson(json));
     }
     return feeds;
   }
 
   @override
-  Future<Feed> queryById(int id) async {
+  Future<FeedModel> queryById(int id) async {
     Database db = await getDataBase();
     List<Map<String, Object?>> result =
         await db.query(tableName, where: 'id = ?', whereArgs: [id]);
-    return Feed.fromJson(result[0]);
+    return FeedModel.fromJson(result[0]);
   }
 
-  Future<Feed> queryByUid(String uid) async {
+  Future<FeedModel> queryByUid(String uid) async {
     Database db = await getDataBase();
     List<Map<String, Object?>> result =
         await db.query(tableName, where: 'uid = ?', whereArgs: [uid]);
-    return Feed.fromJson(result[0]);
+    return FeedModel.fromJson(result[0]);
   }
 
-  Future<Feed> queryByUrl(String url) async {
+  Future<FeedModel> queryByUrl(String url) async {
     Database db = await getDataBase();
     List<Map<String, Object?>> result =
         await db.query(tableName, where: 'url = ?', whereArgs: [url]);
-    return Feed.fromJson(result[0]);
+    return FeedModel.fromJson(result[0]);
   }
 
   @override
-  FutureOr<List<Feed>> queryAll() {
+  FutureOr<List<FeedModel>> queryAll() {
     var db = getDataBase();
     return db.then((value) => value
         .query(tableName)
-        .then((value) => value.map((e) => Feed.fromJson(e)).toList()));
+        .then((value) => value.map((e) => FeedModel.fromJson(e)).toList()));
   }
 
   @override

@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import 'package:readar/Screens/refresh_interface.dart';
 import 'package:readar/Utils/ilogger.dart';
 
+import '../Providers/Providers/rss_service_provider.dart';
 import '../Utils/app_provider.dart';
 import '../Utils/constant.dart';
 import '../Utils/enums.dart';

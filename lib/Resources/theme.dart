@@ -199,4 +199,6 @@ class MyTheme {
 
   static Color get scaffoldBackgroundColor =>
       Theme.of(rootContext).scaffoldBackgroundColor;
+
+  static Color get dividerColor => Theme.of(rootContext).dividerColor;
 }

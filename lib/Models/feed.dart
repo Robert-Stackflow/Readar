@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:readar/Models/article_item.dart';
 import 'package:readar/Models/filter_rule.dart';
 
 import 'feed_setting.dart';
@@ -7,7 +8,7 @@ import 'feed_setting.dart';
 ///
 /// 订阅源
 ///
-class Feed {
+class FeedModel {
   int? id;
   String uid; // feed id
   String serviceUid; // RSS service id
@@ -24,7 +25,7 @@ class Feed {
   List<FilterRule> filterRules;
   Map<String, dynamic> params;
 
-  Feed(
+  FeedModel(
     this.uid,
     this.url,
     this.name, {
@@ -42,7 +43,7 @@ class Feed {
     this.filterRules = const [],
   });
 
-  Feed._privateConstructor(
+  FeedModel._privateConstructor(
     this.id,
     this.serviceUid,
     this.uid,
@@ -60,8 +61,8 @@ class Feed {
     this.createTime,
   );
 
-  Feed clone() {
-    return Feed._privateConstructor(
+  FeedModel clone() {
+    return FeedModel._privateConstructor(
         id,
         serviceUid,
         uid,
@@ -97,7 +98,7 @@ class Feed {
         'createTime': createTime,
       };
 
-  factory Feed.fromJson(Map<String, dynamic> map) => Feed(
+  factory FeedModel.fromJson(Map<String, dynamic> map) => FeedModel(
         map['uid'] as String,
         map['url'] as String,
         map['name'] as String,

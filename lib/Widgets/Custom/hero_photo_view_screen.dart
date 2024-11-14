@@ -5,7 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:readar/Utils/cloud_control_provider.dart';
 import 'package:readar/Utils/file_util.dart';
 import 'package:readar/Utils/hive_util.dart';
 
@@ -394,8 +393,6 @@ class HeroPhotoViewScreenState extends State<HeroPhotoViewScreen>
   }
 
   PreferredSizeWidget _buildAppBar() {
-    bool showDownloadButton = controlProvider.globalControl.showDownloadButton;
-    bool showCopyLinkButton = controlProvider.globalControl.showCopyLinkButton;
     return ItemBuilder.buildAppBar(
       context: context,
       systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -424,26 +421,25 @@ class HeroPhotoViewScreenState extends State<HeroPhotoViewScreen>
                 )
               : emptyWidget,
       actions: [
-        if (showCopyLinkButton)
-          ItemBuilder.buildIconButton(
-            context: context,
-            icon: AssetUtil.load(AssetUtil.linkWhiteIcon),
-            onTap: () {
-              Utils.copy(
-                context,
-                currentUrl,
-                toastText: S.current.copySuccess,
-              );
-            },
-            onLongPress: () {
-              Utils.copy(
-                context,
-                currentUrl,
-                toastText: S.current.copySuccess,
-              );
-            },
-          ),
-        if (showCopyLinkButton) const SizedBox(width: 5),
+        ItemBuilder.buildIconButton(
+          context: context,
+          icon: AssetUtil.load(AssetUtil.linkWhiteIcon),
+          onTap: () {
+            Utils.copy(
+              context,
+              currentUrl,
+              toastText: S.current.copySuccess,
+            );
+          },
+          onLongPress: () {
+            Utils.copy(
+              context,
+              currentUrl,
+              toastText: S.current.copySuccess,
+            );
+          },
+        ),
+        const SizedBox(width: 5),
         ItemBuilder.buildIconButton(
           context: context,
           icon: const Icon(Icons.share_rounded, color: Colors.white, size: 22),
@@ -452,7 +448,7 @@ class HeroPhotoViewScreenState extends State<HeroPhotoViewScreen>
           },
         ),
         const SizedBox(width: 5),
-        if (showDownloadButton) ...[
+        ...[
           ItemBuilder.buildIconButton(
             context: context,
             icon: downloadIcon,
@@ -476,7 +472,7 @@ class HeroPhotoViewScreenState extends State<HeroPhotoViewScreen>
           if (imageUrls.length > 1 || ResponsiveUtil.isLandscape())
             const SizedBox(width: 5),
         ],
-        if (showDownloadButton && imageUrls.length > 1) ...[
+        if (imageUrls.length > 1) ...[
           ItemBuilder.buildIconButton(
             context: context,
             icon: allDownloadIcon,

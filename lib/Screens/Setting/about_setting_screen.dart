@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:readar/Screens/Setting/egg_screen.dart';
 import 'package:readar/Screens/Setting/update_log_screen.dart';
 import 'package:readar/Utils/route_util.dart';
@@ -10,11 +11,9 @@ import 'package:readar/Widgets/BottomSheet/bottom_sheet_builder.dart';
 import 'package:readar/Widgets/BottomSheet/star_bottom_sheet.dart';
 import 'package:readar/Widgets/Custom/no_shadow_scroll_behavior.dart';
 import 'package:readar/Widgets/Shake/shake_animation_controller.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../Utils/cloud_control_provider.dart';
+import '../../Utils/constant.dart';
 import '../../Utils/hive_util.dart';
 import '../../Widgets/General/EasyRefresh/easy_refresh.dart';
 import '../../Widgets/Item/item_builder.dart';
@@ -110,24 +109,22 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
               child: ItemBuilder.buildClickable(
                 GestureDetector(
                   onLongPressStart: (details) {
-                    if (controlProvider.globalControl.enableEasterEggs) {
-                      if (_timer != null) _timer!.cancel();
-                      _timer =
-                          Timer.periodic(const Duration(seconds: 1), (timer) {
-                        count = timer.tick;
-                        if (count >= countThreholdLevel4 / 4) {
-                          diaplayCelebrate();
-                        } else if (count >= countThreholdLevel3 / 4) {
-                          setHapticTimer(HapticFeedback.heavyImpact);
-                        } else if (count >= countThreholdLevel2 / 4) {
-                          setHapticTimer(HapticFeedback.mediumImpact);
-                        } else if (count >= countThreholdLevel1 / 4) {
-                          startShake();
-                          setHapticTimer(HapticFeedback.lightImpact);
-                        }
-                        setState(() {});
-                      });
-                    }
+                    if (_timer != null) _timer!.cancel();
+                    _timer =
+                        Timer.periodic(const Duration(seconds: 1), (timer) {
+                      count = timer.tick;
+                      if (count >= countThreholdLevel4 / 4) {
+                        diaplayCelebrate();
+                      } else if (count >= countThreholdLevel3 / 4) {
+                        setHapticTimer(HapticFeedback.heavyImpact);
+                      } else if (count >= countThreholdLevel2 / 4) {
+                        setHapticTimer(HapticFeedback.mediumImpact);
+                      } else if (count >= countThreholdLevel1 / 4) {
+                        startShake();
+                        setHapticTimer(HapticFeedback.lightImpact);
+                      }
+                      setState(() {});
+                    });
                   },
                   onLongPressEnd: (details) {
                     restore();
@@ -174,132 +171,113 @@ class _AboutSettingScreenState extends State<AboutSettingScreen>
             Container(
               margin: const EdgeInsets.all(10),
               child: ScrollConfiguration(
-                  behavior: NoShadowScrollBehavior(),
-                  child: Consumer<ReadarControlProvider>(
-                    builder: (context, cloudControlProvider, _) => ListView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      children: [
-                        const SizedBox(height: 10),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.changelog,
-                          roundTop: true,
-                          showLeading: true,
-                          onTap: () {
-                            RouteUtil.pushPanelCupertinoRoute(
-                                context, const UpdateLogScreen());
-                          },
-                          leading: Icons.merge_type_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.bugReport,
-                          onTap: () {
-                            UriUtil.launchUrlUri(context,
-                                cloudControlProvider.globalControl.issueUrl);
-                          },
-                          showLeading: true,
-                          leading: Icons.bug_report_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.githubRepo,
-                          onTap: () {
-                            UriUtil.launchUrlUri(context,
-                                cloudControlProvider.globalControl.repoUrl);
-                          },
-                          showLeading: true,
-                          roundBottom: true,
-                          leading: Icons.commit_outlined,
-                        ),
-                        const SizedBox(height: 10),
-                        ItemBuilder.buildEntryItem(
-                          roundTop: true,
-                          context: context,
-                          title: S.current.rate,
-                          showLeading: true,
-                          onTap: () {
-                            BottomSheetBuilder.showBottomSheet(
-                              context,
-                              (context) => const StarBottomSheet(),
-                              responsive: true,
-                            );
-                          },
-                          leading: Icons.rate_review_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.shareApp,
-                          showLeading: true,
-                          onTap: () {
-                            Share.share(
-                                cloudControlProvider.globalControl.shareText);
-                          },
-                          leading: Icons.share_rounded,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.contact,
-                          onTap: () {
-                            UriUtil.launchEmailUri(
-                              context,
-                              cloudControlProvider.globalControl.feedbackEmail,
-                              subject: cloudControlProvider
-                                  .globalControl.feedbackSubject,
-                              body: cloudControlProvider
-                                  .globalControl.feedbackBody,
-                            );
-                          },
-                          showLeading: true,
-                          leading: Icons.contact_support_outlined,
-                        ),
-                        ItemBuilder.buildEntryItem(
-                          context: context,
-                          title: S.current.officialWebsite,
-                          roundBottom: !(cloudControlProvider
-                                  .globalControl.showTelegramGroup) &&
-                              !(cloudControlProvider.globalControl.showQQGroup),
-                          onTap: () {
-                            UriUtil.launchUrlUri(
-                                context,
-                                cloudControlProvider
-                                    .globalControl.officialWebsite);
-                          },
-                          showLeading: true,
-                          leading: Icons.language_outlined,
-                        ),
-                        if (cloudControlProvider.globalControl.showQQGroup)
-                          ItemBuilder.buildEntryItem(
-                            context: context,
-                            title: S.current.qqGroup,
-                            roundBottom: !cloudControlProvider
-                                .globalControl.showTelegramGroup,
-                            onTap: () {
-                              UriUtil.openExternal(cloudControlProvider
-                                  .globalControl.qqGroupUrl);
-                            },
-                            showLeading: true,
-                            leading: Icons.group_outlined,
-                          ),
-                        if (cloudControlProvider
-                            .globalControl.showTelegramGroup)
-                          ItemBuilder.buildEntryItem(
-                            context: context,
-                            title: S.current.telegramGroup,
-                            onTap: () {
-                              UriUtil.openExternal(cloudControlProvider
-                                  .globalControl.telegramGroupUrl);
-                            },
-                            roundBottom: true,
-                            showLeading: true,
-                            leading: Icons.telegram_outlined,
-                          ),
-                        const SizedBox(height: 10)
-                      ],
+                behavior: NoShadowScrollBehavior(),
+                child: ListView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  children: [
+                    const SizedBox(height: 10),
+                    ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: S.current.changelog,
+                      roundTop: true,
+                      showLeading: true,
+                      onTap: () {
+                        RouteUtil.pushPanelCupertinoRoute(
+                            context, const UpdateLogScreen());
+                      },
+                      leading: Icons.merge_type_outlined,
                     ),
-                  )),
+                    ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: S.current.bugReport,
+                      onTap: () {
+                        UriUtil.launchUrlUri(context, issueUrl);
+                      },
+                      showLeading: true,
+                      leading: Icons.bug_report_outlined,
+                    ),
+                    ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: S.current.githubRepo,
+                      onTap: () {
+                        UriUtil.launchUrlUri(context, repoUrl);
+                      },
+                      showLeading: true,
+                      roundBottom: true,
+                      leading: Icons.commit_outlined,
+                    ),
+                    const SizedBox(height: 10),
+                    ItemBuilder.buildEntryItem(
+                      roundTop: true,
+                      context: context,
+                      title: S.current.rate,
+                      showLeading: true,
+                      onTap: () {
+                        BottomSheetBuilder.showBottomSheet(
+                          context,
+                          (context) => const StarBottomSheet(),
+                          responsive: true,
+                        );
+                      },
+                      leading: Icons.rate_review_outlined,
+                    ),
+                    ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: S.current.shareApp,
+                      showLeading: true,
+                      onTap: () {
+                        Share.share(shareText);
+                      },
+                      leading: Icons.share_rounded,
+                    ),
+                    ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: S.current.contact,
+                      onTap: () {
+                        UriUtil.launchEmailUri(
+                          context,
+                          feedbackEmail,
+                          subject: feedbackSubject,
+                          body: feedbackBody,
+                        );
+                      },
+                      showLeading: true,
+                      leading: Icons.contact_support_outlined,
+                    ),
+                    ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: S.current.officialWebsite,
+                      onTap: () {
+                        UriUtil.launchUrlUri(context, officialWebsite);
+                      },
+                      showLeading: true,
+                      leading: Icons.language_outlined,
+                    ),
+                    ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: S.current.qqGroup,
+                      onTap: () {
+                        UriUtil.openExternal(qqGroupUrl);
+                      },
+                      showLeading: true,
+                      leading: Icons.group_outlined,
+                    ),
+                    ItemBuilder.buildEntryItem(
+                      context: context,
+                      title: S.current.telegramGroup,
+                      onTap: () {
+                        UriUtil.openExternal(telegramGroupUrl);
+                      },
+                      roundBottom: true,
+                      showLeading: true,
+                      leading: Icons.telegram_outlined,
+                    ),
+                    const SizedBox(height: 10)
+                  ],
+                ),
+              ),
             ),
           ],
         ),

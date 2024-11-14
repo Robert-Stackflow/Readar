@@ -10,16 +10,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:readar/Models/other/github_response.dart';
-import 'package:readar/Utils/cloud_control_provider.dart';
-import 'package:readar/Utils/constant.dart';
-import 'package:readar/Utils/responsive_util.dart';
-import 'package:readar/Utils/uri_util.dart';
-import 'package:readar/Utils/utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:readar/Models/other/github_response.dart';
+import 'package:readar/Utils/constant.dart';
+import 'package:readar/Utils/responsive_util.dart';
+import 'package:readar/Utils/uri_util.dart';
+import 'package:readar/Utils/utils.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:win32/win32.dart';
 
@@ -165,8 +164,7 @@ class FileUtil {
         }
         String? filePath = await FileUtil.saveFile(
           dialogTitle: S.current.exportLog,
-          fileName:
-              "Readar-Logs-${Utils.getFormattedDate(DateTime.now())}.zip",
+          fileName: "Readar-Logs-${Utils.getFormattedDate(DateTime.now())}.zip",
           type: FileType.custom,
           allowedExtensions: ['zip'],
           lockParentWindow: true,
@@ -627,12 +625,12 @@ class FileUtil {
       ILogger.error("Failed to get android info with abis", e, t);
     }
     resAsset ??= universalAsset;
-    if (controlProvider.globalControl.enableUpdateFromS3) {
-      resAsset.pkgsDownloadUrl =
-          Utils.getDownloadUrl(latestVersion, resAsset.name);
-    } else {
-      resAsset.pkgsDownloadUrl = resAsset.browserDownloadUrl;
-    }
+    // if (true) {
+    resAsset.pkgsDownloadUrl =
+        Utils.getDownloadUrl(latestVersion, resAsset.name);
+    // } else {
+    //   resAsset.pkgsDownloadUrl = resAsset.browserDownloadUrl;
+    // }
     return resAsset;
   }
 

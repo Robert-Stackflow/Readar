@@ -40,7 +40,6 @@ import '../Widgets/Dialog/dialog_builder.dart';
 import '../Widgets/Dialog/widgets/dialog_wrapper_widget.dart';
 import '../generated/l10n.dart';
 import 'app_provider.dart';
-import 'cloud_control_provider.dart';
 import 'constant.dart';
 import 'ilogger.dart';
 import 'itoast.dart';
@@ -86,7 +85,7 @@ class Utils {
   }
 
   static getDownloadUrl(String version, String name) {
-    return "${controlProvider.globalControl.downloadPkgsUrl}/$version/$name";
+    return "$downloadPkgsUrl/$version/$name";
   }
 
   static String getFormattedDate(DateTime dateTime) {
@@ -413,45 +412,64 @@ class Utils {
 
   static bool isUrl(String url) => _urlRegex.hasMatch(url.trim());
 
-  static Future<String?> fetchFavicon(String originUrl) async {
+  static String getDomainWithScheme(String url) {
+    Uri uri = Uri.parse(url);
+    return "${uri.scheme}://${uri.host}";
+  }
+
+  static String getRootDomainWithScheme(String url) {
+    Uri uri = Uri.parse(url);
+    return "${uri.scheme}://${uri.host.split('.').reversed.take(2).toList().reversed.join('.')}";
+  }
+
+  static Future<String?> fetchFavicon(String originUrl,
+      {bool forceRoot = false}) async {
     try {
-      var url = originUrl;
-      url = url.split("/").getRange(0, 3).join("/");
-      var uri = Uri.parse(url);
-      var result = await http.get(uri);
-      var faviconUrl = "";
-      if (result.statusCode == 200) {
-        var htmlStr = result.body;
-        var dom = parse(htmlStr);
-        var links = dom.getElementsByTagName("link");
-        for (var link in links) {
-          var rel = link.attributes["rel"];
-          if ((rel == "icon" || rel == "shortcut icon") &&
-              link.attributes.containsKey("href")) {
-            var href = link.attributes["href"]!;
-            var parsedUrl = Uri.parse(url);
-            if (href.startsWith("//")) {
-              faviconUrl = "${parsedUrl.scheme}:$href";
-            } else if (href.startsWith("/")) {
-              faviconUrl = url + href;
-            } else {
-              faviconUrl = href;
-            }
-          }
+      debugPrint("Fetching favicon for $originUrl");
+      var baseUrl = forceRoot
+          ? getRootDomainWithScheme(originUrl)
+          : getDomainWithScheme(originUrl);
+      var uri = Uri.parse(baseUrl);
+
+      var response = await http.get(uri);
+      if (response.statusCode != 200) {
+        debugPrint("Failed to fetch HTML for $originUrl");
+      }
+
+      var dom = parse(response.body);
+      var links = dom.getElementsByTagName("link");
+      String? faviconUrl;
+
+      for (var link in links) {
+        var rel = link.attributes["rel"];
+        var href = link.attributes["href"];
+        if (href != null && (rel == "icon" || rel == "shortcut icon")) {
+          faviconUrl = href.startsWith("//")
+              ? "${uri.scheme}:$href"
+              : href.startsWith("/")
+                  ? "$baseUrl$href"
+                  : href;
+          break;
         }
       }
-      if (faviconUrl.isEmpty) {
-        faviconUrl = "$url/favicon.ico";
+
+      if (faviconUrl == null && !forceRoot) {
+        faviconUrl = await fetchFavicon(originUrl, forceRoot: true);
       }
+
+      faviconUrl ??= "$baseUrl/favicon.ico";
+
       if (await Utils.validateFavicon(faviconUrl)) {
-        ILogger.info("Favicon found for $originUrl: $faviconUrl");
+        debugPrint("Favicon found for $originUrl: $faviconUrl");
         return faviconUrl;
       } else {
-        ILogger.error("Failed to fetch favicon for $originUrl");
-        return null;
+        debugPrint("Favicon not valid for $originUrl");
+        return forceRoot
+            ? null
+            : await fetchFavicon(originUrl, forceRoot: true);
       }
     } catch (e, t) {
-      ILogger.error("Failed to fetch favicon for $originUrl", e, t);
+      debugPrint("Failed to fetch favicon for $originUrl \n $e $t");
       return null;
     }
   }

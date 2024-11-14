@@ -363,6 +363,7 @@ class ItemBuilder {
     required Widget child,
     Function()? onTap,
     Function()? onLongPress,
+    Function()? onSecondaryTap,
     BorderRadius? borderRadius,
     Clip clipBehavior = Clip.none,
     ShapeBorder? shape,
@@ -376,6 +377,8 @@ class ItemBuilder {
       borderRadius: shape != null ? null : borderRadius,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
+        onSecondaryTap: onSecondaryTap,
         borderRadius: borderRadius,
         child: child,
       ),
@@ -409,29 +412,42 @@ class ItemBuilder {
             SizedBox(width: showCheck ? 8 : 4),
           ],
         );
-        return buildInk(
-          onTap: config.onPressed,
-          child: Container(
-            padding: EdgeInsets.only(
-                left: showCheck ? 8 : 12, right: 12, top: 8, bottom: 8),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-            child: Row(
-              children: [
-                if (isCheckbox) checkIcon,
-                if (config.icon != null)
-                  Transform.scale(
-                    scale: 0.83,
-                    child: config.icon!,
+        return Material(
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
+            onTap: config.onPressed,
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              padding: EdgeInsets.only(
+                  left: showCheck ? 8 : 12, right: 12, top: 8, bottom: 8),
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(10)),
+              child: Row(
+                children: [
+                  if (isCheckbox) checkIcon,
+                  if (config.iconData != null)
+                    Transform.scale(
+                      scale: 0.83,
+                      child: Icon(config.iconData,
+                          color: config.isWarning ? Colors.red : null),
+                    ),
+                  if (config.icon != null)
+                    Transform.scale(
+                      scale: 0.83,
+                      child: config.icon!,
+                    ),
+                  if (config.icon != null || config.iconData != null)
+                    const SizedBox(width: 10),
+                  Text(
+                    config.label,
+                    style: Theme.of(context).textTheme.bodyMedium?.apply(
+                          fontSizeDelta: ResponsiveUtil.isMobile() ? 2 : 0,
+                          color: config.textColor ??
+                              (config.isWarning ? Colors.red : null),
+                        ),
                   ),
-                if (config.icon != null) const SizedBox(width: 10),
-                Text(
-                  config.label,
-                  style: Theme.of(context).textTheme.bodyMedium?.apply(
-                        fontSizeDelta: ResponsiveUtil.isMobile() ? 2 : 0,
-                        color: config.textColor,
-                      ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

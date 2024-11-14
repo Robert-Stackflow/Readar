@@ -14,14 +14,15 @@ import 'package:path/path.dart';
 import 'package:protocol_handler/protocol_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:readar/Database/database_manager.dart';
+import 'package:readar/Providers/Feed/feed_provider.dart';
 import 'package:readar/Utils/app_provider.dart';
-import 'package:readar/Utils/cloud_control_provider.dart';
 import 'package:readar/Utils/file_util.dart';
 import 'package:readar/Utils/hive_util.dart';
 import 'package:readar/Utils/request_util.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'Adapters/global_adapter.dart';
+import 'Providers/Providers/rss_service_provider.dart';
+import 'Providers/RssService/base_rss_service_provider.dart';
 import 'Screens/Lock/pin_verify_screen.dart';
 import 'Screens/main_screen.dart';
 import 'Utils/constant.dart';
@@ -161,8 +162,29 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: appProvider),
-        ChangeNotifierProvider.value(value: controlProvider),
-        ChangeNotifierProvider.value(value: globalAdapter),
+        ChangeNotifierProvider.value(value: globalRssProvider),
+        ChangeNotifierProxyProvider<GlobalRssProvider, BaseRssServiceProvider?>(
+          create: (_) => null,
+          update: (_, rssServiceProvider, previousManager) {
+            final selectedService = rssServiceProvider.selectedService;
+            if (selectedService != null) {
+              if (selectedService != previousManager) {
+                return selectedService;
+              }
+              return previousManager;
+            }
+            return null;
+          },
+        ),
+        ProxyProvider<BaseRssServiceProvider?, FeedProvider?>(
+          update: (_, selectedService, __) {
+            if (selectedService != null) {
+              return FeedProvider(
+                  selectedService.feedProviders.first.feedModel);
+            }
+            return null;
+          },
+        ),
       ],
       child: Consumer<AppProvider>(
         builder: (context, globalProvider, child) => MaterialApp(
