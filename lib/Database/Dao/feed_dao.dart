@@ -5,7 +5,7 @@ import 'package:readar/Database/create_table_sql.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../Models/feed.dart';
-import 'article_item_dao.dart';
+import 'article_dao.dart';
 
 class FeedDao extends BaseDao<FeedModel> {
   static final String tableName = CreateTableSql.feed.tableName;
@@ -70,7 +70,7 @@ class FeedDao extends BaseDao<FeedModel> {
     final batch = db.batch();
     for (var uid in uids) {
       batch.delete(
-        ArticleItemDao.tableName,
+        ArticleDao.tableName,
         where: "feedUid = ?",
         whereArgs: [uid],
       );

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:readar/Models/article_item.dart';
 import 'package:readar/Models/filter_rule.dart';
 
 import 'feed_setting.dart';

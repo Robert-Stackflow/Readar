@@ -55,6 +55,16 @@ class Utils {
         .hasMatch(uid);
   }
 
+  static DateTime? parseDateTime(String? dateTime) {
+    if (dateTime == null) return null;
+    try {
+      return DateTime.parse(dateTime);
+    } catch (e, t) {
+      ILogger.error("Failed to parse date time $dateTime", e, t);
+      return null;
+    }
+  }
+
   static Future<void> setSafeMode(bool enabled) async {
     if (ResponsiveUtil.isMobile()) {
       if (enabled) {

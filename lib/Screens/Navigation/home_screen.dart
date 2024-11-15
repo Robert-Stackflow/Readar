@@ -21,6 +21,7 @@ import '../../Utils/utils.dart';
 import '../../Widgets/General/EasyRefresh/easy_refresh.dart';
 import '../../Widgets/Hidable/scroll_to_hide.dart';
 import '../../Widgets/Item/item_builder.dart';
+import '../../Widgets/Readar/article_item.dart';
 import '../../Widgets/Readar/feed_item.dart';
 import '../../generated/l10n.dart';
 import '../Setting/setting_screen.dart';
@@ -56,7 +57,6 @@ class HomeScreenState extends State<HomeScreen>
   late AnimationController _refreshRotationController;
   final ScrollToHideController _scrollToHideController =
       ScrollToHideController();
-  final ResizableController _resizableController = ResizableController();
 
   late AnimationController darkModeController;
   Widget? darkModeWidget;
@@ -136,7 +136,6 @@ class HomeScreenState extends State<HomeScreen>
         children: [
           ResizableContainer(
             direction: Axis.horizontal,
-            controller: _resizableController,
             divider: ResizableDivider(
               color: Theme.of(context).dividerColor,
               thickness: ResponsiveUtil.isMobile() ? 2 : 1,
@@ -157,17 +156,7 @@ class HomeScreenState extends State<HomeScreen>
               ResizableChild(
                 minSize: 300,
                 size: const ResizableSize.expand(),
-                child: EasyRefresh(
-                  refreshOnStart: true,
-                  controller: _refreshController,
-                  onRefresh: () {},
-                  onLoad: () {},
-                  child: ItemBuilder.buildEmptyPlaceholder(
-                    context: context,
-                    text: S.current.home,
-                    shrinkWrap: false,
-                  ),
-                ),
+                child: _buildFeedDetailPanel(),
               ),
             ],
           ),
@@ -203,13 +192,89 @@ class HomeScreenState extends State<HomeScreen>
               var feed = feedProvider.feedModel;
               return FeedItem(
                 feed: feed,
-                selected: serviceAdapter.selectedFeedUid == feed.uid,
+                selected: serviceAdapter.selectedFeedProviderUid == feed.uid,
                 onTap: () {
-                  serviceAdapter.selectedFeedUid = feed.uid;
+                  serviceAdapter.selectedFeedProvider = feedProvider;
+                  feedProvider.sync();
                 },
               );
             },
           );
+  }
+
+  Widget _buildFeedDetailPanel() {
+    return ResizableContainer(
+      direction: Axis.horizontal,
+      divider: ResizableDivider(
+        color: Theme.of(context).dividerColor,
+        thickness: ResponsiveUtil.isMobile() ? 2 : 1,
+        size: 6,
+        onHoverEnter: () {
+          if (ResponsiveUtil.isMobile()) {
+            HapticFeedback.lightImpact();
+          }
+        },
+      ),
+      children: [
+        ResizableChild(
+          size: const ResizableSize.pixels(240),
+          minSize: 240,
+          child: _buildArticleList(),
+        ),
+        ResizableChild(
+          minSize: 300,
+          size: const ResizableSize.expand(),
+          child: _buildArticleContent(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildArticleList() {
+    final serviceAdapter = Provider.of<BaseRssServiceProvider?>(context);
+    if (serviceAdapter == null) {
+      return Container();
+    }
+    FeedProvider? feedProvider = serviceAdapter.selectedFeedProvider;
+    return feedProvider == null
+        ? Container()
+        : WaterfallFlow.builder(
+            itemCount: feedProvider.articles.length,
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            gridDelegate:
+                const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              mainAxisSpacing: 2,
+            ),
+            itemBuilder: (context, index) {
+              return ArticleItem(
+                article: feedProvider.articles[index],
+                onTap: () {
+
+                },
+              );
+            },
+          );
+  }
+
+  Widget _buildArticleContent() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Article Title",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "Article Content",
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
   }
 
   void scrollToTopAndRefresh() {

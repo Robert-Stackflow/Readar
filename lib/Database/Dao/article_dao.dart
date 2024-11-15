@@ -4,19 +4,19 @@ import 'package:readar/Database/Dao/feed_dao.dart';
 import 'package:readar/Models/feed.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../Models/article_item.dart';
+import '../../Models/article.dart';
 import '../create_table_sql.dart';
 import 'base_dao.dart';
 
-class ArticleItemDao extends BaseDao<ArticleItem> {
+class ArticleDao extends BaseDao<Article> {
   static final String tableName = CreateTableSql.articleItem.tableName;
 
-  ArticleItemDao._internal();
+  ArticleDao._internal();
 
-  static final ArticleItemDao instance = ArticleItemDao._internal();
+  static final ArticleDao instance = ArticleDao._internal();
 
   @override
-  Future<int> insert(ArticleItem item) async {
+  Future<int> insert(Article item) async {
     var db = await getDataBase();
     var res = await db.insert(
       tableName,
@@ -27,10 +27,10 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
   }
 
   @override
-  Future<int> insertAll(List<ArticleItem> items) async {
+  Future<int> insertAll(List<Article> items) async {
     var db = await getDataBase();
     Batch batch = db.batch();
-    for (ArticleItem item in items) {
+    for (Article item in items) {
       batch.insert(tableName, item.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
@@ -38,7 +38,7 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
     return result.length;
   }
 
-  Future<List<ArticleItem>> query({
+  Future<List<Article>> query({
     required int? loadLimit,
     required String where,
     int offset = 0,
@@ -53,11 +53,11 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
       where: where,
       whereArgs: whereArgs,
     );
-    return result.map((e) => ArticleItem.fromJson(e)).toList();
+    return result.map((e) => Article.fromJson(e)).toList();
   }
 
   @override
-  Future<int> delete(ArticleItem item) async {
+  Future<int> delete(Article item) async {
     var db = await getDataBase();
     var res = await db.delete(
       tableName,
@@ -68,17 +68,17 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
   }
 
   @override
-  Future<int> update(ArticleItem item) async {
+  Future<int> update(Article item) async {
     var db = await getDataBase();
     var res = await db.update(tableName, item.toJson());
     return res;
   }
 
   @override
-  Future<int> updateAll(List<ArticleItem> items) async {
+  Future<int> updateAll(List<Article> items) async {
     var db = await getDataBase();
     Batch batch = db.batch();
-    for (ArticleItem item in items) {
+    for (Article item in items) {
       batch.update(tableName, item.toJson());
     }
     var res = await batch.commit();
@@ -92,18 +92,18 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
     return res;
   }
 
-  Future<List<ArticleItem>> queryByFeedUid(String feedUid) async {
+  Future<List<Article>> queryByFeedUid(String feedUid) async {
     var db = await getDataBase();
     List<Map<String, Object?>> result =
         await db.query(tableName, where: 'feedUid = ?', whereArgs: [feedUid]);
-    return result.map<ArticleItem>((e) => ArticleItem.fromJson(e)).toList();
+    return result.map<Article>((e) => Article.fromJson(e)).toList();
   }
 
-  Future<List<ArticleItem>> queryByServiceUid(String serviceUid) async {
+  Future<List<Article>> queryByServiceUid(String serviceUid) async {
     List<FeedModel> feeds = await FeedDao.instance.queryByServiceUid(serviceUid);
-    List<ArticleItem> items = [];
+    List<Article> items = [];
     for (var feed in feeds) {
-      List<ArticleItem> result = await queryByFeedUid(feed.uid);
+      List<Article> result = await queryByFeedUid(feed.uid);
       items.addAll(result);
     }
     return items;
@@ -116,25 +116,25 @@ class ArticleItemDao extends BaseDao<ArticleItem> {
   }
 
   @override
-  FutureOr<List<ArticleItem>> queryAll() {
+  FutureOr<List<Article>> queryAll() {
     var db = getDataBase();
     return db.then((value) => value
         .query(tableName)
-        .then((value) => value.map((e) => ArticleItem.fromJson(e)).toList()));
+        .then((value) => value.map((e) => Article.fromJson(e)).toList()));
   }
 
   @override
-  FutureOr<ArticleItem?> queryById(int id) {
+  FutureOr<Article?> queryById(int id) {
     var db = getDataBase();
     return db.then((value) => value.query(tableName,
         where: 'id = ?',
-        whereArgs: [id]).then((value) => ArticleItem.fromJson(value.first)));
+        whereArgs: [id]).then((value) => Article.fromJson(value.first)));
   }
 
-  FutureOr<ArticleItem?> queryByUid(int uid) {
+  FutureOr<Article?> queryByUid(int uid) {
     var db = getDataBase();
     return db.then((value) => value.query(tableName,
         where: 'uid = ?',
-        whereArgs: [uid]).then((value) => ArticleItem.fromJson(value.first)));
+        whereArgs: [uid]).then((value) => Article.fromJson(value.first)));
   }
 }

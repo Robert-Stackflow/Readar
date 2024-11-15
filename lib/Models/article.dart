@@ -1,9 +1,14 @@
 import 'dart:convert';
 
+import 'package:rss_dart/dart_rss.dart';
+import 'package:rss_dart/domain/rss1_item.dart';
+
+import '../Utils/utils.dart';
+
 ///
 /// RSS文章条目
 ///
-class ArticleItem {
+class Article {
   int? id;
   String uid;
   String feedUid;
@@ -24,7 +29,7 @@ class ArticleItem {
   int aiSummaryTime; // AI摘要生成时间
   Map<String, dynamic> params;
 
-  ArticleItem({
+  Article({
     required this.id,
     required this.uid,
     required this.feedUid,
@@ -46,7 +51,7 @@ class ArticleItem {
     this.params = const {},
   });
 
-  ArticleItem._privateConstructor(
+  Article._privateConstructor(
     this.id,
     this.uid,
     this.feedUid,
@@ -68,8 +73,8 @@ class ArticleItem {
     this.aiSummaryTime,
   );
 
-  ArticleItem clone() {
-    return ArticleItem._privateConstructor(
+  Article clone() {
+    return Article._privateConstructor(
       id,
       uid,
       feedUid,
@@ -114,7 +119,7 @@ class ArticleItem {
         'aiSummaryTime': aiSummaryTime,
       };
 
-  factory ArticleItem.fromJson(Map<String, dynamic> map) => ArticleItem(
+  factory Article.fromJson(Map<String, dynamic> map) => Article(
         id: map['id'] as int,
         uid: map['uid'] as String,
         feedUid: map['feedUid'] as String,
@@ -135,4 +140,88 @@ class ArticleItem {
         hide: map['hide'] == 1,
         params: jsonDecode(map['params'] as String),
       );
+
+  @override
+  String toString() {
+    return 'Article{id: $id, uid: $uid, feedUid: $feedUid, title: $title, url: $url, publishTime: $publishTime, content: $content, snippet: $snippet, aiSummary: $aiSummary, creator: $creator, thumb: $thumb, read: $read, starred: $starred, hide: $hide, readTime: $readTime, starTime: $starTime, readDuration: $readDuration, aiSummaryTime: $aiSummaryTime, params: $params}';
+  }
+}
+
+extension RssItemToArticle on RssItem {
+  Article get article {
+    return Article(
+      id: null,
+      uid: guid ?? Utils.generateUid(),
+      feedUid: "",
+      title: title ?? "",
+      url: link ?? "",
+      publishTime: Utils.parseDateTime(pubDate)?.millisecondsSinceEpoch ??
+          DateTime.now().millisecondsSinceEpoch,
+      content: content?.value ?? "",
+      snippet: description ?? "",
+      creator: author,
+      thumb: content?.images.isNotEmpty == true ? content!.images.first : "",
+      read: false,
+      starred: false,
+      hide: false,
+      readTime: 0,
+      starTime: 0,
+      readDuration: 0,
+      aiSummary: "",
+      aiSummaryTime: 0,
+      params: {},
+    );
+  }
+}
+
+extension Rss1ItemToArticle on Rss1Item {
+  Article get article {
+    return Article(
+      id: null,
+      uid: Utils.generateUid(),
+      feedUid: "",
+      title: title ?? "",
+      url: link ?? "",
+      publishTime: DateTime.now().millisecondsSinceEpoch,
+      content: content?.value ?? "",
+      snippet: description ?? "",
+      thumb: content?.images.isNotEmpty == true ? content!.images.first : "",
+      read: false,
+      starred: false,
+      hide: false,
+      readTime: 0,
+      starTime: 0,
+      readDuration: 0,
+      aiSummary: "",
+      aiSummaryTime: 0,
+      params: {},
+    );
+  }
+}
+
+extension AtomItemToArticle on AtomItem {
+  Article get article {
+    return Article(
+      id: null,
+      uid: id ?? Utils.generateUid(),
+      feedUid: "",
+      title: title ?? "",
+      url: links.isNotEmpty ? links[0].href ?? "" : "",
+      publishTime: Utils.parseDateTime(updated)?.millisecondsSinceEpoch ??
+          DateTime.now().millisecondsSinceEpoch,
+      content: content ?? "",
+      snippet: summary ?? "",
+      creator: authors.isNotEmpty ? authors[0].name : "",
+      thumb: media?.thumbnails.isNotEmpty == true ? media!.thumbnails.first.url : "",
+      read: false,
+      starred: false,
+      hide: false,
+      readTime: 0,
+      starTime: 0,
+      readDuration: 0,
+      aiSummary: "",
+      aiSummaryTime: 0,
+      params: {},
+    );
+  }
 }

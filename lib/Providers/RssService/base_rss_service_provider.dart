@@ -35,12 +35,14 @@ class BaseRssServiceProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  String _selectedFeedUid = "";
+  FeedProvider? _selectedFeedProvider;
 
-  String get selectedFeedUid => _selectedFeedUid;
+  FeedProvider? get selectedFeedProvider => _selectedFeedProvider;
 
-  set selectedFeedUid(String value) {
-    _selectedFeedUid = value;
+  String? get selectedFeedProviderUid => _selectedFeedProvider?.feedModel.uid;
+
+  set selectedFeedProvider(FeedProvider? value) {
+    _selectedFeedProvider = value;
     notifyListeners();
   }
 
